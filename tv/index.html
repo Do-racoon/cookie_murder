@@ -316,7 +316,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 28,
+  "version": 31,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -788,6 +788,14 @@ const DEFAULT_DATA = {
       "reveal": "형사는 펜을 든다. 적을 것인가. — 이제 판결이다."
     }
   ],
+  "endings": [
+    { "id": "E1", "code": "페이스트리", "title": "쿠키는 두 개" },
+    { "id": "E2", "code": "졼트브레드", "title": "하나만 했다" },
+    { "id": "E3", "code": "진저브레드", "title": "문을 닫는다" },
+    { "id": "E4", "code": "머랭", "title": "다른 패턴" },
+    { "id": "E5", "code": "비스코티", "title": "맛이 없게 생겼군" },
+    { "id": "E6", "code": "사블레", "title": "에필로그 신문" }
+  ],
   "shared": true
 };
 const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{n:3,name:"문구",key:"special"},{n:4,name:"기억",key:"memory"}];
@@ -796,7 +804,7 @@ const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{
 let D=loadData(), S=null;
 let role=null, code=null, viewer="D", ch=1, viewCard=null, lastFound=null, lobbyStep=1;
 let lastJs=null, db=null, assets=null, gref=null, cref=null, unsub=null, unsubC=null, canWrite=null, dirty=false, writing=false, dbReady=false, dbTimer=null, offlineNote=false;
-function freshState(){ return {started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, log:[], startAt:null}; }
+function freshState(){ return {started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, verdict:{}, log:[], startAt:null}; }
 function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값으로 채운다 */
   const base=JSON.parse(JSON.stringify(DEFAULT_DATA));
   if(!d||!d.cards) return base;
@@ -863,7 +871,9 @@ function start(){ S=freshState(); S.started=true; S.startAt=Date.now();
 function enterCode(v){
   const who=me(); if(!canAct(who)){ toast("먼저 시작을 누른다."); return; }
   const id=findCard(v);
-  if(!id){ log("코드 "+v+" — 해당 없음. 지직.", who, "bad"); return; }
+  if(!id){ const e=(D.endings||[]).find(x=>norm(x.code)===norm(v));
+    if(e){ log("코드 "+v+" — 엔딩 카드다. 마지막에 티비가 그 이름을 부를 때 뒤집는다.", who, "bad"); return; }
+    log("코드 "+v+" — 해당 없음. 지직.", who, "bad"); return; }
   const c=D.cards[id];
   if(c.who&&c.who!==who){ log("코드 "+id+" — "+roleName(c.who)+"의 카드다. 열리지 않는다.", who, "bad"); return; }
   if((c.act||1)>S.act[who]){ log("코드 "+v+" — 지직. 아직 열리지 않는다.", who, "bad"); return; }
@@ -909,6 +919,27 @@ function answerMemory(v){
   else log("기억에 답했다 — 아니었다.", who, "bad");
 }
 
+/* ===================== 판결 — 티비가 열 엔딩 카드를 부른다 ===================== */
+const VQ=[
+ {k:"opinion",form:"취조서",q:"수사 의견 — 「쿠키 살인은 한 사람의 손이 아니다」",opts:[["그렇게 적는다","yes"],["한 사람의 손이다","no"]]},
+ {k:"count",form:"취조서",q:"「피의자는 연쇄 살인마이다. 피의자가 저지른 쿠키 살인은 □건이다」",opts:[["네 건 전부","4"],["한 건 — 맥주집","1"],["한 건도 없다","0"]]},
+ {k:"name",form:"취조서",q:"「그 밖에 조서에 적는 이름」",opts:[["없다","none"],["동생의 이름을 적는다","her"]]},
+ {k:"confess",form:"자수서",q:"「내가 저지른 쿠키 살인은 □건이다」",opts:[["네 건 전부 — S1을 낸다","S1"],["한 건, 맥주집 — S2를 낸다","S2"],["자수서를 쓰지 못했다","none"]]}
+];
+function endingOf(id){ return (D.endings||[]).find(e=>e.id===id)||{id:id,code:id,title:id}; }
+function verdictPick(v){ if(v.opinion==="no") return ["E4","E6"]; if(v.confess==="S1") return ["E1"]; if(v.confess==="S2") return ["E2"]; if(v.name==="her") return ["E5"]; return ["E3"]; }
+function setVerdict(k,val){ if(!S.verdict) S.verdict={};
+  if(k==="reset"){ S.verdict={}; log("취조서와 자수서를 처음부터 다시 적는다.","sys","sys"); return; }
+  S.verdict[k]=val;
+  if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — 엔딩 카드 "+ids.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집는다.","sys","sys"); }
+  else { saveState(); render(); } }
+function verdictHtml(){ const v=S.verdict||{}; let s=`<div class="memq">취조는 끝났다. 형사는 <b>취조서</b>를, 범인은 <b>자수서</b>를 적는다.</div>`; let asking=false;
+  VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); s+=`<div class="memq reveal"><b>${esc(q.form)}</b> · ${esc(q.q)}<br>→ ${esc(o?o[0]:"—")}</div>`; }
+    else if(!asking){ asking=true; s+=`<div class="memq"><b>${esc(q.form)}</b> · ${esc(q.q)}</div><div class="optlist">${q.opts.map(o=>`<button data-vq="${q.k}" data-vv="${esc(o[1])}">${esc(o[0])}</button>`).join("")}</div>`; } });
+  if(asking) s+=`<div class="hint" style="color:var(--phos-dim)">형사가 먼저 취조서를 적고, 범인이 자수서를 덮어 낸다. 서로의 비밀을 한 번씩 말한 뒤 여기에 적으면, 티비가 열 엔딩 카드의 쿠키 이름을 부른다.</div>`;
+  else { const ids=verdictPick(v); s+=`<div class="memq reveal"><b>엔딩 카드 ${ids.map(i=>"「"+esc(endingOf(i).code)+"」").join(" · ")}</b><br>그 이름이 적힌 카드를 뒤집어 번갈아 읽는다. 다른 카드는 열지 않는다.</div><div class="row" style="flex:0 0 auto"><button data-vq="reset" data-vv="" style="flex:0 0 auto">처음부터 다시 적는다</button></div>`; }
+  return s; }
+
 /* ===================== RENDER ===================== */
 function setChannel(n){ ch=n; capIdx=null; zap(); render(); }
 function panel(w){
@@ -950,6 +981,7 @@ function renderInner(){
   const bg=body.querySelector(".pbig"); if(bg) bg.onclick=ev=>{ ev.stopPropagation(); bigView(bg.dataset.big); };
   if(!$("shutter").hidden&&$("sheet").querySelector(".bigview")) renderBig();
   body.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ viewCard=b.dataset.view; capIdx=null; lastFound=null; render(); });
+  body.querySelectorAll("[data-vq]").forEach(b=>b.onclick=()=>setVerdict(b.dataset.vq,b.dataset.vv));
 }
 let keyMode="code";
 function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서는 기억 답, 그 외에는 카드 코드 */
@@ -1013,7 +1045,7 @@ function renderMemory(w){
     if(m.asks.some(q=>q.optional)) s+=`<div class="hint" style="color:var(--phos-dim)">마지막 범인의 질문은 막을 넘기는 데 필요하지 않다. 판결이 끝날 때까지 언제든 답할 수 있다.</div>`;
     s+=`<div class="hint" style="color:var(--phos-dim)">두 질문을 모두 맞혀야 다음 막이 열린다. 범인의 질문의 답은 형사가, 형사의 질문의 답은 범인이 알고 있다 — 묻고, 내어 주고, 받아 낸다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다 — 어느 질문의 답이든 순서 없이. 횟수 제한 없음.</div>`; }
   else if(m) s+=`<div class="memq">${esc(m.ask)}</div><div class="hint" style="color:var(--phos-dim)">답은 사진의 힌트·문구·취조에서 들은 말 속에 있다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다. 횟수 제한 없음.</div>`;
-  else { const lt=lateAsks(w); if(lt.length) s+=lt.map(x=>{ const q=x.m.asks[x.i]; return `<div class="memq"><b>${esc(q.who)}의 질문 — 아직 열려 있다</b><br>${esc(q.ask)}</div>`; }).join("")+`<div class="hint" style="color:var(--phos-dim)">판결이 끝날 때까지 답할 수 있다.</div>`; else s+=`<div class="memq">…더는 묻지 않는다.</div>`; }
+  else { const lt=lateAsks(w); if(lt.length) s+=lt.map(x=>{ const q=x.m.asks[x.i]; return `<div class="memq"><b>${esc(q.who)}의 질문 — 아직 열려 있다</b><br>${esc(q.ask)}</div>`; }).join("")+`<div class="hint" style="color:var(--phos-dim)">판결이 끝날 때까지 답할 수 있다.</div>`; s+=verdictHtml(); }
   return s;
 }
 function newsHtml(){ return ""; }

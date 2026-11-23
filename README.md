@@ -8,14 +8,16 @@
 | 경로 | 내용 |
 |---|---|
 | `tv/index.html` | 티비 — 테이블 가운데 한 대를 둘이 같이 보는 웹페이지. 사진이 파일 안에 들어 있어 인터넷 없이 열린다 |
-| `tv/data.json` | 티비 설계 데이터 (카드 코드, 사진 지점, 막의 질문) |
+| `tv/source.html` | 티비 원본 (아티팩트와 같은 파일). 고친 뒤 `python3 tools/build.py`로 `tv/index.html`·`docs/tv.html`을 만든다 |
+| `tv/img/` | 티비 사진 원본 |
+| `tools/build.py` | 티비 파일을 만드는 스크립트 |
 | `docs/` | 문서 모음 — 소개서·기획서·타임라인·핸드아웃·카드·룰북·테스트 코드·관계도·그림·티비 목업. `docs/index.html`을 연다 |
 | `text/` | 핸드아웃과 기획서 원문 (Markdown) |
 | `submission-2026-11-22/` | 11/22 공모전에 실제로 낸 파일 11개 그대로 — 소개서·롤카드·규칙서·정답봉투·엔딩책자(docx), 기획서 전체(html), 티비(html), 카드 인쇄 PDF와 시안 그림. 이후 수정 미반영 |
 
 ## 원본
 
-수정은 claude.ai 아티팩트에서 하고 이 저장소에 옮긴다.
+여러 세션이 `main` 하나를 같이 고친다. 순서와 규칙은 `CLAUDE.md`에 있다.
 
 - 티비: https://claude.ai/artifact/RkudTwWyMKxMF91p3AChwb
 - 문서 모음: https://claude.ai/artifact/4HW4bDiY5ph6icqAFJB98o
