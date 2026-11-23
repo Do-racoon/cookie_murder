@@ -1,0 +1,242 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>수상한 자백 인물 관계도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* layout: one full-width board (SVG) with a legend strip under it; purple = 동생/과거 핏줄, brown = 범인 쪽, grey = 형사·수사 */
+:root{
+  --bg:#1a1620; --panel:#241e2c; --fg:#ebe4f0; --muted:#a79bb3; --line:#4a4058;
+  --purple:#9b6dd1; --purple-soft:#3b2b52; --brown:#b8865a; --brown-soft:#45331f;
+  --steel:#8aa0b4; --steel-soft:#2a3540; --red:#c94c4c;
+  --display:"Noto Serif KR",Georgia,serif; --body:"Noto Sans KR",system-ui,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#f3eff6; --panel:#ffffff; --fg:#241e2c; --muted:#6b5f78; --line:#cfc6d8;
+  --purple:#6f3fb0; --purple-soft:#e6daf5; --brown:#8a5a2b; --brown-soft:#f0e3d2;
+  --steel:#4b6578; --steel-soft:#dfe6ec; --red:#b23a3a; color-scheme:light } }
+:root[data-theme="light"]{
+  --bg:#f3eff6; --panel:#ffffff; --fg:#241e2c; --muted:#6b5f78; --line:#cfc6d8;
+  --purple:#6f3fb0; --purple-soft:#e6daf5; --brown:#8a5a2b; --brown-soft:#f0e3d2;
+  --steel:#4b6578; --steel-soft:#dfe6ec; --red:#b23a3a; color-scheme:light }
+body{background:var(--bg);color:var(--fg);font-family:var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+h1{font-family:var(--display);font-size:clamp(22px,3vw,30px);margin:0;text-wrap:balance;font-weight:700}
+p.lead{margin:0;color:var(--muted);font-size:14px;max-width:62ch;line-height:1.6}
+.board{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+svg{display:block;min-width:1100px;width:100%;height:auto;font-family:var(--body)}
+.node rect{fill:var(--panel);stroke-width:1.5}
+.node .name{font-family:var(--display);font-weight:700;font-size:15px;fill:var(--fg)}
+.main .name{font-size:24px} .main .sub{font-size:12px}
+.mid .name{font-size:17px}
+.wit{font-size:11.5px;fill:var(--fg)} .wit.r{fill:var(--muted)}
+.col{fill:none;stroke:var(--line)} .colh{fill:var(--panel)}
+.yr{font-family:var(--display);font-size:13px;font-weight:700;fill:var(--muted)}
+.ct{font-family:var(--display);font-size:14px;font-weight:700;fill:var(--fg)}
+.hand{font-size:11px;font-weight:700;letter-spacing:.04em}
+.h-p{fill:var(--purple)} .h-b{fill:var(--brown)} .h-s{fill:var(--steel)}
+.vic{font-size:13px;font-weight:700;fill:var(--fg)}
+.axis{stroke:var(--line);stroke-width:2}
+
+.node .ring{fill:none;stroke-width:1.5}
+.g-p .ring{stroke:var(--purple)} .g-b .ring{stroke:var(--brown)} .g-s .ring{stroke:var(--steel)}
+.node .sub{font-size:11px;fill:var(--muted)}
+.g-p rect{stroke:var(--purple)} .g-b rect{stroke:var(--brown)} .g-s rect{stroke:var(--steel)}
+.g-p .tag{fill:var(--purple-soft)} .g-b .tag{fill:var(--brown-soft)} .g-s .tag{fill:var(--steel-soft)}
+.tagtext{font-size:10px;font-weight:700;letter-spacing:.06em;fill:var(--fg)}
+.edge{fill:none;stroke-width:1.6}
+.e-p{stroke:var(--purple)} .e-b{stroke:var(--brown)} .e-s{stroke:var(--steel)} .e-r{stroke:var(--red)}
+.dash{stroke-dasharray:5 4}
+.lbl{font-size:12px;fill:var(--fg)} .lbl.k{font-size:13px;font-weight:700} .lbl.m{fill:var(--muted)}
+.lblbg{fill:var(--panel)}
+.zone{fill:none;stroke:var(--line);stroke-dasharray:3 5}
+.zonet{font-size:11px;fill:var(--muted);letter-spacing:.08em;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:14px 22px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:26px;height:0;border-top:2px solid}
+.sw.d{border-top-style:dashed}
+</style>
+<div class="wrap">
+  <div>
+    <h1>수상한 자백 인물 관계도</h1>
+    <p class="lead">위는 주역 세 사람과 모방범. 아래는 사건을 시간순으로 늘어놓고, 사건마다 피해자·손·참고인과 관련 인물을 적었다. 위에서 내려오는 선은 "누가 저질렀나"다. 사건 번호는 11/9 확정 목록, 참고인은 핸드아웃·타임라인 원문 기준.</p>
+  </div>
+  <div class="board">
+<svg viewBox="0 0 1410 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="수상한 자백 인물 관계도">
+  <defs>
+    <clipPath id="cp330"><circle cx="330" cy="110" r="70"/></clipPath><clipPath id="cp790"><circle cx="790" cy="110" r="70"/></clipPath><clipPath id="cp1080"><circle cx="1080" cy="110" r="70"/></clipPath>
+    <clipPath id="c52"><circle cx="26" cy="26" r="26"/></clipPath>
+    <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--purple)"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--brown)"/></marker>
+    <marker id="as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--steel)"/></marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--red)"/></marker>
+  </defs>
+
+  <!-- 주역 사이 관계 -->
+  <path class="edge e-p" d="M405 95 L 715 95" marker-end="url(#ap)" marker-start="url(#ap)" stroke-width="2"/>
+  <rect class="lblbg" x="455" y="60" width="210" height="30" rx="4"/>
+  <text class="lbl k" x="560" y="72" text-anchor="middle">초6 다리 위 공범 (2014) → 오락실 친구 (2025)</text>
+  <path class="edge e-r" d="M715 125 L 405 125" marker-end="url(#ar)" stroke-width="2"/>
+  <rect class="lblbg" x="470" y="130" width="180" height="30" rx="4"/>
+  <text class="lbl k" x="560" y="142" text-anchor="middle">사건 6 · 범인이 동생을 노림</text>
+  <text class="lbl m" x="560" y="155" text-anchor="middle">동생은 미끼가 되어 저항 안 함</text>
+  <path class="edge e-s" d="M1005 110 L 865 110" marker-end="url(#as)" stroke-width="2"/>
+  <rect class="lblbg" x="880" y="60" width="110" height="30" rx="4"/>
+  <text class="lbl k" x="935" y="72" text-anchor="middle">취조 (2026.4)</text>
+  <text class="lbl m" x="935" y="85" text-anchor="middle">삼단봉 체포 · 이마 흉터</text>
+  <path class="edge e-s" d="M1080 40 C 1080 -20, 330 -20, 330 40" fill="none" stroke-dasharray="5 4" stroke-width="2"/>
+  <rect class="lblbg" x="630" y="0" width="150" height="26" rx="4"/>
+  <text class="lbl k" x="705" y="17" text-anchor="middle">오빠 · 동생 (새엄마가 데려옴)</text>
+
+  <g class="node main g-p">
+    <image class="bigp" href="img/sister.jpg" x="260" y="40" width="140" height="140" clip-path="url(#cp330)"/>
+    <circle class="ring" cx="330" cy="110" r="70" stroke-width="3"/>
+    <text class="name" x="330" y="206" text-anchor="middle">동생</text>
+    <text class="sub" x="330" y="224" text-anchor="middle">진범 · 사건 1·2·3 · 이름 미정</text>
+  </g>
+  <g class="node main g-b">
+    <image class="bigp" href="img/killer.jpg" x="720" y="40" width="140" height="140" clip-path="url(#cp790)"/>
+    <circle class="ring" cx="790" cy="110" r="70" stroke-width="3"/>
+    <text class="name" x="790" y="206" text-anchor="middle">범인</text>
+    <text class="sub" x="790" y="224" text-anchor="middle">보건소 채혈 · 사건 5·6 · 플레이어 1</text>
+  </g>
+  <g class="node main g-s">
+    <image class="bigp" href="img/detective.jpg" x="1010" y="40" width="140" height="140" clip-path="url(#cp1080)"/>
+    <circle class="ring" cx="1080" cy="110" r="70" stroke-width="3"/>
+    <text class="name" x="1080" y="206" text-anchor="middle">형사</text>
+    <text class="sub" x="1080" y="224" text-anchor="middle">동생의 오빠 · 플레이어 2</text>
+  </g>
+  <g class="node mid g-s">
+    <rect x="1230" y="60" width="150" height="100" rx="6"/>
+    <rect class="tag" x="1230" y="60" width="150" height="18" rx="6"/>
+    <text class="tagtext" x="1305" y="73" text-anchor="middle">모방범</text>
+    <text class="name" x="1305" y="105" text-anchor="middle">작가 C</text>
+    <text class="sub" x="1305" y="124" text-anchor="middle">소재에 목마른 작가 · 사건 4</text>
+    <text class="sub" x="1305" y="140" text-anchor="middle">체포 뒤 자수, 돌려보내짐</text>
+  </g>
+
+  <!-- 손: 위에서 사건으로 -->
+  <path class="edge e-p" d="M300 180 C 200 260, 130 320, 110 400" marker-end="url(#ap)"/>
+  <path class="edge e-p" d="M330 180 C 360 260, 440 320, 450 400" marker-end="url(#ap)"/>
+  <path class="edge e-p" d="M360 180 C 420 260, 600 320, 620 400" marker-end="url(#ap)"/>
+  <path class="edge e-b" d="M740 165 C 560 220, 320 300, 280 400" marker-end="url(#ab)"/>
+  <path class="edge e-b" d="M810 180 C 860 260, 950 320, 960 400" marker-end="url(#ab)"/>
+  <path class="edge e-b" d="M840 170 C 950 240, 1110 320, 1130 400" marker-end="url(#ab)"/>
+  <path class="edge e-s" d="M1305 160 C 1300 260, 820 300, 790 400" marker-end="url(#as)"/>
+  <path class="edge e-s dash" d="M1080 180 C 1120 300, 1290 320, 1300 400"/>
+  <text class="lbl m" x="1215" y="330">형사: 체포 뒤 기소 준비</text>
+
+  <!-- 시간축 -->
+  <line class="axis" x1="30" y1="385" x2="1380" y2="385"/>
+  <text class="yr" x="30" y="378">2014</text>
+  <text class="yr" x="1355" y="378" text-anchor="end">2026</text>
+
+  <rect class="col" x="30" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="30" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="38" y="417">사건 1 · 2014 여름</text>
+  <text class="ct" x="38" y="436">여성 퍽치기</text>
+  <text class="wit r" x="38" y="462">달림천 다리 아래</text>
+  <text class="wit r" x="38" y="474">피해자</text><text class="vic" x="38" y="492">형사의 친엄마</text>
+  <text class="hand h-p" x="38" y="514">손 · 동생 (범인 공범)</text>
+  <line x1="38" y1="528" x2="182" y2="528" stroke="var(--line)"/>
+  <text class="wit r" x="38" y="544">참고인 · 관련 인물</text>
+  <text class="wit" x="38" y="560">범인</text><text class="wit r" x="38" y="573">공범 · 돈 절반 받음</text>
+  <text class="wit" x="38" y="590">형사의 아버지</text><text class="wit r" x="38" y="603">남편 · 경찰 · 무너짐</text>
+  <text class="wit" x="38" y="620">형사</text><text class="wit r" x="38" y="633">초등학생 · '묻지마'로 앎</text>
+  <text class="wit" x="38" y="650">목격자</text><text class="wit r" x="38" y="663">없음 — 지갑·벽돌 물에</text><rect class="col" x="200" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="200" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="208" y="417">배경 · 2015~16</text>
+  <text class="ct" x="208" y="436">고아원 선생님</text>
+  <text class="wit r" x="208" y="462">외곽 고아원 (목록 밖)</text>
+  <text class="wit r" x="208" y="474">피해자</text><text class="vic" x="208" y="492">고아원 선생님</text>
+  <text class="hand h-b" x="208" y="514">손 · 범인</text>
+  <line x1="208" y1="528" x2="352" y2="528" stroke="var(--line)"/>
+  <text class="wit r" x="208" y="544">참고인 · 관련 인물</text>
+  <text class="wit" x="208" y="560">범인 기억에만 있음</text><text class="wit r" x="208" y="573">'예배' → 채찍·책 → 방화</text>
+  <text class="wit" x="208" y="590">경찰 기록</text><text class="wit r" x="208" y="603">없음</text><rect class="col" x="370" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="370" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="378" y="417">사건 2 · 2021</text>
+  <text class="ct" x="378" y="436">일가족 살인</text>
+  <text class="wit r" x="378" y="462">형사의 본가</text>
+  <g transform="translate(378 470)"><image href="img/family.jpg" x="0" y="0" width="52" height="52" clip-path="url(#c52)"/><circle cx="26" cy="26" r="26" fill="none" stroke="var(--purple)" stroke-width="1.5"/></g>
+  <text class="wit r" x="438" y="490">피해자</text><text class="vic" x="438" y="508">아버지 · 새엄마</text>
+  <text class="hand h-p" x="378" y="544">손 · 동생</text>
+  <line x1="378" y1="558" x2="522" y2="558" stroke="var(--line)"/>
+  <text class="wit r" x="378" y="574">참고인 · 관련 인물</text>
+  <text class="wit" x="378" y="590">동생</text><text class="wit r" x="378" y="603">신고자 · '옷장에 숨었다' (거짓)</text>
+  <text class="wit" x="378" y="620">형사</text><text class="wit r" x="378" y="633">경찰대 순찰 중 문자로 앎</text>
+  <text class="wit" x="378" y="650">경찰 기록</text><text class="wit r" x="378" y="663">강도로 추정</text><rect class="col" x="540" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="540" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="548" y="417">사건 3 · 2024</text>
+  <text class="ct" x="548" y="436">여성 강도 살인</text>
+  <text class="wit r" x="548" y="462">달림동</text>
+  <text class="wit r" x="548" y="474">피해자</text><text class="vic" x="548" y="492">혼자 사는 여성</text>
+  <text class="hand h-p" x="548" y="514">손 · 동생</text>
+  <line x1="548" y1="528" x2="692" y2="528" stroke="var(--line)"/>
+  <text class="wit r" x="548" y="544">참고인 · 관련 인물</text>
+  <text class="wit" x="548" y="560">작가 C</text><text class="wit r" x="548" y="573">보도를 봄 · 경찰에게 물음</text>
+  <text class="wit" x="548" y="590">한 경찰</text><text class="wit r" x="548" y="603">C를 무례하게 거절 (형사?)</text>
+  <text class="wit" x="548" y="620">형사</text><text class="wit r" x="548" y="633">강도 살인으로 따로 기록</text>
+  <text class="wit" x="548" y="650">본문</text><text class="wit r" x="548" y="663">집필 예정</text><rect class="col" x="710" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="710" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="718" y="417">사건 4 · 2025 여름</text>
+  <text class="ct" x="718" y="436">모방범 범죄 · '쿠키 살인'</text>
+  <text class="wit r" x="718" y="462">원룸가, 범인 집에서 버스 10분</text>
+  <text class="wit r" x="718" y="474">피해자</text><text class="vic" x="718" y="492">혼자 술 마시던 여성</text>
+  <text class="hand h-s" x="718" y="514">손 · 작가 C (모방범)</text>
+  <line x1="718" y1="528" x2="862" y2="528" stroke="var(--line)"/>
+  <text class="wit r" x="718" y="544">참고인 · 관련 인물</text>
+  <text class="wit" x="718" y="560">편의점 아주머니</text><text class="wit r" x="718" y="573">'친구 없고 술 자주' · 전남친 소문</text>
+  <text class="wit" x="718" y="590">범인</text><text class="wit r" x="718" y="603">현장에 몰래 들어감 · 목격자</text>
+  <text class="wit" x="718" y="620">형사</text><text class="wit r" x="718" y="633">범인 보건소 채혈 · '불길한 과자'</text>
+  <text class="wit" x="718" y="650">경찰</text><text class="wit r" x="718" y="663">1·2·3과 묶어 '총 4건'</text><rect class="col" x="880" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="880" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="888" y="417">사건 5 · 2025.10 새벽 2시</text>
+  <text class="ct" x="888" y="436">맥주집 알바 살인</text>
+  <text class="wit r" x="888" y="462">N버스 20분, 달림 근처</text>
+  <g transform="translate(888 470)"><image href="img/pub.jpg" x="0" y="0" width="52" height="52" clip-path="url(#c52)"/><circle cx="26" cy="26" r="26" fill="none" stroke="var(--brown)" stroke-width="1.5"/></g>
+  <text class="wit r" x="948" y="490">피해자</text><text class="vic" x="948" y="508">맥주집 알바 (A)</text>
+  <text class="hand h-b" x="888" y="544">손 · 범인</text>
+  <line x1="888" y1="558" x2="1032" y2="558" stroke="var(--line)"/>
+  <text class="wit r" x="888" y="574">참고인 · 관련 인물</text>
+  <text class="wit" x="888" y="590">동생</text><text class="wit r" x="888" y="603">오락실 친구 · 1:10 동석</text>
+  <text class="wit" x="888" y="620">맥주집 아주머니</text><text class="wit r" x="888" y="633">1:45 '그녀 찾는다' 들음</text>
+  <text class="wit" x="888" y="650">CU 아주머니</text><text class="wit r" x="888" y="663">범인 얼굴 기억 · 쿠키 구매</text>
+  <text class="wit" x="888" y="680">국과수</text><text class="wit r" x="888" y="693">발자국 250~260 · 창문 침입</text><rect class="col" x="1050" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="1050" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="1058" y="417">사건 6 · 2026.1 말 새벽 2시</text>
+  <text class="ct" x="1058" y="436">현행범 (살인 미수)</text>
+  <text class="wit r" x="1058" y="462">동생의 집, 달림동</text>
+  <g transform="translate(1058 470)"><image href="img/sister.jpg" x="0" y="0" width="52" height="52" clip-path="url(#c52)"/><circle cx="26" cy="26" r="26" fill="none" stroke="var(--brown)" stroke-width="1.5"/></g>
+  <text class="wit r" x="1118" y="490">피해자</text><text class="vic" x="1118" y="508">동생 (의식 불명)</text>
+  <text class="hand h-b" x="1058" y="544">손 · 범인</text>
+  <line x1="1058" y1="558" x2="1202" y2="558" stroke="var(--line)"/>
+  <text class="wit r" x="1058" y="574">참고인 · 관련 인물</text>
+  <text class="wit" x="1058" y="590">형사</text><text class="wit r" x="1058" y="603">CCTV로 봄 · 삼단봉 체포</text>
+  <text class="wit" x="1058" y="620">동료 형사</text><text class="wit r" x="1058" y="633">뒤이어 도착</text>
+  <text class="wit" x="1058" y="650">동생</text><text class="wit r" x="1058" y="663">저항 안 함 · 손가락 하나</text><rect class="col" x="1220" y="400" width="160" height="350" rx="6"/>
+  <rect class="colh" x="1220" y="400" width="160" height="46" rx="6"/>
+  <text class="yr" x="1228" y="417">2026.2~4</text>
+  <text class="ct" x="1228" y="436">체포 뒤 · 취조</text>
+  <text class="wit r" x="1228" y="462">경찰서 · 병원</text>
+  <text class="wit r" x="1228" y="474">피해자</text><text class="vic" x="1228" y="492">—</text>
+  <line x1="1228" y1="510" x2="1372" y2="510" stroke="var(--line)"/>
+  <text class="wit r" x="1228" y="526">참고인 · 관련 인물</text>
+  <text class="wit" x="1228" y="542">검사</text><text class="wit r" x="1228" y="555">기소 · 요건 판정</text>
+  <text class="wit" x="1228" y="572">국과수</text><text class="wit r" x="1228" y="585">감정</text>
+  <text class="wit" x="1228" y="602">작가 C</text><text class="wit r" x="1228" y="615">'내가 모방범' 자수 → 거절</text>
+  <text class="wit" x="1228" y="632">형사</text><text class="wit r" x="1228" y="645">현행범을 전부와 엮으려 함</text>
+  <text class="wit" x="1228" y="662">동생</text><text class="wit r" x="1228" y="675">병실, 깨어나지 않음</text>
+</svg>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="border-color:var(--purple)"></i>동생이 저지른 일 · 동생과의 연결</span>
+    <span><i class="sw" style="border-color:var(--brown)"></i>범인이 저지른 일</span>
+    <span><i class="sw" style="border-color:var(--steel)"></i>형사 · 수사 관계</span>
+    <span><i class="sw" style="border-color:var(--red)"></i>현재 사건 (살인 미수)</span>
+    <span><i class="sw d" style="border-color:var(--muted)"></i>점선: 혈연 또는 플레이어에게 숨겨진 관계</span>
+  </div>
+</div>
+
+</body></html>

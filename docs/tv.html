@@ -1,0 +1,1135 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>쿠키 살인 사건 TV</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&family=Gowun+Batang:wght@400;700&family=VT323&display=swap">
+<style>
+/* Layout: a 1970s wooden-cabinet CRT set fills the phone. Picture tube on top (what the viewer may see),
+   control panel (channel knob + dial, grille) beside/below it, and a "remote" tray under the set for inputs. Single dark look by design. */
+:root{
+  --room:#0b0908;
+  --wood:#5b3a21; --wood2:#2e1a0e; --wood-hi:#8a5a33;
+  --bezel:#1a1714; --bezel-hi:#3a332c;
+  --glass:#0c140f;
+  --phos:#d8f0c8; --phos-dim:#6f8a68;
+  --amber:#e7b55a;
+  --red:#c2463c; --ochre:#c69a5b; --violet:#a98be0;
+  --tray:#15110e; --tray-edge:#2a221b;
+  --fg:#e9e2d4; --dim:#9a9083;
+  --mono:"Nanum Gothic Coding","Apple SD Gothic Neo","Malgun Gothic",monospace;
+  --serif:"Gowun Batang","Apple SD Gothic Neo",serif;
+  --digit:"VT323","Nanum Gothic Coding",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--room);color:var(--fg);font-family:var(--mono);font-size:15px;line-height:1.5;
+  background-image:radial-gradient(ellipse at 50% 20%,#1a1410 0%,var(--room) 60%);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 20px}
+.room{max-width:760px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;background:#221c17;border:1px solid #3a3027;border-radius:8px;padding:9px 11px;cursor:pointer;min-width:0;text-align:left;line-height:1.3}
+button:hover{background:#2a231d}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+button:disabled{opacity:.38;cursor:not-allowed}
+button.primary{background:#3b2b12;border-color:#7a5a24;color:#f2d79a}
+button.danger{background:#3a1613;border-color:#6d2a25;color:#f1b2aa}
+button.ghost{background:transparent}
+button small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+input,select,textarea{font:inherit;color:var(--fg);background:#0f0c0a;border:1px solid #3a3027;border-radius:8px;padding:9px 11px;width:100%}
+label{display:block;font-size:12px;color:var(--dim);margin-bottom:4px;letter-spacing:.04em}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1 1 120px;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.hint{font-size:12px;color:var(--dim)}
+.tiny{font-size:11px;color:var(--dim)}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;background:#2a221b;font-size:12px;color:var(--dim);vertical-align:middle}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid currentColor;vertical-align:middle}
+.tag.C{color:#ef8f86}.tag.D{color:#dcb47c}
+
+/* ===== THE SET ===== one fixed-proportion object. Every chassis size is in cqw (container width),
+   so the set keeps the same shape at every viewport: screen 4:3, panel 22% of the width on the right. */
+.tv{position:relative;container-type:inline-size;filter:drop-shadow(0 18px 30px rgba(0,0,0,.7))}
+.antenna{position:relative;height:5cqw;margin:0 auto;width:40cqw}
+.antenna i{position:absolute;bottom:0;left:50%;width:.5cqw;height:6cqw;background:linear-gradient(#cfcfcf,#6a6a6a);border-radius:2px;transform-origin:bottom}
+.antenna i:first-child{transform:translateX(-50%) rotate(-28deg)}
+.antenna i:last-child{transform:translateX(-50%) rotate(26deg)}
+.antenna i::after{content:"";position:absolute;top:-.6cqw;left:-.4cqw;width:1.2cqw;height:1.2cqw;border-radius:50%;background:#ddd}
+.cabinet{background:
+   repeating-linear-gradient(92deg,rgba(255,255,255,.04) 0 2px,transparent 2px 9px,rgba(0,0,0,.08) 9px 11px,transparent 11px 23px),
+   linear-gradient(180deg,var(--wood-hi) 0,var(--wood) 12%,#4a2e1a 60%,var(--wood2) 100%);
+  border-radius:3cqw;padding:2.2cqw;display:grid;grid-template-columns:1fr 20cqw;gap:2cqw;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -6px 12px rgba(0,0,0,.5),0 0 0 2px #1a0f08}
+.bezel{background:linear-gradient(160deg,var(--bezel-hi),var(--bezel) 40%,#0d0b09);border-radius:2.2cqw;padding:1.8cqw;box-shadow:inset 0 0 0 1px #000,inset 0 4px 14px rgba(0,0,0,.8);min-width:0}
+.screen{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:5cqw/4cqw;background:var(--glass);overflow:hidden;
+  box-shadow:inset 0 0 40px #000,inset 0 0 6px rgba(120,160,120,.25)}
+.screen.on{background:radial-gradient(ellipse at 50% 45%,#122218 0%,#0b140f 70%,#070b09 100%)}
+.screen::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:5;border-radius:inherit;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px)}
+.screen::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;border-radius:inherit;
+  background:radial-gradient(ellipse at 30% 10%,rgba(255,255,255,.14) 0,rgba(255,255,255,.04) 25%,transparent 50%),
+             radial-gradient(ellipse at 50% 50%,transparent 60%,rgba(0,0,0,.55) 100%)}
+.static{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;background-image:
+   repeating-radial-gradient(circle at 17% 33%,#fff 0 1px,transparent 1px 2px),
+   repeating-radial-gradient(circle at 70% 60%,#aaa 0 1px,transparent 1px 3px),
+   repeating-linear-gradient(0deg,rgba(255,255,255,.35) 0 1px,rgba(0,0,0,.6) 1px 2px);
+  background-size:3px 3px,5px 5px,100% 4px;mix-blend-mode:screen}
+.screen.nosignal .static{opacity:.2;animation:snow .12s steps(2) infinite}
+.screen.zap .static{animation:zap .35s steps(3) 1}
+@keyframes snow{from{background-position:0 0,0 0,0 0}to{background-position:3px 2px,-4px 3px,0 2px}}
+@keyframes zap{0%{opacity:.9}60%{opacity:.4}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.screen.nosignal .static,.screen.zap .static{animation:none}}
+/* screen type scales with the set but stays readable: ~13px on a 390px phone, 15px from 560px up */
+.face{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:2.2cqw 3cqw;gap:.8cqw;color:var(--phos);font-family:var(--mono);min-width:0;font-size:clamp(11px,3.3cqw,15px);line-height:1.45}
+.osd{display:flex;justify-content:space-between;align-items:baseline;gap:1.5cqw;font-family:var(--digit);font-size:clamp(15px,4.2cqw,22px);line-height:1.2;min-height:1.2em;color:var(--amber);letter-spacing:.05em;text-shadow:0 0 6px rgba(231,181,90,.6);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
+.osd>span:first-child{flex:0 0 auto}
+.osd>span:last-child{overflow:hidden;text-overflow:clip;min-width:0;text-align:right}
+.osd .rec{color:var(--red)}
+.osd .rec::before{content:"\25cf  ";animation:blink 1.2s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.osd .rec::before{animation:none}}
+.ticker{position:absolute;left:3cqw;right:3cqw;z-index:4;pointer-events:none;font-size:.95em;box-shadow:0 4px 14px rgba(0,0,0,.5);color:#f6dc9c;background:rgba(231,181,90,.14);border:1px solid rgba(231,181,90,.6);border-radius:6px;padding:.5em .8em;line-height:1.4;text-shadow:none}
+.ticker.bad{color:#ffb3aa;background:rgba(194,70,60,.16);border-color:rgba(239,154,144,.7)}
+.ticker.good{color:#c8f5c0;background:rgba(184,240,176,.12);border-color:rgba(184,240,176,.6)}
+/* 알림은 불투명 — 아래 글자와 겹쳐 읽히지 않게 */
+.ticker{background:#2b2413}.ticker.bad{background:#2e1512}.ticker.good{background:#16261a}
+.body{flex:1 1 auto;min-height:0;overflow:auto;scrollbar-width:thin;display:flex;flex-direction:column;gap:.8cqw;text-shadow:0 0 4px rgba(216,240,200,.45)}
+.body p{margin:0}
+.title{font-family:var(--serif);font-size:1.15em;color:#f3ecd8}
+.chname{font-size:.85em;color:var(--phos-dim);letter-spacing:.14em;text-transform:uppercase}
+.nosig{display:flex;align-items:center;justify-content:center;height:100%;font-family:var(--digit);font-size:clamp(22px,7cqw,36px);color:#cfd8c8;letter-spacing:.2em;text-shadow:0 0 10px #fff;text-align:center;line-height:1.1}
+.logl{display:flex;flex-direction:column;gap:.4cqw;font-size:.9em}
+.logl .e{display:flex;gap:1.2cqw;align-items:baseline}
+.logl .e time{font-family:var(--digit);font-size:1.25em;color:var(--phos-dim);flex:0 0 3.4em;font-variant-numeric:tabular-nums}
+.logl .e.C span::before{content:"\bc94\c778 ";color:#ef8f86}
+.logl .e.D span::before{content:"\d615\c0ac ";color:#dcb47c}
+.logl .e.sys{color:var(--amber)}
+.logl .e.bad{color:#ef9a90}.logl .e.good{color:#b8f0b0}.logl .e.q{color:var(--violet)}
+.flash{animation:fl .5s steps(2) 1}
+@keyframes fl{from{opacity:.25}to{opacity:1}}
+.photo{position:relative;width:100%;aspect-ratio:4/3;max-width:100%;border-radius:6px;overflow:hidden;cursor:crosshair;background:#1e2a22;flex:0 0 auto}
+.photo.fill{aspect-ratio:auto;flex:1 1 auto;min-height:0;background:#0a110d}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;filter:saturate(.8) contrast(1.05)}
+.photo .layer{position:absolute;left:0;top:0;width:100%;height:100%}
+.photo .spot.found i{cursor:pointer}
+.photo .spot.found b{cursor:pointer}
+.photo .plabel{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:.3em .6em;font-size:.8em;color:var(--phos);background:linear-gradient(rgba(0,0,0,.7),transparent);pointer-events:none;z-index:2;text-shadow:0 1px 2px #000}
+.photo .pbig{position:absolute;right:.4em;bottom:.4em;z-index:4;width:2em;height:2em;padding:0;border-radius:6px;background:rgba(0,0,0,.6);border:1px solid rgba(216,240,200,.5);color:var(--phos);font-size:1em;line-height:1;text-align:center;cursor:pointer}
+.bigview{display:flex;flex-direction:column;gap:8px}
+.bigview .photo{aspect-ratio:4/3;width:100%;max-height:72vh;flex:0 0 auto;cursor:crosshair;background:#0a110d}
+.photo .cap{position:absolute;left:4%;right:4%;bottom:4%;background:rgba(6,12,8,.86);border:1px solid var(--amber);border-radius:6px;padding:.5em .8em;color:#f6e9c8;font-size:.95em;line-height:1.45;text-shadow:none;z-index:3}
+.photo .cap b{color:var(--amber);margin-right:.4em}
+.photo .cap.flash{animation:fl .5s steps(2) 1}
+.photo .ph{position:absolute;inset:0;z-index:0;background:
+   linear-gradient(rgba(216,240,200,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(216,240,200,.10) 1px,transparent 1px),
+   radial-gradient(ellipse at 50% 50%,#2a3a2e,#141c17);background-size:25% 25%,25% 25%,100% 100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--phos-dim);font-family:var(--digit);font-size:2em;letter-spacing:.1em}
+.photo .ph small{font-family:var(--mono);font-size:.8rem;letter-spacing:0}
+.photo .spot{position:absolute;width:0;height:0}
+.photo .spot i{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:var(--d);height:var(--d);border-radius:50%;border:1px dashed rgba(231,181,90,.9);background:rgba(231,181,90,.12)}
+.photo .spot.found i{border:2px solid var(--phos);background:rgba(216,240,200,.18)}
+.photo .spot.miss i{border:1px solid rgba(239,154,144,.8);width:10px;height:10px;background:transparent}
+.photo .spot b{position:absolute;left:8px;top:-8px;font-size:.75em;color:var(--amber);white-space:nowrap;background:rgba(0,0,0,.6);padding:0 4px;border-radius:3px;font-weight:400}
+.found-line{font-size:.95em;color:#f3ecd8;border-left:2px solid var(--amber);padding-left:8px}
+.memq{font-family:var(--serif);font-size:1.2em;line-height:1.7;color:#f3ecd8}
+.memq.reveal{color:#e9d7f5}
+.interlog{display:flex;flex-direction:column;gap:6px;font-size:.9em}
+.interlog .q{border-left:2px solid var(--ochre);padding-left:8px}
+.interlog .q.C{border-color:var(--red)}
+.interlog .q .a{color:var(--amber)}
+.optlist{display:flex;flex-direction:column;gap:6px}
+.optlist button{font-size:.9em;background:#1a2620;border-color:#2f4337;color:var(--phos);position:relative}
+.optlist button.sel{background:#3b2b12;border:2px solid var(--amber);color:#f6dc9c;box-shadow:0 0 0 3px rgba(231,181,90,.25),0 0 14px rgba(231,181,90,.35);padding-left:2.2em}
+.optlist button.sel::before{content:"\25CF";position:absolute;left:.7em;top:.55em;font-weight:700;color:var(--amber)}
+.optlist button.sel small{color:#d9c9a8}
+.sheet .optlist button{font-size:14px;padding:12px 12px}
+.notes{display:flex;flex-direction:column;gap:6px;font-size:.95em}
+.notes .n{border-left:2px solid var(--ochre);padding-left:8px}
+.notes .n.C{border-color:var(--red)}
+.endscreen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;text-align:center}
+.endscreen .big{font-family:var(--digit);font-size:clamp(26px,8cqw,40px);color:var(--amber);letter-spacing:.2em;text-shadow:0 0 10px rgba(231,181,90,.7)}
+
+/* control panel: a fixed column on the right at every width */
+.panel{display:flex;flex-direction:column;align-items:center;gap:1.4cqw;padding:.6cqw 0;color:#d9c9a8;min-width:0}
+.knobwrap{display:flex;flex-direction:column;align-items:center;gap:.4cqw}
+.knob{width:9cqw;height:9cqw;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a4139,#1b1714 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 3px 6px rgba(0,0,0,.7);position:relative;cursor:pointer;border:0;padding:0;flex:0 0 auto}
+.knob::after{content:"";position:absolute;left:50%;top:8%;width:.6cqw;height:30%;margin-left:-.3cqw;background:var(--amber);border-radius:2px;transform-origin:50% 140%;transform:rotate(var(--rot,0deg));transition:transform .25s}
+.klabel{font-family:var(--digit);font-size:clamp(10px,2.2cqw,15px);letter-spacing:.14em;color:#cbb88f}
+.dial{display:grid;grid-template-columns:1fr;gap:0;font-family:var(--digit);font-size:clamp(10px,2.3cqw,15px);color:#9c8c6c;width:100%;line-height:1.35}
+.dial button{background:none;border:0;padding:0 .4cqw;font:inherit;color:inherit;text-align:left;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.dial button.on{color:var(--amber);text-shadow:0 0 4px rgba(231,181,90,.6)}
+.led{width:1.4cqw;height:1.4cqw;border-radius:50%;background:#3a1a16;box-shadow:inset 0 0 2px #000}
+.led.on{background:#ff5a4c;box-shadow:0 0 8px #ff5a4c}
+.grille{width:100%;flex:1 1 3cqw;min-height:3cqw;background:repeating-linear-gradient(180deg,#1d150f 0 3px,#3b2816 3px 6px);border-radius:.8cqw;box-shadow:inset 0 0 6px rgba(0,0,0,.7)}
+.brand{font-family:var(--digit);font-size:clamp(8px,1.7cqw,13px);letter-spacing:.14em;color:#d2b88b;text-shadow:0 1px 0 #000;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:clip}
+.feet{display:flex;justify-content:space-between;padding:0 6cqw}
+.feet i{width:4cqw;height:2.2cqw;background:linear-gradient(#3a2414,#1b0f08);border-radius:0 0 .8cqw .8cqw}
+.pbtn{font-family:var(--digit);font-size:clamp(10px,2.3cqw,16px);letter-spacing:.12em;padding:.8cqw .6cqw;border-radius:1cqw;background:linear-gradient(#3a2f26,#1b1512);border:1px solid #574538;color:#e6d2a8;box-shadow:0 2px 0 #000;text-align:center;width:100%;line-height:1.2}
+.pbtn:hover{background:linear-gradient(#45392e,#211a16)}
+.pbtn.end{color:#ff8a7a;border-color:#7a3a33;background:linear-gradient(#4a1f1a,#2a110e)}
+.pbtn.end:disabled{opacity:.35}
+.pbtn.end.go{box-shadow:0 0 10px rgba(255,90,76,.6),0 2px 0 #000}
+.prow{display:flex;gap:.6cqw;width:100%}
+.prow .pbtn{flex:1;letter-spacing:0}
+/* Portrait set for phones: same fixed proportions, but the panel runs under the tube so the screen gets the full width. */
+@container (max-width: 560px){
+  .cabinet{grid-template-columns:1fr;padding:3cqw;gap:2.5cqw;border-radius:5cqw}
+  .bezel{padding:2.5cqw;border-radius:3.5cqw}
+  .screen{border-radius:7cqw/5.5cqw}
+  .face{padding:3.5cqw 4.5cqw;gap:1.2cqw;font-size:clamp(12px,3.6cqw,15px)}
+  .osd{font-size:clamp(16px,5cqw,22px)}
+  .osd .chn{display:none}
+  .panel{display:grid;grid-template-columns:16cqw 1fr 24cqw;grid-template-rows:auto auto;gap:2cqw 3cqw;align-items:center;padding:1cqw 1cqw 0}
+  .knobwrap{grid-row:1/3}
+  .knob{width:14cqw;height:14cqw}
+  .klabel{font-size:clamp(12px,3.2cqw,15px)}
+  .dial{grid-template-columns:repeat(2,auto);justify-content:start;gap:.5cqw 4cqw;font-size:clamp(13px,3.6cqw,16px);grid-row:1/3}
+  .dial button{white-space:nowrap;overflow:visible;padding:0 1cqw 0 0;letter-spacing:0}
+  .osd .rec::before{content:"\25cf "}
+  .pbtn{font-size:clamp(14px,3.8cqw,18px);padding:2cqw 1cqw;border-radius:2cqw}
+  .prow{gap:1cqw}
+  .grille,.brand{display:none}
+  .led{width:2.2cqw;height:2.2cqw}
+  .feet{padding:0 10cqw}
+  .feet i{width:7cqw;height:3.5cqw}
+  .antenna{height:8cqw;width:50cqw}
+  .antenna i{height:9cqw;width:.8cqw}
+}
+
+/* ===== 가로 전제 ===== 가로로 든 폰·태블릿·모니터에서는 세트가 화면 높이에 꼭 맞고, 리모컨(입력)은 오른쪽에 선다.
+   세트 높이 ≈ 폭 × 0.605 (4:3 화면 + 베젤 + 캐비닛). 안테나·다리는 접어서 화면에 자리를 준다. */
+@media (orientation:landscape){
+  body{padding-block:8px}
+  .room{max-width:none;flex-direction:row;align-items:center;justify-content:center;gap:14px;min-height:calc(100dvh - 16px)}
+  .tv{flex:0 1 auto;width:min(100%,calc((100dvh - 20px) / .605))}
+  .antenna,.feet{display:none}
+  .kwrap{flex:0 0 clamp(170px,24vw,280px);align-self:center}
+  .kwrap .keypad{flex-direction:column}
+  .room:has(.kwrap:not([hidden])) .tv{width:min(calc(100% - clamp(170px,24vw,280px) - 14px),calc((100dvh - 20px) / .605))}
+}
+
+/* in-screen controls */
+.face button{background:rgba(216,240,200,.08);border:1px solid rgba(216,240,200,.35);color:var(--phos);border-radius:6px;padding:7px 10px;font-size:13px;text-shadow:none}
+.face button:hover{background:rgba(216,240,200,.16)}
+.face button.primary{background:rgba(231,181,90,.16);border-color:var(--amber);color:#f6dc9c}
+.face button.danger{background:rgba(194,70,60,.18);border-color:#d26c62;color:#ffb3aa}
+.face button small{color:var(--phos-dim)}
+.face input,.face select{background:rgba(0,0,0,.45);border:1px solid rgba(216,240,200,.35);color:var(--phos);border-radius:6px;padding:7px 10px;font-size:14px;text-shadow:none}
+.face label{color:var(--phos-dim)}
+.face .hint,.face .tiny{color:var(--phos-dim)}
+.face .pill{background:rgba(216,240,200,.12);color:var(--phos)}
+
+.codein{display:flex;gap:6px}
+.codein button{flex:0 0 auto}
+.ctl{display:flex;flex-direction:column;gap:6px;flex:0 0 auto;border-top:1px dashed rgba(216,240,200,.25);padding-top:6px;margin-top:auto}
+.acts{display:inline-flex;gap:4px;vertical-align:middle}
+.acts i{width:.6em;height:.6em;border-radius:50%;background:rgba(216,240,200,.12);border:1px solid rgba(216,240,200,.4)}
+.acts i.on{background:var(--amber);box-shadow:0 0 6px rgba(231,181,90,.7)}
+.brandline{font-family:var(--serif);font-size:24px;color:#f3ecd8}
+.brandline small{display:block;font-family:var(--digit);font-size:16px;color:var(--amber);letter-spacing:.1em}
+.start{display:flex;flex-direction:column;gap:8px}
+.kwrap{background:var(--tray);border:1px solid var(--tray-edge);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.khead{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--dim)}
+.khead .acts i{width:12px;height:12px}
+.keypad{display:flex;gap:8px}
+.keypad input.ok{border-color:#6fb078;box-shadow:0 0 0 3px rgba(111,176,120,.25)}
+.keypad input.no{border-color:var(--red);box-shadow:0 0 0 3px rgba(194,70,60,.25);animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.keypad input.no{animation:none}}
+.kmsg{font-size:14px;line-height:1.4;padding:8px 10px;border-radius:8px;border-left:3px solid var(--amber);background:#1d1711;color:#f2e6cf}
+.kmsg.no{border-left-color:var(--red);color:#ffb3aa}
+.kmsg.ok{border-left-color:#6fb078;color:#c8f5c0}
+.kmsg::before{content:"● ";color:var(--amber)}
+.kmsg.no::before{content:"✕ ";color:var(--red)}
+.kmsg.ok::before{content:"✓ ";color:#6fb078}
+.keypad input{font-family:var(--digit);font-size:24px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;min-width:0}
+.keypad input::placeholder{font-family:var(--mono);font-size:15px;letter-spacing:0;text-transform:none;color:var(--dim)}
+.keypad input.word{font-family:var(--mono);font-size:16px;letter-spacing:0;text-transform:none}
+.keypad button{flex:0 0 auto}
+/* tray (unused) */
+.tray{background:var(--tray);border:1px solid var(--tray-edge);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.tray .who{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tray .who b{font-size:16px}
+.acts{display:inline-flex;gap:5px;vertical-align:middle;margin-left:6px}
+.acts i{width:12px;height:12px;border-radius:50%;background:#2a221b;border:1px solid #4a3c2e}
+.acts i.on{background:var(--amber);box-shadow:0 0 6px rgba(231,181,90,.7)}
+.codein{display:flex;gap:8px}
+.codein input{font-family:var(--digit);font-size:26px;letter-spacing:.18em;text-transform:uppercase;padding:6px 12px}
+.codein button{flex:0 0 auto}
+.start{display:flex;flex-direction:column;gap:12px}
+.gateq{margin:4px 0;padding:10px 12px;border:1px dashed var(--phos-dim);border-radius:6px;font-size:17px;line-height:1.5}
+.brandline{font-family:var(--serif);font-size:28px;color:#f3ecd8}
+.brandline small{display:block;font-family:var(--digit);font-size:17px;color:var(--amber);letter-spacing:.1em}
+.phasebar{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--dim);flex-wrap:wrap}
+.phasebar .r{font-family:var(--digit);font-size:20px;color:var(--amber);letter-spacing:.1em}
+.qbox{display:flex;flex-direction:column;gap:6px;border:1px solid #30271f;border-radius:8px;padding:8px}
+/* sheet */
+.shutter{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:flex-end;justify-content:center;z-index:50;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-top:env(safe-area-inset-top,0px);padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.sheet{width:100%;max-width:620px;background:#17120e;border:1px solid #30271f;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;max-height:92vh;overflow:auto}
+.sheet .foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.sheet h3{font-size:16px}
+textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;min-height:40vh;white-space:pre}
+.cover{text-align:center;padding:20px 8px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.cover .eye{font-family:var(--digit);font-size:40px;color:var(--amber)}
+.spotlist{display:flex;flex-direction:column;gap:6px}
+.spotlist .s{display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center;font-size:13px}
+.spotlist .s input{padding:6px 8px}
+.editphoto{cursor:copy}
+</style>
+
+<div class="room">
+  <div class="tv">
+    <div class="antenna"><i></i><i></i></div>
+    <div class="cabinet">
+      <div class="bezel">
+        <div class="screen nosignal" id="screen">
+          <div class="static"></div>
+          <div class="face">
+            <div class="osd"><span id="osdL">CH --</span><span id="osdR">NO SIGNAL</span></div>
+            <div class="ticker" id="ticker" hidden></div>
+            <div class="body" id="body"><div class="nosig">NO SIGNAL</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="knobwrap"><button class="knob" id="knobCh" aria-label="채널 돌리기" title="채널"></button><div class="klabel">CH <span class="led" id="led" style="display:inline-block;vertical-align:middle"></span></div></div>
+        <div class="dial" id="dial"></div>
+        <div class="prow"><button class="pbtn" id="btnSetP" title="설정">⚙</button><button class="pbtn" id="btnSwapP" title="폰을 넘긴다" hidden>⇄</button></div>
+        <div class="grille"></div>
+        <div class="brand">SUSPECT·VISION</div>
+      </div>
+    </div>
+    <div class="feet"><i></i><i></i></div>
+  </div>
+  <div class="kwrap" id="kwrap" hidden>
+    <div class="khead"><span id="kleft"></span><span id="kmode">카드 코드</span></div>
+    <form class="keypad" id="keypad"><input id="keyIn" autocomplete="off" autocapitalize="characters" aria-label="입력"><button class="primary" type="submit" id="keyBtn">입력</button></form>
+    <div class="kmsg" id="kmsg" hidden></div>
+  </div>
+</div>
+<div class="shutter" id="shutter" hidden><div class="sheet" id="sheet"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ===================== DATA — 제작자가 채우는 부분 =====================
+   cards: 카드 번호 → code(카드에 인쇄), kind(photo / text), who(C 범인 / D 형사), act(해금 막),
+          hotspots(사진 지점: x,y %, r 반지름 %, hint).
+   memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
+   티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
+const DEFAULT_DATA = {
+  "version": 28,
+  "title": "쿠키 살인 사건",
+  "maxAct": 4,
+  "cards": {
+    "K1": {
+      "code": "8ㅎ8ㅎ",
+      "who": "D",
+      "act": 1,
+      "kind": "photo",
+      "title": "현관 앞 CCTV ★",
+      "img": "img/tv-f51d26fa.jpg",
+      "hotspots": [
+        {
+          "x": 30,
+          "y": 9,
+          "r": 8,
+          "hint": "★처마 밑 돔 카메라 — 경찰 장비가 아니다. 누가 달았나"
+        },
+        {
+          "x": 63,
+          "y": 64,
+          "r": 8,
+          "hint": "문손잡이의 토끼 열쇠고리 — 오락실 경품. 그녀가 좋아하는 것"
+        },
+        {
+          "x": 46,
+          "y": 88,
+          "r": 8,
+          "hint": "바닥의 달림공원 안내지 — 다리로 가는 길"
+        }
+      ]
+    },
+    "K2": {
+      "code": "1ㅁ5ㅈ",
+      "who": "D",
+      "act": 1,
+      "kind": "photo",
+      "title": "현관과 영수증 ★",
+      "img": "img/tv-d0cf663d.jpg",
+      "hotspots": [
+        {
+          "x": 36,
+          "y": 86,
+          "r": 9,
+          "hint": "★달림국밥 영수증 — 새벽 1:50, 2인분. 누구와 먹었나"
+        },
+        {
+          "x": 61,
+          "y": 43,
+          "r": 8,
+          "hint": "키패드와 초인종 — 지문 없음. 문은 안에서 열렸다"
+        },
+        {
+          "x": 28,
+          "y": 36,
+          "r": 10,
+          "hint": "창가의 인형들 — 곰인형만 없다. 그건 방 안 소파에"
+        }
+      ]
+    },
+    "K3": {
+      "code": "4ㄷ8ㅇ",
+      "who": "D",
+      "act": 1,
+      "kind": "text",
+      "title": "가방 끈",
+      "text": "붉은 가방 끈. 피해자의 집에 있던 물건이 아니다 — 피의자가 가지고 들어왔다. 끈에 피해자의 피, 그리고 더 오래된 다른 피. 품에서는 밀봉된 쿠키 봉지도 나왔다. 안에 쿠키 두 개. ▶ 범인: 기억 ①을 읽는다"
+    },
+    "K4": {
+      "code": "3ㄴ7ㅁ",
+      "who": "D",
+      "act": 1,
+      "kind": "photo",
+      "title": "피해자 — 그녀 ★",
+      "img": "img/tv-6a3b65b0.jpg",
+      "hotspots": [
+        {
+          "x": 38,
+          "y": 44,
+          "r": 10,
+          "hint": "★하트 모양 쿠키 — 그 쿠키. \"제일 싫어하는 쿠키\"라던 사람이 들고 있다"
+        },
+        {
+          "x": 52,
+          "y": 24,
+          "r": 8,
+          "hint": "눈 — 달이 있다"
+        },
+        {
+          "x": 62,
+          "y": 70,
+          "r": 8,
+          "hint": "초커와 피어싱 — 오락실 리듬게임 자리의 그 사람"
+        }
+      ]
+    },
+    "K5": {
+      "code": "9ㅊ4ㄹ",
+      "who": "D",
+      "act": 1,
+      "kind": "photo",
+      "title": "피의자 ★",
+      "img": "img/tv-38c4e735.jpg",
+      "hotspots": [
+        {
+          "x": 63,
+          "y": 26,
+          "r": 8,
+          "hint": "★이마 흉터 — 삼단봉, 여러 번"
+        },
+        {
+          "x": 50,
+          "y": 40,
+          "r": 8,
+          "hint": "눈 — 달이 없다. \"맛이 없게 생겼군\"은 형사에게 한 말"
+        },
+        {
+          "x": 50,
+          "y": 82,
+          "r": 9,
+          "hint": "셔츠 — 보건소 유니폼이 아니다. 구치소 지급품"
+        }
+      ]
+    },
+    "K6": {
+      "code": "7ㄱ2ㅂ",
+      "who": "D",
+      "act": 1,
+      "kind": "photo",
+      "title": "방 안 — 곰인형 ★",
+      "img": "img/room-strap.jpg",
+      "hotspots": [
+        {
+          "x": 24,
+          "y": 37,
+          "r": 6,
+          "hint": "★곰인형의 눈 — 렌즈다. 인형 안에 카메라가 들어 있다. 누군가 이 방을 보고 있었다 ▶ 형사: 비밀 ①을 읽는다"
+        },
+        {
+          "x": 60,
+          "y": 80,
+          "r": 9,
+          "hint": "바닥의 붉은 끈 — 피의자가 들고 온 것. 이 집 물건이 아니다"
+        },
+        {
+          "x": 57,
+          "y": 35,
+          "r": 9,
+          "hint": "발코니 창 — 들어온 길. 그런데 현관은 안에서 열려 있었다"
+        }
+      ]
+    },
+    "B1": {
+      "code": "4ㅈ3ㅋ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "피해자 — 서연 ★",
+      "img": "img/tv-4ebb2fd2.jpg",
+      "hotspots": [
+        {
+          "x": 70,
+          "y": 78,
+          "r": 9,
+          "hint": "★명찰 \"서연\" — 맥주집 새벽 2시 퇴근"
+        },
+        {
+          "x": 26,
+          "y": 38,
+          "r": 9,
+          "hint": "뒤의 남자 손님 — 등을 돌리고 있다. 화장실 쪽"
+        },
+        {
+          "x": 86,
+          "y": 16,
+          "r": 8,
+          "hint": "메뉴판 — 보건소 옆 가게"
+        }
+      ]
+    },
+    "B2": {
+      "code": "5ㅇ0ㅋ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "피해자의 방 ★",
+      "img": "img/tv-f2ffa379.jpg",
+      "hotspots": [
+        {
+          "x": 60,
+          "y": 74,
+          "r": 10,
+          "hint": "★가방 — 끈이 떼어져 없다. 피해자의 물건. 끈은 현장에 없다. 가져갔다"
+        },
+        {
+          "x": 50,
+          "y": 22,
+          "r": 8,
+          "hint": "열린 발코니 창 — 미리 열려 있었다"
+        },
+        {
+          "x": 74,
+          "y": 36,
+          "r": 8,
+          "hint": "의자에 걸친 옷 — 갈아입으려던 참이었다"
+        }
+      ]
+    },
+    "B3": {
+      "code": "2ㅇ4ㅅ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "책상 위 쿠키 ★",
+      "img": "img/tv-4458b4cf.jpg",
+      "hotspots": [
+        {
+          "x": 22,
+          "y": 66,
+          "r": 10,
+          "hint": "★봉지 안의 쿠키 — 피에 젖어 있다. 부스러기에도 피. 둘 다 피에 닿았다. 편지처럼 남긴 하나 ▶ 범인: 기억 ②를 읽는다"
+        },
+        {
+          "x": 76,
+          "y": 30,
+          "r": 8,
+          "hint": "문에 끼인 슬리퍼 — 나갈 때 열어 둔 것"
+        },
+        {
+          "x": 30,
+          "y": 12,
+          "r": 8,
+          "hint": "벽의 사진 — 웃고 있는 피해자, 오락실 앞"
+        }
+      ]
+    },
+    "B4": {
+      "code": "9ㅎ1ㅌ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "국과수 촬영 ★",
+      "img": "img/tv-31d590ad.jpg",
+      "hotspots": [
+        {
+          "x": 72,
+          "y": 26,
+          "r": 10,
+          "hint": "★침대의 피 — 뒤통수를 먼저 쳤다. 이마가 아니다"
+        },
+        {
+          "x": 44,
+          "y": 48,
+          "r": 8,
+          "hint": "슬리퍼 위치 — 문틀"
+        },
+        {
+          "x": 50,
+          "y": 70,
+          "r": 8,
+          "hint": "바닥의 발자국 — 265mm, 창에서 책상으로"
+        }
+      ]
+    },
+    "B5": {
+      "code": "5ㅂ3ㅈ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "오락실 친구 ★",
+      "img": "img/tv-55e36ff5.jpg",
+      "hotspots": [
+        {
+          "x": 86,
+          "y": 46,
+          "r": 10,
+          "hint": "★리듬게임 기기 — 평화로운 게임만. 매일 여기 있다"
+        },
+        {
+          "x": 78,
+          "y": 40,
+          "r": 7,
+          "hint": "손목시계 — 새벽 1시 10분"
+        },
+        {
+          "x": 56,
+          "y": 28,
+          "r": 8,
+          "hint": "반창고 — 벽에 부딪힌 자국이 아니다"
+        }
+      ]
+    },
+    "G1": {
+      "code": "2ㄷ3ㅌ",
+      "who": "D",
+      "act": 3,
+      "kind": "text",
+      "title": "첫 번째 쿠키 살인",
+      "text": "여성, 20대 후반. 2022년 10월, 달림동 반지하. 손목·발목에 결박 자국, 목에 넓은 압흔 — 벨트. 침입 흔적 없음, 현관은 열려 있었다. 책상에 반으로 쪼갠 쿠키의 반쪽 — 피가 묻지 않았다. 가게 점장을 의심했으나 미제. 처음으로 \"쿠키 살인\"이라 불린 사건. 사망 추정은 새벽 4시 — 그날 아침, 한 경찰 가족의 발인이 있었다. ▶ 형사: 비밀 ②를 읽는다 ▶ 범인: 기억 ③을 읽는다"
+    },
+    "G2": {
+      "code": "2ㄱ0ㅇ",
+      "who": "D",
+      "act": 3,
+      "kind": "text",
+      "title": "반지하의 책상",
+      "text": "책상 위, 반으로 쪼갠 쿠키의 남은 반쪽 — 피가 없다. 먹은 반쪽에만 피를 댔다. 맥주집과 다르다. 찻잔이 두 개, 두 번째 잔의 입술 자국이 작다 — 손님은 아는 사람. 벽의 사진: 오락실 앞, 피해자 옆에 초커를 한 여자. 눈에 달이 있다. ▶ 범인: 기억 ④를 읽는다"
+    },
+    "G3": {
+      "code": "6ㄱ6ㅍ",
+      "who": "D",
+      "act": 3,
+      "kind": "text",
+      "title": "그 뒤의 두 건",
+      "text": "2023년 10월, 2024년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2025년 10월 맥주집이 네 번째로 기록됐고, 다음은 2026년 10월로 예상했다. ▶ 형사: 비밀 ③을 읽는다"
+    }
+  },
+  "memory": [
+    {
+      "role": "D",
+      "from": 1,
+      "to": 2,
+      "asks": [
+        {
+          "who": "범인",
+          "need": "K3",
+          "lock": "범인이 기억 ①을 읽으면 나타난다.",
+          "ask": "그녀가 가족을 떠나 연락을 끊었던 것은 몇 년 동안인가?",
+          "answers": [
+            "3년",
+            "삼년",
+            "3",
+            "3년간",
+            "3년 동안",
+            "세 해",
+            "3년 정도",
+            "약 3년"
+          ],
+          "ok": "3년. 그녀에게는 비어 있는 3년이 있다."
+        },
+        {
+          "who": "형사",
+          "need": "K6#0",
+          "lock": "형사가 비밀 ①을 읽으면 나타난다.",
+          "ask": "영수증의 국밥 2인분. 피의자는 그 밤 누구와 먹었나?",
+          "answers": [
+            "그녀",
+            "피해자",
+            "동생",
+            "내 동생",
+            "여동생",
+            "형사의 동생",
+            "302호",
+            "302호 여자",
+            "302호 피해자"
+          ],
+          "ok": "그녀. 한 시간 전까지 둘은 마주 앉아 있었다."
+        }
+      ],
+      "ask": "그녀가 가족을 떠나 연락을 끊었던 것은 몇 년 동안인가? / 영수증의 국밥 2인분. 피의자는 그 밤 누구와 먹었나?",
+      "answers": [],
+      "reveal": "한 시간 전까지 함께 국밥을 먹던 사이. 그리고 그녀에게는 비어 있는 3년이 있다. — 석 달 전 맥주집의 기록을 연다."
+    },
+    {
+      "role": "D",
+      "from": 2,
+      "to": 3,
+      "asks": [
+        {
+          "who": "범인",
+          "need": "B3#0",
+          "lock": "범인이 기억 ②를 읽으면 나타난다.",
+          "ask": "그녀가 제일 싫어한다는 그 쿠키를, 집에 늘 사다 놓던 사람은 누구인가?",
+          "answers": [
+            "어머니",
+            "엄마",
+            "새엄마",
+            "새어머니",
+            "그녀의 엄마",
+            "그녀의 어머니",
+            "친엄마",
+            "모친",
+            "계모"
+          ],
+          "ok": "어머니. 그 쿠키는 어머니의 것이었다."
+        },
+        {
+          "who": "형사",
+          "need": "B3",
+          "lock": "책상 위 쿠키 카드를 열면 나타난다.",
+          "ask": "책상 위에 남긴 쿠키는 누구에게 보내는 편지였나?",
+          "answers": [
+            "진짜 범인",
+            "진범",
+            "쿠키 살인범",
+            "쿠키 살인의 범인",
+            "쿠키 살인 사건의 범인",
+            "원래 범인",
+            "첫 번째 범인",
+            "연쇄 살인범",
+            "그 범인",
+            "범인",
+            "진짜 쿠키 살인범"
+          ],
+          "ok": "진짜 범인. 이 남자는 누군가를 따라 했다."
+        }
+      ],
+      "ask": "그녀가 제일 싫어한다는 그 쿠키를, 집에 늘 사다 놓던 사람은 누구인가? / 책상 위에 남긴 쿠키는 누구에게 보내는 편지였나?",
+      "answers": [],
+      "reveal": "쿠키는 진짜 범인에게 보낸 편지였다. 맥주집은 처음이 아니다. 그리고 그 쿠키는, 그녀의 어머니가 늘 사다 놓던 것이다. — 3년 전, 첫 번째 쿠키 살인의 기록을 연다."
+    },
+    {
+      "role": "D",
+      "from": 3,
+      "to": 4,
+      "asks": [
+        {
+          "who": "범인",
+          "need": "G2",
+          "lock": "범인이 기억 ④를 읽으면 나타난다.",
+          "optional": true,
+          "ask": "그녀는 왜 쿠키를 먹을까?",
+          "answers": [
+            "피를 좋아하니까",
+            "피가 좋아서",
+            "피를 좋아해서",
+            "피를 마셔서 이해하려고",
+            "피를 마셔 그들을 이해하려고",
+            "사람을 이해하려고",
+            "그들을 이해하려고"
+          ],
+          "keys": [
+            [
+              "피",
+              "사람",
+              "그들",
+              "이해"
+            ],
+            [
+              "좋아",
+              "이해",
+              "마시",
+              "마셔",
+              "마신",
+              "맛"
+            ]
+          ],
+          "ok": "그녀는 피를 좋아한다. 피를 마시며 그들을 이해하려 했다. — 형사는 그녀를 지키지 못했다."
+        },
+        {
+          "who": "형사",
+          "need": "G1",
+          "lock": "형사가 비밀 ②를 읽으면 나타난다.",
+          "ask": "피의자가 피 묻은 쿠키를 처음 받아먹은 곳은 어디인가?",
+          "answers": [
+            "다리",
+            "다리 위",
+            "다리에서",
+            "다리 위에서",
+            "달림 다리",
+            "달림교",
+            "다리 난간",
+            "다리 아래"
+          ],
+          "ok": "다리. 그에게 쿠키를 건넨 아이가 있었다."
+        }
+      ],
+      "ask": "그녀는 왜 쿠키를 먹을까? / 피의자가 피 묻은 쿠키를 처음 받아먹은 곳은 어디인가?",
+      "answers": [],
+      "reveal": "형사는 펜을 든다. 적을 것인가. — 이제 판결이다."
+    }
+  ],
+  "shared": true
+};
+const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{n:3,name:"문구",key:"special"},{n:4,name:"기억",key:"memory"}];
+
+/* ===================== STATE ===================== */
+let D=loadData(), S=null;
+let role=null, code=null, viewer="D", ch=1, viewCard=null, lastFound=null, lobbyStep=1;
+let lastJs=null, db=null, assets=null, gref=null, cref=null, unsub=null, unsubC=null, canWrite=null, dirty=false, writing=false, dbReady=false, dbTimer=null, offlineNote=false;
+function freshState(){ return {started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, log:[], startAt:null}; }
+function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값으로 채운다 */
+  const base=JSON.parse(JSON.stringify(DEFAULT_DATA));
+  if(!d||!d.cards) return base;
+  if((d.version||0)<(base.version||0)){ /* 카드 설계가 새 판으로 바뀌었다: 기본값을 쓰되 올려 둔 사진은 남긴다 */
+    for(const [id,c] of Object.entries(base.cards)){ const o=d.cards[id]; if(o&&o.img) c.img=o.img; }
+    return base; }
+  for(const k of Object.keys(base)){ if(d[k]===undefined||(Array.isArray(base[k])&&Array.isArray(d[k])&&!d[k].length)) d[k]=base[k]; }
+  return d; }
+function migrateState(st){ const base=freshState(); for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
+  /* 옛 판(턴·지시 카드)의 로그 줄은 지운다 */ if(Array.isArray(st.log)) st.log=st.log.filter(e=>e&&e.turn===undefined&&!/턴|END|지시 카드|상호작용/.test(e.text||"")); return st; }
+function loadData(){ try{ const j=localStorage.getItem("sbtv2_data"); if(j) return migrate(JSON.parse(j)); }catch(e){} return migrate(null); }
+function saveData(push){ try{ localStorage.setItem("sbtv2_data", JSON.stringify(D)); }catch(e){} if(push&&cref){ cref.set(JSON.parse(JSON.stringify(D))).catch(e=>toast(e&&e.code==="quota_exceeded"?"설계가 너무 크다. 사진은 업로드로 넣어야 한다.":"상대 폰에 설계를 보내지 못했다 (쓰기 권한?). 이 폰에는 저장됐다.")); } }
+try{ role=localStorage.getItem("sbtv2_role")||null; code=localStorage.getItem("sbtv2_code")||null; }catch(e){}
+const hashM=(location.hash||"").replace(/^#/,"").trim().match(/^([A-Za-z0-9]{3,12})(?:-([CD]))?$/i); if(hashM){ code=hashM[1].toUpperCase(); lobbyStep=2; if(hashM[2]){ role=hashM[2].toUpperCase(); try{ localStorage.setItem("sbtv2_role",role); localStorage.setItem("sbtv2_code",code); }catch(e){} } }
+if(D.shared){ if(role&&role!=="TV") role="TV"; viewer="D"; }
+function newCode(){ const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<4;i++) s+=a[Math.floor(Math.random()*a.length)]; return s; }
+function saveState(){ dirty=true; if(!gref){ try{ localStorage.setItem("sbtv2_state", JSON.stringify(S)); }catch(e){} } else commit(); }
+async function commit(){ if(!gref||writing||!dirty) return; writing=true; dirty=false;
+  try{ const js=JSON.stringify(S); await gref.set(JSON.parse(js)); lastJs=js; }
+  catch(e){ if(e&&e.code==="invalid_argument"){ canWrite=false; toast("이 폰은 쓰기 권한이 없다. 상대가 링크를 '편집 가능'으로 공유해야 한다."); } }
+  writing=false; if(dirty) commit(); }
+async function connect(){
+  try{ db=await claude.use("db"); }catch(e){ db=null; } dbReady=true;
+  try{ assets=await claude.use("assets"); }catch(e){ assets=null; }
+  if(!db||!code){ render(); return; }
+  try{ const u=await claude.use("user"); canWrite=u? await u.can("data.write") : null; }catch(e){}
+  gref=db.doc("games/"+code); cref=db.doc("config/"+code);
+  if(unsub) unsub(); if(unsubC) unsubC();
+  clearTimeout(dbTimer); dbTimer=setTimeout(()=>{ offlineNote=true; render(); },10000);
+  unsub=gref.onSnapshot(snap=>{ if(!snap.metadata.fromCache){ clearTimeout(dbTimer); offlineNote=false; }
+      if(snap.exists){ const d=snap.data(); if(writing||dirty) return; if(d&&d.started!==undefined){ const js=JSON.stringify(d); if(js===lastJs){ return; } lastJs=js; const was=S&&S.log?S.log.length:0; S=migrateState(JSON.parse(js)); if(S.log.length>was&&S.started){ zap(); const e=S.log[0]; if(e) showTick((e.who==="sys"?"":roleName(e.who)+": ")+e.text, e.kind); } } }
+      render(); }, e=>{ clearTimeout(dbTimer); gref=null; render(); });
+  unsubC=cref.onSnapshot(snap=>{ if(snap.exists){ const d=snap.data(); if(d&&d.cards){ D=migrate(JSON.parse(JSON.stringify(d))); try{ localStorage.setItem("sbtv2_data", JSON.stringify(D)); }catch(e){} render(); } } }, e=>{ cref=null; });
+}
+function setRoleCode(r,c){ role=r; code=c; try{ localStorage.setItem("sbtv2_role",r); localStorage.setItem("sbtv2_code",c); }catch(e){} try{ history.replaceState(null,"","#"+c); }catch(e){} if(dbReady) connect(); else render(); }
+function shareUrl(){ const r=role==="C"?"D":"C"; return location.href.replace(/#.*$/,"")+"#"+code+"-"+r; }
+
+/* ===================== HELPERS ===================== */
+const $=id=>document.getElementById(id);
+const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const JAMO={"\u1100":"ㄱ","\u1102":"ㄴ","\u1103":"ㄷ","\u1105":"ㄹ","\u1106":"ㅁ","\u1107":"ㅂ","\u1109":"ㅅ","\u110b":"ㅇ","\u110c":"ㅈ","\u110e":"ㅊ","\u110f":"ㅋ","\u1110":"ㅌ","\u1111":"ㅍ","\u1112":"ㅎ"};
+const norm=s=>(s||"").toString().normalize("NFC").replace(/[\u1100-\u1112]/g,c=>JAMO[c]||c).trim().toUpperCase().replace(/[\s\-_.]/g,"");
+const roleName=r=>r==="C"?"범인":r==="D"?"취조실":"티비";
+const other=r=>r==="C"?"D":"C";
+function me(){ return role==="TV" ? viewer : role; }
+function stamp(){ if(!S||!S.startAt) return "00:00"; const el=Date.now()-S.startAt; return String(Math.floor(el/60000)).padStart(2,"0")+":"+String(Math.floor(el%60000/1000)).padStart(2,"0"); }
+let tick={text:"",kind:"",at:0,timer:null};
+function showTick(text,kind){ tick={text,kind:kind||"",at:Date.now()}; clearTimeout(tick.timer); tick.timer=setTimeout(()=>{ tick.text=""; const t=$("ticker"); if(t) t.hidden=true; },9000); paintTick(); }
+function kres(text,kind){ /* 입력창 바로 아래에 결과를 남긴다 — 다음 입력까지 유지 */
+  const m=$("kmsg"), i=$("keyIn"); if(!m) return; m.hidden=false; m.className="kmsg "+(kind==="bad"?"no":kind==="good"||kind==="sys"?"ok":""); m.textContent=text;
+  if(i){ i.classList.remove("ok","no"); void i.offsetWidth; i.classList.add(kind==="bad"?"no":"ok"); setTimeout(()=>i.classList.remove("ok","no"),900); } }
+function paintTick(){ const t=$("ticker"); if(!t) return; const o=document.querySelector(".osd"); if(o) t.style.top=(o.offsetTop+o.offsetHeight+4)+"px"; if(tick.text&&Date.now()-tick.at<9000){ t.hidden=false; t.className="ticker "+(tick.kind==="bad"?"bad":tick.kind==="good"?"good":""); t.textContent=tick.text; } else t.hidden=true; }
+function log(text, who, kind){ S.log.unshift({t:stamp(), text, who:who||"sys", kind:kind||""}); if(S.log.length>200) S.log.length=200; showTick((who==="sys"?"":roleName(who)+": ")+text, kind); if(who===me()||who==="sys") kres(text, kind||"info"); saveState(); zap(); render(); }
+function toast(t){ showTick(t,"bad"); kres(t,"bad"); }
+function zap(){ const s=$("screen"); s.classList.remove("zap"); void s.offsetWidth; s.classList.add("zap"); }
+function findCard(input){ const q=norm(input); if(!q) return null; for(const [id,c] of Object.entries(D.cards)){ if(norm(id)===q||norm(c.code)===q) return id; } return null; }
+function memFor(who){ return (D.memory||[]).find(m=>m.role===who&&m.from===S.act[who]); }
+function canAct(who){ return !!(S&&S.started); }
+function cardsOf(who,kind){ return S.opened[who].filter(id=>D.cards[id]&&D.cards[id].kind===kind); }
+
+/* ===================== ACTIONS ===================== */
+function start(){ S=freshState(); S.started=true; S.startAt=Date.now();
+  S.log.unshift({t:"00:00", text:"티비가 켜졌다. 카드의 코드를 넣으면 ★ 사진이 뜬다. 기억 채널에서 막을 넘긴다. 취조와 카드 교환은 테이블에서 한다.", who:"sys", kind:"sys"}); saveState(); ch=1; render(); }
+function enterCode(v){
+  const who=me(); if(!canAct(who)){ toast("먼저 시작을 누른다."); return; }
+  const id=findCard(v);
+  if(!id){ log("코드 "+v+" — 해당 없음. 지직.", who, "bad"); return; }
+  const c=D.cards[id];
+  if(c.who&&c.who!==who){ log("코드 "+id+" — "+roleName(c.who)+"의 카드다. 열리지 않는다.", who, "bad"); return; }
+  if((c.act||1)>S.act[who]){ log("코드 "+v+" — 지직. 아직 열리지 않는다.", who, "bad"); return; }
+  const already=S.opened[who].includes(id);
+  if(!already) S.opened[who].push(id);
+  viewCard=id; capIdx=null; lastFound=null; ch= c.kind==="photo"?2:3;
+  log((already?"다시 ":"")+"코드 "+id+" 입력 → "+(c.kind==="photo"?"사진이 떴다":who==="D"?"본문만 있는 카드다":"기억 문구가 떴다"), who, "good");
+}
+function clickPhoto(ev, id){
+  const who=me(); const c=D.cards[id]; if(!S.opened[who].includes(id)) return;
+  const L=ev.currentTarget.querySelector(".layer")||ev.currentTarget; const r=L.getBoundingClientRect(); if(!r.width) return;
+  const x=(ev.clientX-r.left)/r.width*100, y=(ev.clientY-r.top)/r.height*100; if(x<0||x>100||y<0||y>100) return;
+  if(ev.target.closest(".pbig")) return;
+  if(ev.target.closest(".cap")){ capIdx=null; lastFound=null; render(); return; }
+  let hit=-1; (c.hotspots||[]).forEach((h,i)=>{ if(Math.hypot(x-h.x,y-h.y)<=(h.r||8)) hit=i; });
+  if(hit>=0){ const key=id+"#"+hit; lastFound={id,i:hit};
+    if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key); log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다.", who, "good"); }
+    else { if(capIdx===hit){ capIdx=null; lastFound=null; } else capIdx=hit; render(); } }
+  else { S.misses[who].push({id,x:+x.toFixed(1),y:+y.toFixed(1)}); lastFound=null; capIdx=null; log("사진 "+id+"의 한 지점을 눌렀다 — 아무것도 없었다.", who, "bad"); }
+}
+function askOpen(who,q){ if(!q.need) return true; return q.need.includes("#") ? S.found[who].includes(q.need) : S.opened[who].includes(q.need); }
+function partDone(who,m){ if(!S.memPart) S.memPart={C:{},D:{}}; if(!S.memPart[who]) S.memPart[who]={}; return S.memPart[who][m.from]||[]; }
+function askHit(q,v){ const n=norm(v); if(!n) return false; if((q.answers||[]).some(a=>norm(a)===n)) return true; return !!(q.keys&&q.keys.length&&q.keys.every(g=>g.some(k=>n.includes(norm(k))))); }
+function lateAsks(who){ const out=[]; (D.memory||[]).forEach(m=>{ if(m.role!==who||!S.memDone[who].includes(m.from)||!m.asks) return; const dn=partDone(who,m); m.asks.forEach((q,i)=>{ if(q.optional&&!dn.includes(i)&&askOpen(who,q)) out.push({m,i}); }); }); return out; }
+function answerMemory(v){
+  const who=me(); const m=memFor(who); const late=lateAsks(who);
+  if(!m&&!late.length){ toast("더는 기억의 질문이 없다."); return; }
+  if(!canAct(who)){ toast("먼저 시작을 누른다."); return; }
+  if(!m||(m.asks&&m.asks.length)){
+    const cands=[]; if(m){ const dn=partDone(who,m); m.asks.forEach((q,i)=>{ if(!dn.includes(i)&&askOpen(who,q)) cands.push({m,i}); }); }
+    late.forEach(x=>cands.push(x));
+    if(!cands.length){ toast("아직 질문이 나타나지 않았다. 현장을 더 조사한다."); return; }
+    const h=cands.find(x=>askHit(x.m.asks[x.i],v));
+    if(!h){ log("질문에 답했다 — 아니었다.", who, "bad"); return; }
+    const mm=h.m, q=mm.asks[h.i]; S.memPart[who][mm.from]=partDone(who,mm).concat([h.i]); ch=4;
+    if(mm===m){ const dn=S.memPart[who][mm.from]; const req=mm.asks.map((x,i)=>i).filter(i=>!mm.asks[i].optional); const left=req.filter(i=>!dn.includes(i)).length;
+      if(!left){ S.act[who]=mm.to; S.memDone[who].push(mm.from); log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" "+(mm.to>=(D.maxAct||4)?"이제 판결이다.":mm.to+"막으로. 그 막의 봉투를 뜯는다."), who, "sys"); }
+      else log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" 남은 질문 "+left+"개.", who, "good"); }
+    else log(q.who+"의 질문 — 맞았다. "+(q.ok||""), who, "sys");
+    return; }
+  const ok=(m.answers||[]).some(a=>norm(a)===norm(v));
+  if(ok){ S.act[who]=m.to; S.memDone[who].push(m.from); ch=4; log("기억에 답했다 — 맞았다. "+roleName(who)+"은(는) "+m.to+"막으로. 그 막의 카드가 열린다.", who, "sys"); }
+  else log("기억에 답했다 — 아니었다.", who, "bad");
+}
+
+/* ===================== RENDER ===================== */
+function setChannel(n){ ch=n; capIdx=null; zap(); render(); }
+function panel(w){
+  const started=S&&S.started&&role&&code;
+  $("btnSwapP").hidden=!(role==="TV"&&started&&!D.shared);
+  $("led").className="led"+(started?" on":"");
+}
+function keepInput(fn){ /* 화면을 다시 그려도 치던 글자와 커서를 지키기 위해 */
+  const a=document.activeElement; const keep=a&&a.id&&(a.tagName==="INPUT"||a.tagName==="SELECT")&&($("body").contains(a)||a.id==="keyIn")? {id:a.id,v:a.value,s:a.selectionStart,e:a.selectionEnd}:null;
+  fn();
+  if(keep){ const n=$(keep.id); if(n&&!n.disabled){ n.value=keep.v; try{ n.setSelectionRange(keep.s,keep.e); }catch(e){} n.focus({preventScroll:true}); } } }
+function render(){ keepInput(renderInner); }
+function renderInner(){
+  const scr=$("screen"), body=$("body");
+  $("knobCh").style.setProperty("--rot", ((ch-1)*36-72)+"deg");
+  $("dial").innerHTML=CH.map(c=>`<button class="${c.n===ch?'on':''}" data-ch="${c.n}">${c.n} ${c.name}</button>`).join("");
+  $("dial").querySelectorAll("button").forEach(b=>b.onclick=()=>setChannel(+b.dataset.ch));
+  if(!role||!code){ $("kwrap").hidden=true; renderLobby(scr,body); panel(null); return; }
+  const w=me(); panel(w);
+  if(!S||!S.started){
+    scr.className="screen nosignal"; $("osdL").textContent="CH --"; $("osdR").textContent=gref?"TBL "+code:"LOCAL"; $("kwrap").hidden=true;
+    body.innerHTML=`${newsHtml()}<div class="start"><div class="brandline">${esc(D.title)}<small>${roleName(role)} 폰 · 테이블 ${esc(code)}</small></div>
+      <p class="hint" style="margin:0">${gref?"두 폰이 같은 테이블에 연결됐다.":(dbReady?"공유 저장소 없음 — 이 폰 한 대로만 진행된다.":"연결 중…")}${offlineNote?" 저장소 응답이 늦다.":""} 티비는 사진과 기억만 맡는다. 취조·카드 교환은 테이블에서 말과 손으로.</p>
+      <div class="row"><button class="primary" id="btnStart">시작</button></div></div>`;
+    $("btnStart").onclick=start; return;
+  }
+  const mine=canAct(w); scr.className="screen on";
+  $("osdL").innerHTML="CH "+String(ch).padStart(2,"0")+' <span class="chn">'+esc(CH[ch-1].name)+"</span>";
+  $("osdR").innerHTML=`${roleName(w)} ${S.act[w]}막 <span class="rec"></span><span id="clock">${stamp()}</span>`;
+  const k=CH[ch-1].key;
+  if(k==="status") body.innerHTML=`<div class="chname">${roleName(w)} ${S.act[w]}막 ${D.shared?"":"· 상대 "+S.act[other(w)]+"막"} ${role==="TV"&&!D.shared?`· <span class="pill">${roleName(w)}이(가) 보는 중</span>`:""}</div><div class="logl">${S.log.map(e=>`<div class="e ${e.who} ${e.kind}"><time>${e.t}</time><span>${esc(e.text)}</span></div>`).join("")}</div>
+      <div class="ctl"><div class="hint">아래 입력창에 카드 코드를 넣는다. ★ 카드는 사진이 뜨고, 기억 채널에서는 같은 창이 기억의 답 입력이 된다.${canWrite===false?" 이 폰은 보기 전용이다.":""}${offlineNote?" 저장소 응답이 늦다.":""}</div></div>`;
+  else if(k==="photo") body.innerHTML=renderPhoto(w);
+  else if(k==="memory") body.innerHTML=renderMemory(w);
+  else body.innerHTML=renderSpecial(w);
+  keypad(w,mine);
+  paintTick();
+  const ph=body.querySelector(".photo[data-id]"); if(ph){ ph.onclick=ev=>clickPhoto(ev, ph.dataset.id); fitLayer(); const im=ph.querySelector("img"); if(im&&!im.complete) im.onload=fitLayer; }
+  const bg=body.querySelector(".pbig"); if(bg) bg.onclick=ev=>{ ev.stopPropagation(); bigView(bg.dataset.big); };
+  if(!$("shutter").hidden&&$("sheet").querySelector(".bigview")) renderBig();
+  body.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ viewCard=b.dataset.view; capIdx=null; lastFound=null; render(); });
+}
+let keyMode="code";
+function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서는 기억 답, 그 외에는 카드 코드 */
+  const kp=$("kwrap"), i=$("keyIn"), b=$("keyBtn"); kp.hidden=!(S&&S.started);
+  if(kp.hidden) return;
+  $("kleft").textContent=roleName(w)+" · "+S.act[w]+"막";
+  const k=CH[ch-1].key; const m=memFor(w);
+  if(k==="memory"&&(m||(S&&S.started&&lateAsks(w).length))){ keyMode="mem"; i.classList.add("word"); i.placeholder="기억의 답"; b.textContent="답한다"; $("kmode").textContent="기억의 답을 넣는다"; }
+  else { keyMode="code"; i.classList.remove("word"); i.placeholder="코드 4글자"; b.textContent="입력"; $("kmode").textContent="카드 코드를 넣는다"; }
+  i.disabled=false; b.disabled=false;
+}
+function spotsHtml(c, id, who, all){ return (c.hotspots||[]).map((h,i)=> (all||S.found[who].includes(id+"#"+i)) ? `<div class="spot ${all?'':'found'}" style="left:${h.x}%;top:${h.y}%;--d:${(h.r||8)*2}%"><i></i><b>${i+1}</b></div>` : "").join(""); }
+function photoHtml(c, id, extra){ return `<div class="photo" ${extra||""}>${c.img?`<img src="${esc(c.img)}" alt="${esc(c.title||id)}">`:`<div class="ph">${id}<small>사진 자리 — 제작자 모드에서 올린다</small></div>`}`; }
+let capIdx=null; /* 사진 위에 열어 둔 설명(지점 번호) */
+function renderPhoto(w){
+  const ids=cardsOf(w,"photo");
+  if(!viewCard||!ids.includes(viewCard)) viewCard=ids[ids.length-1]||null;
+  if(!viewCard) return `<div class="chname">사진 · ${roleName(w)}</div><p class="hint" style="color:var(--phos-dim)">아직 연 사진이 없다. ★ 카드의 코드를 넣는다.</p>`;
+  const c=D.cards[viewCard]; const foundN=S.found[w].filter(k=>k.startsWith(viewCard+"#")).length;
+  const tabs=ids.length>1? `<div class="row" style="flex:0 0 auto;gap:4px">${ids.map(id=>`<button data-view="${id}" class="${id===viewCard?'primary':''}" style="padding:2px 7px;font-size:.8em;flex:0 0 auto">${id}</button>`).join("")}</div>`:"";
+  const misses=S.misses[w].filter(m=>m.id===viewCard).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
+  if(lastFound&&lastFound.id===viewCard&&capIdx===null) capIdx=lastFound.i;
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(viewCard+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${esc(h.hint)}</div>`:"";
+  return `${tabs}<div class="photo fill" data-id="${viewCard}">${c.img?`<img src="${esc(c.img)}" alt="${esc(c.title||viewCard)}">`:`<div class="ph">${viewCard}<small>사진 자리 — 제작자 모드에서 올린다</small></div>`}<div class="layer">${spotsHtml(c,viewCard,w,false)}${misses}${cap}</div>
+    <div class="plabel"><span>${esc(c.title||viewCard)} · ${viewCard}</span><span>지점 ${foundN}/${(c.hotspots||[]).length}</span></div><button class="pbig" data-big="${viewCard}" title="크게 보기">⤢</button></div>`;
+}
+let bigId=null;
+function bigView(id){ bigId=id; openSheet(s=>{ renderBig(s); }); }
+function renderBig(sheet){ /* 큰 화면 보기 — 같은 지점·설명 규칙 */
+  const s=sheet||$("sheet"); const w=me(); const id=bigId; const c=D.cards[id]; if(!c) return;
+  const foundN=S.found[w].filter(k=>k.startsWith(id+"#")).length;
+  const misses=S.misses[w].filter(m=>m.id===id).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(id+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${esc(h.hint)}</div>`:"";
+  s.innerHTML=`<div class="bigview"><div class="row" style="align-items:center"><h3 style="flex:1">${esc(c.title||id)} <span class="pill">${id}</span> <span class="pill">지점 ${foundN}/${(c.hotspots||[]).length}</span></h3><button id="bigClose" style="flex:0 0 auto">닫기</button></div>
+    <div class="photo" data-id="${id}">${c.img?`<img src="${esc(c.img)}" alt="">`:`<div class="ph">${id}<small>사진 없음</small></div>`}<div class="layer">${spotsHtml(c,id,w,false)}${misses}${cap}</div></div>
+    <div class="hint">의심스러운 곳을 누른다. 번호가 붙은 지점을 다시 누르면 설명이 뜬다. 소모 없음.</div></div>`;
+  const ph=s.querySelector(".photo"); ph.onclick=ev=>clickPhoto(ev,id); $("bigClose").onclick=closeSheet;
+  const fit=()=>{ const L=ph.querySelector(".layer"), im=ph.querySelector("img"); const W=ph.clientWidth,H=ph.clientHeight; let w2=W,h2=H,x=0,y=0; if(im&&im.naturalWidth){ const r=Math.min(W/im.naturalWidth,H/im.naturalHeight); w2=im.naturalWidth*r; h2=im.naturalHeight*r; x=(W-w2)/2; y=(H-h2)/2; } L.style.left=x+"px"; L.style.top=y+"px"; L.style.width=w2+"px"; L.style.height=h2+"px"; };
+  fit(); const im=ph.querySelector("img"); if(im&&!im.complete) im.onload=fit;
+}
+function fitLayer(){ /* object-fit: contain 으로 그려진 그림의 실제 사각형에 지점 레이어를 맞춘다 */
+  const ph=document.querySelector(".photo.fill"); if(!ph) return; const L=ph.querySelector(".layer"), im=ph.querySelector("img");
+  if(!L) return; const W=ph.clientWidth, H=ph.clientHeight; let w=W,h=H,x=0,y=0;
+  if(im&&im.naturalWidth){ const r=Math.min(W/im.naturalWidth,H/im.naturalHeight); w=im.naturalWidth*r; h=im.naturalHeight*r; x=(W-w)/2; y=(H-h)/2; }
+  L.style.left=x+"px"; L.style.top=y+"px"; L.style.width=w+"px"; L.style.height=h+"px"; }
+function renderSpecial(w){
+  const tx=cardsOf(w,"text");
+  let s=`<div class="chname">문구 · ${roleName(w)} · ${w==="C"?"기억 문구":"본문 카드"} ${tx.length}장</div>`;
+  if(!tx.length) s+=`<p class="hint" style="color:var(--phos-dim)">아직 연 문구가 없다. 코드를 넣는다.</p>`;
+  if(tx.length) s+=`<div class="notes">${tx.map(id=>`<div class="n ${w}"><b>${esc(D.cards[id].title||id)}</b> <span class="pill">${id}</span>${D.cards[id].img?`<div class="photo" style="cursor:default;margin:4px 0"><img src="${esc(D.cards[id].img)}" alt=""></div>`:""}<br>${esc(D.cards[id].text||"")}</div>`).join("")}</div>`;
+  return s;
+}
+function renderMemory(w){
+  const m=memFor(w); const done=(D.memory||[]).filter(x=>x.role===w&&S.memDone[w].includes(x.from));
+  let s=`<div class="chname">기억 · ${roleName(w)} ${S.act[w]}막 · 열린 카드 ${Object.values(D.cards).filter(c=>c.who===w&&(c.act||1)<=S.act[w]).length}장</div>`;
+  done.forEach(x=>{ s+=`<div class="memq reveal">「${esc(x.ask)}」<br>${esc(x.reveal)}</div>`; });
+  if(m&&m.asks&&m.asks.length){ const dn=partDone(w,m);
+    s+=m.asks.map((q,i)=> dn.includes(i) ? `<div class="memq reveal"><b>${esc(q.who)}의 질문 ✓</b><br>「${esc(q.ask)}」<br>${esc(q.ok||"")}</div>`
+      : askOpen(w,q) ? `<div class="memq"><b>${esc(q.who)}의 질문</b><br>${esc(q.ask)}</div>`
+      : `<div class="memq" style="opacity:.55"><b>${esc(q.who)}의 질문</b> — 잠겨 있다<br>${esc(q.lock||"현장을 더 조사하면 나타난다.")}</div>`).join("");
+    if(m.asks.some(q=>q.optional)) s+=`<div class="hint" style="color:var(--phos-dim)">마지막 범인의 질문은 막을 넘기는 데 필요하지 않다. 판결이 끝날 때까지 언제든 답할 수 있다.</div>`;
+    s+=`<div class="hint" style="color:var(--phos-dim)">두 질문을 모두 맞혀야 다음 막이 열린다. 범인의 질문의 답은 형사가, 형사의 질문의 답은 범인이 알고 있다 — 묻고, 내어 주고, 받아 낸다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다 — 어느 질문의 답이든 순서 없이. 횟수 제한 없음.</div>`; }
+  else if(m) s+=`<div class="memq">${esc(m.ask)}</div><div class="hint" style="color:var(--phos-dim)">답은 사진의 힌트·문구·취조에서 들은 말 속에 있다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다. 횟수 제한 없음.</div>`;
+  else { const lt=lateAsks(w); if(lt.length) s+=lt.map(x=>{ const q=x.m.asks[x.i]; return `<div class="memq"><b>${esc(q.who)}의 질문 — 아직 열려 있다</b><br>${esc(q.ask)}</div>`; }).join("")+`<div class="hint" style="color:var(--phos-dim)">판결이 끝날 때까지 답할 수 있다.</div>`; else s+=`<div class="memq">…더는 묻지 않는다.</div>`; }
+  return s;
+}
+function newsHtml(){ return ""; }
+const GATE={q:"(문제는 제작자 모드 → JSON → gate.q 에 넣는다)", answers:["7920"]};
+function renderLobby(scr,body){
+  scr.className="screen nosignal"; $("osdL").textContent="CH --"; $("osdR").textContent="";
+  if(D.shared){ body.innerHTML=`<div class="start"><div class="brandline">${esc(D.title)}<small>2인 취조 · 티비 한 대</small></div>
+      <p class="hint" style="margin:0">테이블 가운데 이 화면 하나를 둘이 같이 본다. 카드의 코드를 넣으면 현장이 뜬다. 화면이 "▶ 범인: 기억 ○를 읽는다"라고 하면 그 사람만 자기 핸드아웃을 펼친다.</p>
+      <div class="row"><button class="primary" id="btnShared">켠다</button></div></div>`;
+    $("btnShared").onclick=()=>setRoleCode("TV",code||newCode()); return; }
+  if(lobbyStep===1||(lobbyStep!==3&&!code)){
+    const g=(D.gate&&D.gate.q)?D.gate:GATE;
+    body.innerHTML=`${newsHtml()}<div class="start"><div class="brandline">${esc(D.title)}<small>2인 취조</small></div>
+      <p class="hint" style="margin:0"><b>먼저 문제.</b> 맞힌 사람이 형사다. 형사 폰에 뜨는 QR을 찍은 사람이 범인이다.</p>
+      <p class="gateq">${esc(g.q)}</p>
+      <div><label for="gateA">답</label><input id="gateA" autocomplete="off" placeholder="답을 적는다"></div>
+      <div class="row"><button class="primary" id="btnGate">답한다</button></div>
+      <p class="tiny" id="gateMsg"></p>
+      <p class="tiny"><a href="#" id="lnkManual" style="color:var(--phos-dim)">문제 없이 코드로 들어간다 · 한 대 공용</a></p></div>`;
+    const go=()=>{ const v=norm($("gateA").value); if(!v){ $("gateA").focus(); return; }
+      if((g.answers||[]).some(x=>norm(x)===v)){ code=newCode(); setRoleCode("D",code); setTimeout(qrSheet,80); }
+      else { $("gateMsg").textContent="아니다. 다시."; $("gateA").value=""; $("gateA").focus(); } };
+    $("btnGate").onclick=go; $("gateA").onkeydown=e=>{ if(e.key==="Enter") go(); };
+    $("lnkManual").onclick=e=>{ e.preventDefault(); lobbyStep=3; render(); };
+    return;
+  }
+  if(lobbyStep===3){
+    body.innerHTML=`${newsHtml()}<div class="start"><div class="brandline">${esc(D.title)}<small>2인 취조</small></div>
+      <p class="hint" style="margin:0">테이블 코드. 두 폰이 같은 코드를 쓰면 같은 게임이다.</p>
+      <div><label for="codeLobby">테이블 코드</label><input id="codeLobby" value="${esc(code||newCode())}" maxlength="12" autocapitalize="characters" autocomplete="off" style="font-family:var(--digit);font-size:26px;letter-spacing:.2em;width:12ch"></div>
+      <div class="row"><button class="primary" id="btnNext">다음 → 역할</button><button id="btnQuiz">← 문제로</button></div></div>`;
+    $("btnNext").onclick=()=>{ const v=norm($("codeLobby").value).replace(/[^A-Z0-9]/g,""); if(v.length<3){ $("codeLobby").focus(); return; } code=v; lobbyStep=2; render(); };
+    $("btnQuiz").onclick=()=>{ lobbyStep=1; render(); };
+    return;
+  }
+  body.innerHTML=`${newsHtml()}<div class="start"><div class="brandline">${esc(D.title)}<small>테이블 ${esc(code)}</small></div>
+    <p class="hint" style="margin:0">누구의 폰인가. 폰 하나로 하면 "한 대 공용" — ⇄ 로 보는 사람을 바꾼다.</p>
+    <div class="grid"><button class="primary" id="rC">범인<small>검붉 — 기억을 되찾는 쪽</small></button><button class="primary" id="rD">형사<small>황토 — 현장을 읽는 쪽</small></button><button id="rTV">한 대 공용<small>⇄ 로 넘긴다</small></button></div>
+    <div class="row"><button id="btnBack">← 코드 바꾸기</button></div>
+    <p class="tiny">두 폰 연결은 상대도 같은 링크를 열 수 있을 때 된다. ⚙에서 QR.</p></div>`;
+  $("rC").onclick=()=>setRoleCode("C",code); $("rD").onclick=()=>setRoleCode("D",code); $("rTV").onclick=()=>setRoleCode("TV",code); $("btnBack").onclick=()=>{ lobbyStep=3; render(); };
+}
+
+/* ===================== SHEETS ===================== */
+function openSheet(build,{cover=false,title=""}={}){ const sh=$("shutter"), sheet=$("sheet"); sh.hidden=false; const show=()=>{ sheet.innerHTML=""; build(sheet); };
+  if(cover&&role==="TV"){ sheet.innerHTML=`<div class="cover"><div class="eye">▮ ▮</div><b>${esc(title)}</b><div class="hint">화면을 가리고 누른다.</div><button class="primary" id="cv">가렸다</button><button id="cx">취소</button></div>`; $("cv").onclick=show; $("cx").onclick=closeSheet; } else show(); }
+function closeSheet(){ $("shutter").hidden=true; $("sheet").innerHTML=""; render(); }
+function btn(label,sub,fn,cls,dis){ const b=document.createElement("button"); b.innerHTML=esc(label)+(sub?`<small>${esc(sub)}</small>`:""); if(cls) b.className=cls; b.disabled=!!dis; b.onclick=fn; return b; }
+function foot(sheet,ok,fn,cancelLabel){ const f=document.createElement("div"); f.className="foot"; f.appendChild(btn(cancelLabel||"닫기","",closeSheet)); if(ok) f.appendChild(btn(ok,"",fn,"primary")); sheet.appendChild(f); }
+function textField(s,id,label,ph){ const w=document.createElement("div"); w.innerHTML=`<label for="${id}">${esc(label)}</label>`; const i=document.createElement("input"); i.id=id; i.autocomplete="off"; if(ph) i.placeholder=ph; w.appendChild(i); s.appendChild(w); return i; }
+function swapSheet(){ const to=other(me());
+  openSheet(s=>{ s.innerHTML=`<div class="cover"><div class="eye">▮ ▮</div><b>${roleName(to)}에게 폰을 넘긴다</b><div class="hint">넘긴 뒤 ${roleName(to)}이(가) 누른다. 사진·문구·기억은 ${roleName(to)}의 것만 보인다.</div></div>`;
+    const f=document.createElement("div"); f.className="foot"; f.appendChild(btn("취소","",closeSheet)); f.appendChild(btn("나는 "+roleName(to)+"다","",()=>{ viewer=to; viewCard=null; lastFound=null; closeSheet(); },"primary")); s.appendChild(f); }); }
+function settings(){ openSheet(s=>{ s.innerHTML=`<h3>⚙ 설정</h3>`;
+  const g=document.createElement("div"); g.className="grid";
+  g.appendChild(btn("QR · 테이블 "+code,"상대 폰 연결",()=>{ closeSheet(); qrSheet(); }));
+  g.appendChild(btn("제작자 모드","카드·사진·지점·질문",()=>{ closeSheet(); maker(); }));
+  g.appendChild(btn("역할 바꾸기","코드·역할 다시 고르기",()=>{ role=null; lobbyStep=2; try{localStorage.removeItem("sbtv2_role");}catch(e){} closeSheet(); }));
+  g.appendChild(btn("새 게임","진행 중인 게임 지우기",()=>{ S=freshState(); saveState(); ch=1; closeSheet(); },"danger"));
+  s.appendChild(g); foot(s); }); }
+function qrSheet(){ openSheet(s=>{ const url=shareUrl();
+  s.innerHTML=`<h3>테이블 ${esc(code)}</h3><div class="hint">${role==="C"?"형사":"범인"}이 이 QR을 찍으면 바로 ${role==="C"?"형사":"범인"} 폰이 된다. 안 열리면 같은 링크를 열고 코드 <b style="font-family:var(--digit);font-size:22px">${esc(code)}</b>를 넣는다.</div><div id="qrBox" style="background:#fff;padding:12px;border-radius:8px;width:max-content;max-width:100%;margin:auto"></div><div class="tiny" style="word-break:break-all">${esc(url)}</div>`;
+  try{ new QRCode($("qrBox"),{text:url,width:200,height:200,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.M}); }catch(e){ $("qrBox").textContent="QR 생성 실패"; }
+  const f=document.createElement("div"); f.className="foot"; f.appendChild(btn("링크 복사","",async()=>{ try{ await navigator.clipboard.writeText(url); }catch(e){} })); f.appendChild(btn("닫기","",closeSheet,"primary")); s.appendChild(f); }); }
+
+/* ===================== MAKER MODE ===================== */
+let mkCard=null;
+function maker(){ openSheet(s=>{ renderMaker(s); }); }
+function renderMaker(s){
+  const ids=Object.keys(D.cards); if(!mkCard||!D.cards[mkCard]) mkCard=ids[0]||null;
+  s.innerHTML=`<h3>제작자 모드 ⚙</h3><div class="hint">사진 카드를 고르고, 사진을 올리고, 사진 위를 눌러 힌트 지점을 찍는다. 코드·해금 막(act)·문구·기억 질문은 아래 JSON. "적용"하면 이 폰과 같은 테이블의 상대 폰에 저장된다.</div>
+    <div class="row"><div><label for="mkSel">카드</label><select id="mkSel">${ids.map(id=>`<option value="${id}" ${id===mkCard?"selected":""}>${id} · ${esc(D.cards[id].title||"")} (${D.cards[id].who} ${D.cards[id].act||1}막 ${D.cards[id].kind})</option>`).join("")}</select></div>
+    <div><label for="mkNew">새 카드 번호</label><div class="codein" style="gap:6px"><input id="mkNew" placeholder="K2 (코드는 JSON에서 ㄱ123 꼴로)" style="font-size:16px;letter-spacing:.05em"><button id="mkAdd" type="button">추가</button></div></div></div>
+    <div id="mkPhoto"></div>
+    <label for="jsonData" style="margin-top:6px">전체 설계 JSON</label><textarea class="json" id="jsonData">${esc(JSON.stringify(D,null,2))}</textarea><div class="hint" id="mkMsg"></div>`;
+  const f=document.createElement("div"); f.className="foot";
+  f.appendChild(btn("복사","",async()=>{ const t=$("jsonData"); try{ await navigator.clipboard.writeText(t.value); $("mkMsg").textContent="복사했다."; }catch(e){ t.select(); $("mkMsg").textContent="선택했다. 직접 복사한다."; } }));
+  f.appendChild(btn("기본값으로","",()=>{ $("jsonData").value=JSON.stringify(DEFAULT_DATA,null,2); }));
+  f.appendChild(btn("닫기","",closeSheet));
+  f.appendChild(btn("적용","",()=>{ try{ const j=JSON.parse($("jsonData").value); if(!j.cards) throw new Error("cards 없음"); D=j; saveData(true); $("mkMsg").textContent="적용했다."; renderMaker(s); }catch(e){ $("mkMsg").textContent="JSON 오류: "+e.message; } },"primary"));
+  s.appendChild(f);
+  $("mkSel").onchange=e=>{ mkCard=e.target.value; renderMaker(s); };
+  $("mkAdd").onclick=()=>{ const id=$("mkNew").value.trim().toUpperCase(); if(!id||D.cards[id]) return; const isC=/^M|^R/.test(id); D.cards[id]={code:String(1+Math.floor(Math.random()*9))+"ㅇ"+String(Math.floor(Math.random()*10))+"ㄱ",who:isC?"C":"D",act:1,kind:isC?"text":"photo",title:"[임시] "+id,img:"",text:"",hotspots:[]}; mkCard=id; renderMaker(s); };
+  renderMkPhoto($("mkPhoto"));
+}
+function renderMkPhoto(w){
+  const c=mkCard&&D.cards[mkCard]; if(!c){ w.innerHTML=""; return; }
+  if(c.kind!=="photo"){ w.innerHTML=`<div class="hint">${mkCard}은(는) 문구 카드다. 본문은 JSON의 text에 쓴다. 그림을 붙일 수도 있다(지점 없음).</div><div class="photo" style="cursor:default">${c.img?`<img src="${esc(c.img)}" alt="">`:`<div class="ph">${mkCard}<small>그림 없음</small></div>`}</div><div><label for="mkFile">그림 올리기 (jpg/png)</label><input type="file" id="mkFile" accept="image/*"></div>`;
+    $("mkFile").onchange=async ev=>{ const f=ev.target.files[0]; if(!f) return; const msg=$("mkMsg"); if(assets){ try{ msg.textContent="올리는 중…"; const a=await assets.upload(f); c.img=a.url; msg.textContent="올렸다. 적용을 눌러 저장한다."; }catch(e){ msg.textContent="업로드 실패: "+(e&&e.code||e); return; } } else { const url=await new Promise(res=>{ const rd=new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(f); }); c.img=url; } syncJson(); renderMkPhoto(w); }; return; }
+  w.innerHTML=`<div class="hint">${esc(c.title||mkCard)} · 코드 <b>${esc(c.code)}</b> · ${c.act||1}막 해금 · 사진 위를 누르면 지점이 추가된다.</div>
+    <div class="photo editphoto" id="mkImg">${c.img?`<img src="${esc(c.img)}" alt="">`:`<div class="ph">${mkCard}<small>사진 없음</small></div>`}${(c.hotspots||[]).map((h,i)=>`<div class="spot" style="left:${h.x}%;top:${h.y}%;--d:${(h.r||8)*2}%"><i></i><b>${i+1}</b></div>`).join("")}</div>
+    <div class="row"><div><label for="mkFile">사진 올리기 (jpg/png)</label><input type="file" id="mkFile" accept="image/*"></div><div><label for="mkR">새 지점 반지름 %</label><input id="mkR" type="number" min="3" max="25" value="8"></div></div>
+    <div class="spotlist" id="mkSpots">${(c.hotspots||[]).map((h,i)=>`<div class="s"><span class="pill">${i+1} · ${h.x},${h.y} r${h.r||8}</span><input data-i="${i}" value="${esc(h.hint)}" placeholder="힌트 문장"><button data-del="${i}" type="button" class="danger">삭제</button></div>`).join("")}</div>`;
+  $("mkImg").onclick=ev=>{ const r=ev.currentTarget.getBoundingClientRect(); const x=+((ev.clientX-r.left)/r.width*100).toFixed(1), y=+((ev.clientY-r.top)/r.height*100).toFixed(1); c.hotspots=c.hotspots||[]; c.hotspots.push({x,y,r:+($("mkR").value||8),hint:"[임시] 힌트"}); syncJson(); renderMkPhoto(w); };
+  w.querySelectorAll("input[data-i]").forEach(i=>i.oninput=()=>{ c.hotspots[+i.dataset.i].hint=i.value; syncJson(); });
+  w.querySelectorAll("button[data-del]").forEach(b=>b.onclick=()=>{ c.hotspots.splice(+b.dataset.del,1); syncJson(); renderMkPhoto(w); });
+  $("mkFile").onchange=async ev=>{ const f=ev.target.files[0]; if(!f) return; const msg=$("mkMsg");
+    if(assets){ try{ msg.textContent="올리는 중…"; const a=await assets.upload(f); c.img=a.url; msg.textContent="올렸다. 적용을 눌러 저장한다."; }catch(e){ msg.textContent="업로드 실패: "+(e&&e.code||e); return; } }
+    else { const url=await new Promise(res=>{ const rd=new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(f); }); c.img=url; msg.textContent="이 폰에만 저장되는 사진이다 (공유 저장소에는 너무 클 수 있다). 적용을 누른다."; }
+    syncJson(); renderMkPhoto(w); };
+}
+function syncJson(){ const t=$("jsonData"); if(t) t.value=JSON.stringify(D,null,2); }
+
+/* ===================== KNOB ===================== */
+$("knobCh").onclick=()=>setChannel(ch%CH.length+1);
+window.addEventListener("resize",fitLayer);
+$("keypad").onsubmit=ev=>{ ev.preventDefault(); const i=$("keyIn"); const v=i.value.trim(); if(!v){ toast("빈 칸이다. 카드 앞면의 코드 네 글자를 넣고 입력을 누른다."); return; } i.value=""; i.blur(); if(keyMode==="mem"&&!findCard(v)) answerMemory(v); else enterCode(v); };
+$("btnSetP").onclick=settings;
+$("btnSwapP").onclick=swapSheet;
+setInterval(()=>{ const c=$("clock"); if(c&&S&&S.started) c.textContent=stamp(); },1000);
+
+/* ===================== BOOT ===================== */
+function boot(data){ S=freshState(); try{ const j=JSON.parse(localStorage.getItem("sbtv2_state")); if(j&&j.started) S=migrateState(j); }catch(e){} if(data&&data.S) S=migrateState(data.S); if(data&&data.ch) ch=data.ch; if(data&&data.viewer) viewer=data.viewer; render();
+  window.claude?.hot?.snapshot?.(()=>({S,ch,viewer}));
+  if(window.claude&&window.claude.use){ connect().catch(()=>{ dbReady=true; render(); }); } else { dbReady=true; render(); } }
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+</script>
+
+</body></html>
