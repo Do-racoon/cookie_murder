@@ -11,6 +11,7 @@
 | `tv/source.html` | 티비 원본 (아티팩트와 같은 파일). 고친 뒤 `python3 tools/build.py`로 `tv/index.html`·`docs/tv.html`을 만든다 |
 | `tv/img/` | 티비 사진 원본 |
 | `tools/build.py` | 티비 파일을 만드는 스크립트 |
+| `cards/` | 카드 22장 인쇄본 — 양면 PDF(63×88mm, A4 3×3 여섯 쪽) · 앞뒤 전체 비교 그림 · 낱장 PNG 44개 · 그림을 만든 파이썬 파일(`cards.py` `cookie.py` `make_pdf.py`) |
 | `docs/` | 문서 모음 — 소개서·기획서·타임라인·핸드아웃·카드·룰북·테스트 코드·관계도·그림·티비 목업. `docs/index.html`을 연다 |
 | `text/` | 핸드아웃과 기획서 원문 (Markdown) |
 | `submission-2026-11-22/` | 11/22 공모전에 실제로 낸 파일 11개 그대로 — 소개서·롤카드·규칙서·정답봉투·엔딩책자(docx), 기획서 전체(html), 티비(html), 카드 인쇄 PDF와 시안 그림. 이후 수정 미반영 |
