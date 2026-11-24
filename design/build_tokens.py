@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""design/tokens.json 의 값을 쓰는 곳에 넣어 준다.
+r"""design/tokens.json 의 값을 쓰는 곳에 넣어 준다.
 
     python3 design/build_tokens.py
 
