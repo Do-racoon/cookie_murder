@@ -29,8 +29,12 @@ def act_rgb(tk, act):
 
 
 def css_block(tk):
-    body = ";".join("--%s:%s" % (k, v) for k, v in tk["color"].items())
-    return ":root{%s}" % body
+    """토큰 이름과, 문서 모음이 이미 쓰고 있는 옛 이름을 함께 내보낸다."""
+    parts = ["--%s:%s" % (k, v) for k, v in tk["color"].items()]
+    parts += ["--%s:%s" % (old, tk["color"][new]) for old, new in tk.get("docsAlias", {}).items()]
+    parts.append("--mono:'Nanum Gothic Coding',monospace")
+    parts.append("--serif:'Gowun Batang',serif")
+    return ":root{%s}" % ";".join(parts)
 
 
 def main():
