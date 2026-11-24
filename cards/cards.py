@@ -105,11 +105,18 @@ def wrap(d,text,font,maxw):
             else: line+=ch
         if line: out.append(line)
     return out
-def fit(d,text,maxw,maxh,sizes,lead=1.5,w='Regular'):
+# 63mm 카드에서 단위 25 = 7.1pt 다. 읽히려면 9pt(=단위 32) 쯤은 돼야 한다.
+BODY=[34,32,30,28,26,25,24,23,22,21,20,19,18]
+CHOICE=[34,32,30,28,27,25]
+LEAD=1.68
+OVERFLOW=[]
+def fit(d,text,maxw,maxh,sizes,lead=1.5,w='Regular',who=''):
+    """가장 큰 크기부터 넣어 본다. 제일 작은 크기로도 안 들어가면 적어 둔다."""
     for sz in sizes:
         f=F(sz,w); ls=wrap(d,text,f,maxw); lh=sz*S*lead
         h=sum(lh if l else lh*0.5 for l in ls)
         if h<=maxh: return f,ls,lh
+    OVERFLOW.append((who or text[:12], len(text), int(h-maxh)))
     return f,ls,lh
 def para(d,x,y,ls,f,lh,fill):
     for l in ls:
@@ -159,12 +166,12 @@ def front(c):
         for l in ls: d.text((cx,y),l,font=f,fill=GRAY,anchor='mm'); y+=lh
         hintblock(d,c['hint']); footer(d,'증거 식별 코드',c['code'])
     elif k=='text':
-        f,ls,lh=fit(d,c['body'],X(540),X(340),[27,25,24,23,22,21,20],1.55)
-        para(d,X(46),X(256),ls,f,lh,WHITE)
+        f,ls,lh=fit(d,c['body'],X(560),X(356),BODY,LEAD,who=c['id'])
+        para(d,X(36),X(244),ls,f,lh,WHITE)
         hintblock(d,c['hint']); footer(d,'증거 식별 코드',c['code'])
     elif k=='choice':
-        f,ls,lh=fit(d,c['body'],X(540),X(300),[27,25],1.6)
-        para(d,X(46),X(262),ls,f,lh,WHITE)
+        f,ls,lh=fit(d,c['body'],X(560),X(316),CHOICE,LEAD,who=c['id'])
+        para(d,X(36),X(250),ls,f,lh,WHITE)
         footer(d,c['foot'],c['id'])
     return im
 
@@ -207,8 +214,8 @@ def back_ending(c):
     d.text((X(40),X(92)),'엔딩 · '+c['code'],font=M(22),fill=GRAY,anchor='lm')
     d.text((X(40),X(160)),c['title'],font=F(40,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
-    f,ls,lh=fit(d,c['back'],X(540),X(590),[27,26,25,24,23,22],1.6)
-    para(d,X(46),X(240),ls,f,lh,WHITE)
+    f,ls,lh=fit(d,c['back'],X(560),X(614),BODY,LEAD,who=c['id'])
+    para(d,X(36),X(228),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=RED)
     return im
 def special_front(c):
@@ -243,8 +250,8 @@ def back_special(c):
     if c.get('only')=='D': d.text((X(588),X(92)),'형사만 읽는다',font=F(24,'Medium'),fill=WHITE,anchor='rm')
     d.text((X(40),X(160)),c['title'],font=F(38,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
-    f,ls,lh=fit(d,c['body'],X(540),X(600),[25,24,23,22,21,20,19,18],1.55)
-    para(d,X(46),X(236),ls,f,lh,WHITE)
+    f,ls,lh=fit(d,c['body'],X(560),X(624),BODY,LEAD,who=c['id'])
+    para(d,X(36),X(224),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
     return im
 def back(c):
@@ -282,6 +289,8 @@ def check_endings():
 
 if __name__=='__main__':
     check_endings(); check_glyphs()
+    import atexit
+    atexit.register(lambda: OVERFLOW and print('칸을 넘친 카드:', OVERFLOW))
     out=sys.argv[1]; os.makedirs(out,exist_ok=True)
     for c in CARDS:
         front(c).save('%s/%s_front.png'%(out,c['id'])); back(c).save('%s/%s_back.png'%(out,c['id']))

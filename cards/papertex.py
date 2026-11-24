@@ -19,11 +19,11 @@ def bag(size, base, seed=7):
     small.putdata([rnd.randint(104, 150) for _ in range(small.width * small.height)])
     grain = small.resize(size, Image.BILINEAR).filter(ImageFilter.GaussianBlur(0.6))
     im = ImageChops.overlay(im, Image.merge("RGB", (grain, grain, grain)))
-    im = Image.blend(Image.new("RGB", size, base), im, 0.30)
+    im = Image.blend(Image.new("RGB", size, base), im, 0.18)
 
     # 2) 섬유 부스러기 — 아주 드문 짙은 점
     d = ImageDraw.Draw(im)
-    for _ in range((w * h) // 9000):
+    for _ in range((w * h) // 16000):
         x, y = rnd.randrange(w), rnd.randrange(h)
         v = rnd.randint(14, 30)
         d.point((x, y), fill=tuple(max(0, c - v) for c in base))
@@ -33,7 +33,7 @@ def bag(size, base, seed=7):
     sd = ImageDraw.Draw(shade)
     for fx in (0.30, 0.68):
         x = int(w * fx)
-        sd.line([(x, 0), (x, h)], fill=26, width=max(1, w // 300))
+        sd.line([(x, 0), (x, h)], fill=17, width=max(1, w // 300))
         sd.line([(x + max(1, w // 210), 0), (x + max(1, w // 210), h)], fill=12, width=1)
     shade = shade.filter(ImageFilter.GaussianBlur(w / 160))
     im = ImageChops.subtract(im, Image.merge("RGB", (shade, shade, shade)))
