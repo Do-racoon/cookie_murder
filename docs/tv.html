@@ -317,7 +317,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 33,
+  "version": 34,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -971,14 +971,21 @@ function endingOf(id){ return (D.endings||[]).find(e=>e.id===id)||{id:id,code:id
 const VGRID={"all/S1":"E1","her/S2":"E2","all/none":"E3","split/none":"E4","her/none":"E5",
              "split/S2":"E6","all/S2":"E7","her/S1":"E8","split/S1":"E9"};
 function verdictPick(v){ const e=VGRID[v.charge+"/"+v.confess]; return e?[e]:[]; }
+/* 자수서(S1·S2)는 3막 범인의 질문 — "그녀는 왜 쿠키를 먹을까" — 을 맞혀야 쓴다. 답은 형사가 쥔 일기장에 있다. */
+function confessOpen(){ if(!S||!S.memPart||!S.memPart.D) return false;
+  const m=(D.memory||[]).find(x=>x.from===3&&x.asks); if(!m) return false;
+  const i=m.asks.findIndex(q=>q.optional); const dn=S.memPart.D[m.from]||[];
+  return i>=0&&dn.includes(i); }
 function setVerdict(k,val){ if(!S.verdict) S.verdict={};
+  if(k==="confess"&&(val==="S1"||val==="S2")&&!confessOpen()){ toast("그녀의 이유를 아직 모른다 — 자수서를 쓸 수 없다."); return; }
   if(k==="reset"){ S.verdict={}; log("취조서와 자수서를 처음부터 다시 적는다.","sys","sys"); return; }
   S.verdict[k]=val;
   if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — 엔딩 카드 "+ids.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집는다.","sys","sys"); }
   else { saveState(); render(); } }
 function verdictHtml(){ const v=S.verdict||{}; let s=`<div class="memq">취조는 끝났다. 형사는 <b>취조서</b>를, 범인은 <b>자수서</b>를 적는다.</div>`; let asking=false;
   VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); s+=`<div class="memq reveal"><b>${esc(q.form)}</b> · ${esc(q.q)}<br>→ ${esc(o?o[0]:"—")}</div>`; }
-    else if(!asking){ asking=true; s+=`<div class="memq"><b>${esc(q.form)}</b> · ${esc(q.q)}</div><div class="optlist">${q.opts.map(o=>`<button data-vq="${q.k}" data-vv="${esc(o[1])}">${esc(o[0])}</button>`).join("")}</div>`; } });
+    else if(!asking){ asking=true; const lock=q.k==="confess"&&!confessOpen(); s+=`<div class="memq"><b>${esc(q.form)}</b> · ${esc(q.q)}</div><div class="optlist">${q.opts.map(o=>`<button data-vq="${q.k}" data-vv="${esc(o[1])}"${lock&&o[1]!=="none"?" disabled":""}>${esc(o[0])}</button>`).join("")}</div>`;
+      if(lock) s+=`<div class="hint" style="color:var(--phos-dim)">그녀가 왜 쿠키를 먹는지 맞혀야 자수서를 쓸 수 있다. 아직 "4 기억"의 범인의 질문이 열려 있다.</div>`; } });
   if(asking) s+=`<div class="hint" style="color:var(--phos-dim)">형사가 먼저 취조서를 적고, 범인이 자수서를 덮어 낸다. 서로의 비밀을 한 번씩 말한 뒤 여기에 적으면, 티비가 열 엔딩 카드의 쿠키 이름을 부른다.</div>`;
   else { const ids=verdictPick(v); s+=`<div class="memq reveal"><b>엔딩 카드 ${ids.map(i=>"「"+esc(endingOf(i).code)+"」").join(" · ")}</b><br>그 이름이 적힌 카드를 뒤집어 번갈아 읽는다. 다른 카드는 열지 않는다.</div><div class="row" style="flex:0 0 auto"><button data-vq="reset" data-vv="" style="flex:0 0 auto">처음부터 다시 적는다</button></div>`; }
   return s; }

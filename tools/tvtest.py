@@ -24,8 +24,10 @@ def main():
 
     errors = []
     with sync_playwright() as p:
+        chrome = pathlib.Path("/usr/bin/google-chrome")
         b = p.chromium.launch(
-            executable_path="/usr/bin/google-chrome",
+            # 크롬이 없는 컨테이너에서는 Playwright 에 딸린 chromium 을 쓴다
+            **({"executable_path": str(chrome)} if chrome.exists() else {}),
             args=["--allow-file-access-from-files", "--no-sandbox"],
         )
         pg = b.new_page(viewport={"width": 1100, "height": 900})
@@ -38,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 33 다", ver == 33, ver)
+        check("DEFAULT_DATA.version 이 34 다", ver == 34, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -121,6 +123,21 @@ def main():
             "G3 에서 비밀 ③ 지시가 빠졌다",
             "비밀 ③" not in (pg.evaluate("DEFAULT_DATA.cards.G3.text") or ""),
         )
+
+        # 자수서는 3막 범인의 질문("그녀는 왜 쿠키를 먹을까")을 맞혀야 쓴다
+        r = pg.evaluate("""(()=>{ try{ setRoleCode("TV","T9"); start();
+          const a=confessOpen(); setVerdict("confess","S1"); const b=(S.verdict||{}).confess;
+          setVerdict("confess","none"); const c=S.verdict.confess; setVerdict("reset","");
+          S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); answerMemory("피를 좋아하니까");
+          const d=confessOpen(); setVerdict("confess","S1"); const e=S.verdict.confess;
+          const S0=S; S=Object.assign({},S0); delete S.memPart; const f=confessOpen(); S=S0;
+          return {a,b:b===undefined?null:b,c,d,e,f}; }catch(err){ return {err:String(err)}; } })()""")
+        check("처음에는 자수서가 잠겨 있다", r.get("a") is False, r)
+        check("잠겨 있으면 S1을 골라도 적히지 않는다", "b" in r and r["b"] is None, r)
+        check("못 썼다는 언제나 고를 수 있다", r.get("c") == "none", r)
+        check("3막 범인의 질문을 맞히면 열린다", r.get("d") is True, r)
+        check("열린 뒤에는 S1이 적힌다", r.get("e") == "S1", r)
+        check("memPart 없는 옛 상태에서도 false", r.get("f") is False, r)
 
         b.close()
 
