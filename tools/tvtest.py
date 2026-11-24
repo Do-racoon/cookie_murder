@@ -139,6 +139,22 @@ def main():
         check("열린 뒤에는 S1이 적힌다", r.get("e") == "S1", r)
         check("memPart 없는 옛 상태에서도 false", r.get("f") is False, r)
 
+        # 4막에 G2 없이 들어오면, 판결 화면의 안내는 "아직 나타나지 않았다"를 말해야 한다
+        h = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=4; S.memDone.D=[1,2,3];
+          setVerdict("charge","all"); setChannel(4); const t1=document.getElementById('body').innerText;
+          enterCode("G2"); setChannel(4); const t2=document.getElementById('body').innerText;
+          const dis=[...document.querySelectorAll('[data-vq="confess"]')].filter(x=>x.disabled).length;
+          return {t1,t2,dis}; })()""")
+        check("G2를 안 열었으면 안내가 질문이 아직 없다고 말한다",
+              "열려 있다" not in h["t1"] and "2ㄱ0ㅇ" in h["t1"], h["t1"][-160:])
+        check("G2를 열면 안내가 질문이 열려 있다고 말한다", "열려 있다" in h["t2"], h["t2"][-160:])
+        check("답하기 전에는 S1·S2 두 버튼이 잠겨 있다", h["dis"] == 2, h["dis"])
+
+        # 문서 모음의 핸드아웃 탭도 새 목표 문구여야 한다
+        hub = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        check("문서 모음 핸드아웃 탭에 옛 범인 목표가 없다", "이름을 듣고 나면 선택해야 한다" not in hub)
+        check("문서 모음 핸드아웃 탭에 형사 목표 새 문장이 있다", "자수서를 쓸 수 있게 된다" in hub)
+
         b.close()
 
     print()
