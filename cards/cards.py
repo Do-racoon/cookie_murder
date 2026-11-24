@@ -5,11 +5,25 @@ ROOT=HERE.parent
 
 from PIL import Image, ImageDraw, ImageFont
 S=2; W,H=630*S,880*S
-FD='/usr/share/fonts/opentype/noto/'
-def F(sz,w='Regular'): return ImageFont.truetype(FD+'NotoSansCJK-%s.ttc'%w, int(sz*S), index=1)
-BG=(15,22,28); LINE=(58,70,80); PANEL=(26,36,43); WHITE=(242,238,230); GRAY=(150,162,170); DIM=(110,124,134)
-ORA=(240,160,90); ORA2=(255,187,120); RED=(196,72,72)
-ACT={'K':('현행범 현장',(214,128,74)),'B':('맥주집',(140,170,186)),'G':('반지하',(190,64,72)),'S':('자수서',(190,170,120)),'E':('엔딩',(190,170,120)),'X':('특수 카드',(150,140,190))}
+# 색·글꼴은 design/tokens.json 하나에서 온다 — 티비가 기준이다
+sys.path.insert(0, str(ROOT/'design'))
+from build_tokens import load_tokens, rgb
+TK=load_tokens()
+_C=TK['color']
+FD=str(ROOT/'design'/'fonts')+'/'
+_FACE={'Regular':('serif','400'),'Medium':('serif','700'),'Bold':('serif','700'),
+       'Mono':('mono','400'),'MonoBold':('mono','700'),'Digit':('digit','400')}
+def F(sz,w='Regular'):
+    kind,wt=_FACE[w]
+    return ImageFont.truetype(FD+TK['font'][kind]['ttf'][wt], int(sz*S))
+def M(sz,bold=False): return F(sz,'MonoBold' if bold else 'Mono')   # 라벨·코드 — 티비에 치는 글자
+def D(sz):            return F(sz,'Digit')                          # 카드 번호 (라틴·숫자만)
+
+BG=rgb(_C['bg']); LINE=rgb(_C['line']); PANEL=rgb(_C['panel'])
+WHITE=rgb(_C['phos']); GRAY=rgb(_C['phos-dim']); DIM=rgb(_C['line'])
+ORA=rgb(_C['amber']); ORA2=rgb(_C['amber-hi']); RED=rgb(_C['red'])
+_ACTNAME={'K':'현행범 현장','B':'맥주집','G':'반지하','S':'자수서','E':'엔딩','X':'특수 카드'}
+ACT={k:(_ACTNAME[k], rgb(_C[TK['act'][k]])) for k in _ACTNAME}
 
 CARDS=[
  dict(id='K1',code='8ㅎ8ㅎ',title='현관 앞 CCTV',kind='photo',desc='302호 현관. 사건이 일어난 밤.',hint='위를 보라. 이 집을 보고 있던 것이 있다.'),
@@ -51,7 +65,7 @@ CARDS=[
  dict(id='E9',code='튀일',title='받지 않은 편지',kind='ending',cond='손을 가른다 × S1',
       back='범인이 전부 가져가겠다는데, 형사는 두 건만 적고 나머지는 신원 미상으로 둔다.\n\n범인: "왜 안 받아?"\n\n형사: "내 것이 아니라서."\n\n티비가 꺼진다.'),
 ]
-VIO=(168,158,205); VIO2=(198,190,230)
+VIO=rgb(_C['violet']); VIO2=rgb(_C['amber-hi'])
 def load_specials():
     """tv/source.html 의 DEFAULT_DATA 에서 특수 카드와 그 카드를 꺼내는 자리를 읽는다."""
     src=(ROOT/'tv'/'source.html').read_text(encoding='utf-8')
@@ -70,7 +84,6 @@ def load_specials():
                         where=where.get(x['id'],'티비의 지시를 따른다')))
     return out
 
-BACKSRC={'K1':9,'K2':10,'K3':11,'K4':12,'K5':13,'K6':14,'B1':15,'B2':16,'B3':17,'B4':23,'B5':24,'G1':25,'G2':26,'G3':27}
 
 def wrap(d,text,font,maxw):
     out=[]
@@ -104,7 +117,7 @@ def base(c):
     d.rectangle([X(34),X(43),X(174),X(47)],fill=ORA)
     act=ACT[c['id'][0]][0]
     d.text((X(40),X(92)),'CASE FILE / '+act,font=F(24),fill=(200,206,210),anchor='lm')
-    d.text((X(588),X(92)),c['id'],font=F(27,'Medium'),fill=ORA2,anchor='rm')
+    d.text((X(588),X(92)),c['id'],font=D(34),fill=ORA2,anchor='rm')
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(38,'Medium')
     d.text((X(40),X(172)),c['title'],font=tf,fill=WHITE,anchor='lm')
@@ -112,11 +125,11 @@ def base(c):
     return im,d
 def footer(d,label,big,color=ORA2):
     d.line([X(40),X(739),X(588),X(739)],fill=LINE,width=X(2))
-    d.text((X(40),X(770)),label,font=F(22),fill=GRAY,anchor='lm')
-    d.text((X(588),X(790)),big,font=F(58,'Medium'),fill=color,anchor='rm')
+    d.text((X(40),X(770)),label,font=M(21),fill=GRAY,anchor='lm')
+    d.text((X(588),X(790)),big,font=M(54,True),fill=color,anchor='rm')
     d.rectangle([X(40),X(838),X(588),X(842)],fill=ORA)
 def hintblock(d,hint):
-    d.text((X(40),X(622)),'HINT',font=F(19,'Medium'),fill=ORA,anchor='lm')
+    d.text((X(40),X(622)),'HINT',font=M(18,True),fill=ORA,anchor='lm')
     d.line([X(100),X(622),X(588),X(622)],fill=(44,56,66),width=X(1))
     f,ls,lh=fit(d,hint,X(548),X(84),[27,25,23,21],1.45)
     para(d,X(40),X(644),ls,f,lh,WHITE)
@@ -149,7 +162,7 @@ def back_button(c):
     name,col=ACT[c['id'][0]]
     im=Image.new('RGB',(W,H),(26,29,33)); d=ImageDraw.Draw(im)
     for y in range(0,H,X(4)): d.line([0,y,W,y],fill=(24,27,31),width=1)
-    d.text((X(48),X(92)),c['id'],font=F(44),fill=(150,150,146),anchor='lm')
+    d.text((X(48),X(92)),c['id'],font=D(56),fill=GRAY,anchor='lm')
     d.rounded_rectangle([X(76),X(204),X(566),X(676)],radius=X(60),fill=(12,13,15))
     d.rounded_rectangle([X(62),X(188),X(552),X(660)],radius=X(60),fill=(54,54,54),outline=(128,124,110),width=X(9))
     d.rounded_rectangle([X(80),X(206),X(534),X(642)],radius=X(46),outline=(92,90,82),width=X(2))
@@ -178,7 +191,7 @@ def back_ending(c):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=RED)
-    d.text((X(40),X(92)),'ENDING / '+c['code'],font=F(24),fill=(200,206,210),anchor='lm')
+    d.text((X(40),X(92)),'ENDING / '+c['code'],font=M(22),fill=GRAY,anchor='lm')
     d.text((X(40),X(160)),c['title'],font=F(40,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
     f,ls,lh=fit(d,c['back'],X(540),X(590),[27,26,25,24,23,22],1.6)
@@ -189,8 +202,8 @@ def special_front(c):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
-    d.text((X(40),X(92)),'SPECIAL / '+c['sort'],font=F(24),fill=(200,206,210),anchor='lm')
-    d.text((X(588),X(92)),c['id'],font=F(27,'Medium'),fill=VIO2,anchor='rm')
+    d.text((X(40),X(92)),'SPECIAL / '+c['sort'],font=M(22),fill=GRAY,anchor='lm')
+    d.text((X(588),X(92)),c['id'],font=D(34),fill=VIO2,anchor='rm')
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
     d.text((X(40),X(172)),c['title'],font=tf,fill=WHITE,anchor='lm')
@@ -213,7 +226,7 @@ def back_special(c):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
-    d.text((X(40),X(92)),c['sort']+' / '+c['id'],font=F(24),fill=(200,206,210),anchor='lm')
+    d.text((X(40),X(92)),c['sort']+' / '+c['id'],font=M(22),fill=GRAY,anchor='lm')
     if c.get('only')=='D': d.text((X(588),X(92)),'형사만 읽는다',font=F(24,'Medium'),fill=VIO2,anchor='rm')
     d.text((X(40),X(160)),c['title'],font=F(38,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
@@ -223,12 +236,27 @@ def back_special(c):
     return im
 def back(c):
     cid=c['id']
-    if cid in BACKSRC: return Image.open(str(HERE/'ext'/('c-%03d.png'%BACKSRC[cid]))).convert('RGB').resize((W,H),Image.LANCZOS)
     if c['kind']=='special': return back_special(c)
     if c['kind']=='ending': return back_ending(c)
     return back_button(c)
 
 CARDS=CARDS+load_specials()
+
+def check_glyphs():
+    """카드 글에 글꼴이 못 찍는 글자가 있으면 멈춘다 — 빈 네모로 인쇄되는 사고 방지."""
+    sys.path.insert(0, str(ROOT/'design'))
+    from make_fonts import check_coverage
+    from make_fonts import source_strings
+    used=set(source_strings(__file__))
+    for c in CARDS:
+        for v in c.values():
+            if isinstance(v,str): used|=set(v)
+    for kind in ('serif','mono'):
+        for wt,f in TK['font'][kind]['ttf'].items():
+            miss=check_coverage(ROOT/'design'/'fonts'/f, used)
+            if miss:
+                raise SystemExit('%s 에 없는 글자: %s\n  python3 design/make_fonts.py 를 다시 돌려라'
+                                 % (f, ''.join(miss)))
 
 def check_endings():
     """엔딩 카드의 쿠키 이름·제목이 티비 설계와 어긋나면 멈춘다 (옛 졼트브레드 사고 방지)."""
@@ -238,9 +266,9 @@ def check_endings():
     mine={c['id']:(c['code'],c['title']) for c in CARDS if c['kind']=='ending'}
     if tv!=mine:
         raise SystemExit('엔딩이 티비와 다르다\n  티비: %s\n  카드: %s'%(tv,mine))
-check_endings()
 
 if __name__=='__main__':
+    check_endings(); check_glyphs()
     out=sys.argv[1]; os.makedirs(out,exist_ok=True)
     for c in CARDS:
         front(c).save('%s/%s_front.png'%(out,c['id'])); back(c).save('%s/%s_back.png'%(out,c['id']))

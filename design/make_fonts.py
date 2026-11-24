@@ -13,9 +13,9 @@ HERE = pathlib.Path(__file__).resolve().parent
 FONTS = HERE / "fonts"
 
 PKGS = {
-    "VT323":             ("@fontsource/vt323", False),
-    "NanumGothicCoding": ("@fontsource/nanum-gothic-coding", True),
-    "GowunBatang":       ("@fontsource/gowun-batang", True),
+    "VT323":             ("@fontsource/vt323", False, [400]),
+    "NanumGothicCoding": ("@fontsource/nanum-gothic-coding", True, [400, 700]),
+    "GowunBatang":       ("@fontsource/gowun-batang", True, [400, 700]),
 }
 
 # 글꼴에 반드시 있어야 하는 글자 — 카드 본문에서 모은 것에 이것을 더한다
@@ -26,23 +26,27 @@ EXTRA = ("0123456789"
          "「」『』※")
 
 
+def source_strings(path):
+    """파이썬 소스 안의 문자열 리터럴을 전부 모은다.
+
+    "증거 식별 코드" 처럼 그리는 코드에 박힌 문구를 놓치지 않으면서, 주석과 식별자는
+    끌어오지 않는다. (주석까지 넣으면 쓰지도 않는 글자가 글꼴에 섞인다.)
+    """
+    import ast
+    tree = ast.parse(pathlib.Path(path).read_text(encoding="utf-8"))
+    return "".join(n.value for n in ast.walk(tree)
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str))
+
+
 def card_chars():
-    """카드가 실제로 찍는 글자 전부."""
+    """카드가 실제로 찍는 글자 전부 — CARDS 의 글 + cards.py 에 박힌 문구."""
     sys.path.insert(0, str(HERE.parent / "cards"))
     import cards
-    buf = []
+    buf = [source_strings(HERE.parent / "cards" / "cards.py"), EXTRA]
     for c in cards.CARDS:
-        for k in ("title", "desc", "hint", "code", "id", "back", "cond", "sort", "where", "body"):
-            v = c.get(k)
+        for v in c.values():
             if isinstance(v, str):
                 buf.append(v)
-    for name, _ in cards.ACT.values():
-        buf.append(name)
-    buf.append(EXTRA)
-    # 카드에 박혀 있는 고정 문구
-    buf += ["특수 카드", "증언", "국과수", "일기장", "형사만 읽는다", "범인만 읽는다",
-            "둘 다 읽는다", "꺼내는 자리", "티비가 꺼내라고 할 때 뒤집는다",
-            "티비가 이 이름을 부르면 뒤집는다", "ENDING", "SPECIAL", "쿠키 살인 사건"]
     return set("".join(buf))
 
 
@@ -56,15 +60,12 @@ def check_coverage(ttf_path, chars):
 
 
 def unpack(pkg, work):
-    """패키지를 받아 풀고, 그 안의 woff2 조각 전부를 돌려준다."""
+    """패키지를 받아 풀고, 조각들이 든 폴더를 돌려준다."""
     subprocess.run(["npm", "pack", pkg], cwd=work, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     tgz = glob.glob(str(work / "*.tgz"))[-1]
     shutil.unpack_archive(tgz, work / "x", format="gztar")
-    files = sorted(glob.glob(str(work / "x" / "package" / "files" / "*-400-normal.woff2")))
-    if not files:
-        raise SystemExit("%s 안에 woff2 가 없다" % pkg)
-    return files
+    return work / "x" / "package" / "files"
 
 
 def pick(files, chars):
@@ -113,20 +114,24 @@ def main():
     print("카드가 쓰는 글자 %d 자" % len(chars))
     bad = 0
 
-    for name, (pkg, do_subset) in PKGS.items():
+    for name, (pkg, do_subset, weights) in PKGS.items():
         with tempfile.TemporaryDirectory() as td:
             work = pathlib.Path(td)
-            files = unpack(pkg, work)
-            keep = pick(files, chars) or files[:1]
-            out = FONTS / ("%s-subset.ttf" % name if do_subset else "%s.ttf" % name)
-            merge_and_subset(keep, chars, out, do_subset)
-            kb = out.stat().st_size / 1024
-            missing = [] if name == "VT323" else check_coverage(out, chars)
-            print("%-24s 조각 %3d개 → %7.0fKB  빠진 글자 %d"
-                  % (out.name, len(keep), kb, len(missing)))
-            if missing:
-                bad += 1
-                print("   →", "".join(missing[:40]))
+            folder = unpack(pkg, work)
+            for wt in weights:
+                files = sorted(glob.glob(str(folder / ("*-%d-normal.woff2" % wt))))
+                if not files:
+                    raise SystemExit("%s 에 %d 굵기가 없다" % (pkg, wt))
+                keep = pick(files, chars) or files[:1]
+                out = FONTS / ("%s-%d%s.ttf" % (name, wt, "-subset" if do_subset else ""))
+                merge_and_subset(keep, chars, out, do_subset)
+                kb = out.stat().st_size / 1024
+                missing = [] if name == "VT323" else check_coverage(out, chars)
+                print("%-30s 조각 %3d개 → %6.0fKB  빠진 글자 %d"
+                      % (out.name, len(keep), kb, len(missing)))
+                if missing:
+                    bad += 1
+                    print("   →", "".join(missing[:40]))
     (FONTS / "chars.txt").write_text("".join(sorted(chars)), encoding="utf-8")
     return 1 if bad else 0
 
