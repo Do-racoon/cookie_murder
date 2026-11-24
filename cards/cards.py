@@ -25,6 +25,10 @@ BG=rgb(_P['paper']); LINE=rgb(_P['rule']); PANEL=rgb(_P['paper-2'])
 WHITE=rgb(_P['ink']); GRAY=rgb(_P['ink-dim']); DIM=rgb(_P['rule'])
 ORA=rgb(_P['bronze']); ORA2=rgb(_P['stamp']); RED=rgb(_P['stamp'])
 KRAFT=rgb(_P['kraft'])
+from papertex import bag, pinked
+def sheet(c, base=None):
+    """봉투 종이 한 장. 카드마다 결이 조금씩 다르다."""
+    return bag((W,H), base or BG, seed=sum(ord(x) for x in c['id']))
 _ACTNAME={'K':'현행범 현장','B':'맥주집','G':'반지하','S':'자수서','E':'엔딩','X':'특수 카드'}
 ACT={k:(_ACTNAME[k], rgb(TK['paperAct'][k])) for k in _ACTNAME}
 
@@ -115,9 +119,9 @@ def para(d,x,y,ls,f,lh,fill):
 def X(v): return int(v*S)
 
 def base(c):
-    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
-    d.rectangle([X(34),X(43),X(174),X(47)],fill=ORA)
+    d.rectangle([X(34),X(43),X(174),X(47)],fill=ACT[c['id'][0]][1])
     act=ACT[c['id'][0]][0]
     d.text((X(40),X(92)),'사건 기록 · '+act,font=F(24),fill=GRAY,anchor='lm')
     d.text((X(588),X(92)),c['id'],font=D(34),fill=ORA2,anchor='rm')
@@ -156,19 +160,20 @@ def front(c):
         hintblock(d,c['hint']); footer(d,'증거 식별 코드',c['code'])
     elif k=='text':
         f,ls,lh=fit(d,c['body'],X(540),X(340),[27,25,24,23,22,21,20],1.55)
-        para(d,X(46),X(256),ls,f,lh,(226,226,222))
+        para(d,X(46),X(256),ls,f,lh,WHITE)
         hintblock(d,c['hint']); footer(d,'증거 식별 코드',c['code'])
     elif k=='choice':
         f,ls,lh=fit(d,c['body'],X(540),X(300),[27,25],1.6)
-        para(d,X(46),X(262),ls,f,lh,(226,226,222))
+        para(d,X(46),X(262),ls,f,lh,WHITE)
         footer(d,c['foot'],c['id'])
     return im
 
 def back_button(c):
     name,col=ACT[c['id'][0]]
-    im=Image.new('RGB',(W,H),KRAFT); d=ImageDraw.Draw(im)
+    im=sheet(c,KRAFT); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(0),X(0),W,X(96)],fill=col)
+    pinked(d,0,W,X(96),X(14),col,X(26))
     d.text((X(48),X(48)),c['id'],font=D(52),fill=rgb(_P['paper']),anchor='lm')
     # 서류철 겉장에 찍힌 도장
     cx,cy,r=X(314),X(430),X(176)
@@ -183,7 +188,7 @@ def back_button(c):
 GOLD=(198,170,110)
 def ending_code_side(c):
     from cookie import draw_cookie
-    im=Image.new('RGB',(W,H),KRAFT); d=ImageDraw.Draw(im)
+    im=sheet(c,KRAFT); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.text((X(48),X(92)),'엔딩',font=M(26),fill=GRAY,anchor='lm')
     draw_cookie(im, c['code'], X(315), X(360), X(300))
@@ -196,7 +201,7 @@ def ending_code_side(c):
     for x in (60,566): d.ellipse([X(x-6),X(820),X(x+6),X(832)],fill=LINE)
     return im
 def back_ending(c):
-    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=RED)
     d.text((X(40),X(92)),'엔딩 · '+c['code'],font=M(22),fill=GRAY,anchor='lm')
@@ -207,7 +212,7 @@ def back_ending(c):
     d.rectangle([X(40),X(838),X(588),X(842)],fill=RED)
     return im
 def special_front(c):
-    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
     d.text((X(40),X(92)),c['sort'],font=M(22),fill=GRAY,anchor='lm')
@@ -231,7 +236,7 @@ def special_front(c):
     d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
     return im
 def back_special(c):
-    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
     d.text((X(40),X(92)),c['sort']+' / '+c['id'],font=M(22),fill=GRAY,anchor='lm')
