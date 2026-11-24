@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import os, sys
+import os, sys, re, json, pathlib
+HERE=pathlib.Path(__file__).resolve().parent
+ROOT=HERE.parent
 
 from PIL import Image, ImageDraw, ImageFont
 S=2; W,H=630*S,880*S
@@ -7,7 +9,7 @@ FD='/usr/share/fonts/opentype/noto/'
 def F(sz,w='Regular'): return ImageFont.truetype(FD+'NotoSansCJK-%s.ttc'%w, int(sz*S), index=1)
 BG=(15,22,28); LINE=(58,70,80); PANEL=(26,36,43); WHITE=(242,238,230); GRAY=(150,162,170); DIM=(110,124,134)
 ORA=(240,160,90); ORA2=(255,187,120); RED=(196,72,72)
-ACT={'K':('현행범 현장',(214,128,74)),'B':('맥주집',(140,170,186)),'G':('반지하',(190,64,72)),'S':('자수서',(190,170,120)),'E':('엔딩',(190,170,120))}
+ACT={'K':('현행범 현장',(214,128,74)),'B':('맥주집',(140,170,186)),'G':('반지하',(190,64,72)),'S':('자수서',(190,170,120)),'E':('엔딩',(190,170,120)),'X':('특수 카드',(150,140,190))}
 
 CARDS=[
  dict(id='K1',code='8ㅎ8ㅎ',title='현관 앞 CCTV',kind='photo',desc='302호 현관. 사건이 일어난 밤.',hint='위를 보라. 이 집을 보고 있던 것이 있다.'),
@@ -43,6 +45,25 @@ CARDS=[
  dict(id='E6',code='사블레',title='에필로그 신문',kind='ending',cond='엔딩 4에서 연다',
       back='달림동 살인 — 쿠키는 없었다\n\n달림동에서 혼자 살던 20대 여성이 숨진 채 발견됐다. 현장에 쿠키는 없었다. 10월도 아니었다. 경찰은 쿠키 살인과 무관한 사건으로 보고 있다.'),
 ]
+VIO=(168,158,205); VIO2=(198,190,230)
+def load_specials():
+    """tv/source.html 의 DEFAULT_DATA 에서 특수 카드와 그 카드를 꺼내는 자리를 읽는다."""
+    src=(ROOT/'tv'/'source.html').read_text(encoding='utf-8')
+    D=json.loads(re.search(r'const DEFAULT_DATA\s*=\s*(\{.*?\n\});',src,re.S).group(1))
+    where={}
+    for cid,c in D['cards'].items():
+        for i,h in enumerate(c.get('hotspots') or []):
+            if h.get('card'): where[h['card']]='%s 「%s」의 %d번 지점'%(cid,c['title'].replace(' ★',''),i+1)
+        if c.get('kind')=='text':
+            for x in D.get('specials') or []:
+                if x['id'] in (c.get('text') or ''): where[x['id']]='%s 「%s」의 본문'%(cid,c['title'])
+    out=[]
+    for x in D.get('specials') or []:
+        out.append(dict(id=x['id'],kind='special',title=x['title'],sort=x['kind'],act=x.get('act',1),
+                        only=x.get('only'),body=x['text'],
+                        where=where.get(x['id'],'티비의 지시를 따른다')))
+    return out
+
 BACKSRC={'K1':9,'K2':10,'K3':11,'K4':12,'K5':13,'K6':14,'B1':15,'B2':16,'B3':17,'B4':23,'B5':24,'G1':25,'G2':26,'G3':27}
 
 def wrap(d,text,font,maxw):
@@ -95,6 +116,7 @@ def hintblock(d,hint):
     para(d,X(40),X(644),ls,f,lh,WHITE)
 
 def front(c):
+    if c['kind']=='special': return special_front(c)
     if c['kind']=='ending': return ending_code_side(c)
     im,d=base(c); k=c['kind']
     if k=='photo':
@@ -157,11 +179,50 @@ def back_ending(c):
     para(d,X(46),X(240),ls,f,lh,(232,230,224))
     d.rectangle([X(40),X(838),X(588),X(842)],fill=RED)
     return im
+def special_front(c):
+    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
+    d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
+    d.text((X(40),X(92)),'SPECIAL / '+c['sort'],font=F(24),fill=(200,206,210),anchor='lm')
+    d.text((X(588),X(92)),c['id'],font=F(27,'Medium'),fill=VIO2,anchor='rm')
+    tf=F(46,'Medium')
+    if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
+    d.text((X(40),X(172)),c['title'],font=tf,fill=WHITE,anchor='lm')
+    d.line([X(40),X(220),X(588),X(220)],fill=LINE,width=X(2))
+    d.rounded_rectangle([X(40),X(262),X(588),X(560)],radius=X(18),fill=PANEL)
+    cx=X(314)
+    d.text((cx,X(330)),'\u25a3',font=F(72),fill=VIO2,anchor='mm')
+    d.text((cx,X(408)),c['sort'],font=F(40,'Medium'),fill=WHITE,anchor='mm')
+    d.text((cx,X(462)),'%d막'%c['act'],font=F(24),fill=GRAY,anchor='mm')
+    who='형사만 읽는다' if c.get('only')=='D' else '범인만 읽는다' if c.get('only')=='C' else '둘 다 읽는다'
+    d.text((cx,X(514)),who,font=F(27,'Medium'),fill=VIO2 if c.get('only') else GRAY,anchor='mm')
+    d.text((X(40),X(606)),'꺼내는 자리',font=F(19,'Medium'),fill=VIO,anchor='lm')
+    d.line([X(170),X(606),X(588),X(606)],fill=(44,56,66),width=X(1))
+    f,ls,lh=fit(d,c['where'],X(548),X(84),[27,25,23,21],1.45)
+    para(d,X(40),X(628),ls,f,lh,WHITE)
+    footer(d,'티비가 꺼내라고 할 때 뒤집는다',c['id'],VIO2)
+    d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
+    return im
+def back_special(c):
+    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
+    d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
+    d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
+    d.text((X(40),X(92)),c['sort']+' / '+c['id'],font=F(24),fill=(200,206,210),anchor='lm')
+    if c.get('only')=='D': d.text((X(588),X(92)),'형사만 읽는다',font=F(24,'Medium'),fill=VIO2,anchor='rm')
+    d.text((X(40),X(160)),c['title'],font=F(38,'Medium'),fill=WHITE,anchor='lm')
+    d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
+    f,ls,lh=fit(d,c['body'],X(540),X(600),[25,24,23,22,21,20,19,18],1.55)
+    para(d,X(46),X(236),ls,f,lh,(232,230,224))
+    d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
+    return im
 def back(c):
     cid=c['id']
-    if cid in BACKSRC: return Image.open('ext/c-%03d.png'%BACKSRC[cid]).convert('RGB').resize((W,H),Image.LANCZOS)
+    if cid in BACKSRC: return Image.open(str(HERE/'ext'/('c-%03d.png'%BACKSRC[cid]))).convert('RGB').resize((W,H),Image.LANCZOS)
+    if c['kind']=='special': return back_special(c)
     if c['kind']=='ending': return back_ending(c)
     return back_button(c)
+
+CARDS=CARDS+load_specials()
 
 if __name__=='__main__':
     out=sys.argv[1]; os.makedirs(out,exist_ok=True)
