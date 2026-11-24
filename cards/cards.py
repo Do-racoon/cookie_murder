@@ -19,11 +19,14 @@ def F(sz,w='Regular'):
 def M(sz,bold=False): return F(sz,'MonoBold' if bold else 'Mono')   # 라벨·코드 — 티비에 치는 글자
 def D(sz):            return F(sz,'Digit')                          # 카드 번호 (라틴·숫자만)
 
-BG=rgb(_C['bg']); LINE=rgb(_C['line']); PANEL=rgb(_C['panel'])
-WHITE=rgb(_C['phos']); GRAY=rgb(_C['phos-dim']); DIM=rgb(_C['line'])
-ORA=rgb(_C['amber']); ORA2=rgb(_C['amber-hi']); RED=rgb(_C['red'])
+# 카드는 종이다 — 빛나는 것은 티비 유리 하나뿐이다
+_P=TK['paperColor']
+BG=rgb(_P['paper']); LINE=rgb(_P['rule']); PANEL=rgb(_P['paper-2'])
+WHITE=rgb(_P['ink']); GRAY=rgb(_P['ink-dim']); DIM=rgb(_P['rule'])
+ORA=rgb(_P['bronze']); ORA2=rgb(_P['stamp']); RED=rgb(_P['stamp'])
+KRAFT=rgb(_P['kraft'])
 _ACTNAME={'K':'현행범 현장','B':'맥주집','G':'반지하','S':'자수서','E':'엔딩','X':'특수 카드'}
-ACT={k:(_ACTNAME[k], rgb(_C[TK['act'][k]])) for k in _ACTNAME}
+ACT={k:(_ACTNAME[k], rgb(TK['paperAct'][k])) for k in _ACTNAME}
 
 CARDS=[
  dict(id='K1',code='8ㅎ8ㅎ',title='현관 앞 CCTV',kind='photo',desc='302호 현관. 사건이 일어난 밤.',hint='위를 보라. 이 집을 보고 있던 것이 있다.'),
@@ -65,7 +68,7 @@ CARDS=[
  dict(id='E9',code='튀일',title='받지 않은 편지',kind='ending',cond='손을 가른다 × S1',
       back='범인이 전부 가져가겠다는데, 형사는 두 건만 적고 나머지는 신원 미상으로 둔다.\n\n범인: "왜 안 받아?"\n\n형사: "내 것이 아니라서."\n\n티비가 꺼진다.'),
 ]
-VIO=rgb(_C['violet']); VIO2=rgb(_C['amber-hi'])
+VIO=rgb(TK['paperAct']['X']); VIO2=rgb(_P['stamp'])
 def load_specials():
     """tv/source.html 의 DEFAULT_DATA 에서 특수 카드와 그 카드를 꺼내는 자리를 읽는다."""
     src=(ROOT/'tv'/'source.html').read_text(encoding='utf-8')
@@ -116,7 +119,7 @@ def base(c):
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=ORA)
     act=ACT[c['id'][0]][0]
-    d.text((X(40),X(92)),'CASE FILE / '+act,font=F(24),fill=(200,206,210),anchor='lm')
+    d.text((X(40),X(92)),'사건 기록 · '+act,font=F(24),fill=GRAY,anchor='lm')
     d.text((X(588),X(92)),c['id'],font=D(34),fill=ORA2,anchor='rm')
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(38,'Medium')
@@ -125,12 +128,15 @@ def base(c):
     return im,d
 def footer(d,label,big,color=ORA2):
     d.line([X(40),X(739),X(588),X(739)],fill=LINE,width=X(2))
-    d.text((X(40),X(770)),label,font=M(21),fill=GRAY,anchor='lm')
-    d.text((X(588),X(790)),big,font=M(54,True),fill=color,anchor='rm')
+    d.text((X(40),X(772)),label,font=M(21),fill=GRAY,anchor='lm')
+    f=M(46,True); w=d.textlength(big,font=f)
+    x2,y1,y2=X(588),X(752),X(820)
+    d.rectangle([x2-w-X(34),y1,x2,y2],outline=color,width=X(3))
+    d.text(((x2-w-X(34)+x2)//2,(y1+y2)//2),big,font=f,fill=color,anchor='mm')
     d.rectangle([X(40),X(838),X(588),X(842)],fill=ORA)
 def hintblock(d,hint):
-    d.text((X(40),X(622)),'HINT',font=M(18,True),fill=ORA,anchor='lm')
-    d.line([X(100),X(622),X(588),X(622)],fill=(44,56,66),width=X(1))
+    d.text((X(40),X(622)),'눈여겨볼 것',font=M(18,True),fill=ORA,anchor='lm')
+    d.line([X(188),X(622),X(588),X(622)],fill=LINE,width=X(1))
     f,ls,lh=fit(d,hint,X(548),X(84),[27,25,23,21],1.45)
     para(d,X(40),X(644),ls,f,lh,WHITE)
 
@@ -143,7 +149,7 @@ def front(c):
         cx,cy=X(314),X(372)
         for r,wd in ((58,2),(37,2),(10,2)): d.ellipse([cx-X(r),cy-X(r),cx+X(r),cy+X(r)],outline=GRAY,width=X(wd))
         d.line([cx-X(118),cy,cx-X(84),cy],fill=GRAY,width=X(2)); d.line([cx+X(84),cy,cx+X(118),cy],fill=GRAY,width=X(2))
-        d.text((cx,X(478)),'PHOTO EVIDENCE',font=F(27),fill=(214,218,220),anchor='mm')
+        d.text((cx,X(478)),'현장 사진',font=F(27),fill=GRAY,anchor='mm')
         f,ls,lh=fit(d,c['desc'],X(500),X(70),[23,21],1.4)
         y=X(526)
         for l in ls: d.text((cx,y),l,font=f,fill=GRAY,anchor='mm'); y+=lh
@@ -160,49 +166,51 @@ def front(c):
 
 def back_button(c):
     name,col=ACT[c['id'][0]]
-    im=Image.new('RGB',(W,H),(26,29,33)); d=ImageDraw.Draw(im)
-    for y in range(0,H,X(4)): d.line([0,y,W,y],fill=(24,27,31),width=1)
-    d.text((X(48),X(92)),c['id'],font=D(56),fill=GRAY,anchor='lm')
-    d.rounded_rectangle([X(76),X(204),X(566),X(676)],radius=X(60),fill=(12,13,15))
-    d.rounded_rectangle([X(62),X(188),X(552),X(660)],radius=X(60),fill=(54,54,54),outline=(128,124,110),width=X(9))
-    d.rounded_rectangle([X(80),X(206),X(534),X(642)],radius=X(46),outline=(92,90,82),width=X(2))
-    d.ellipse([X(108),X(282),X(156),X(330)],fill=col)
-    d.text((X(307),X(408)),name,font=F(52,'Medium'),fill=WHITE,anchor='mm')
-    d.rectangle([X(146),X(552),X(478),X(558)],fill=col)
-    d.line([X(60),X(852),X(570),X(852)],fill=(60,64,68),width=X(2))
-    for x in (60,566): d.ellipse([X(x-6),X(820),X(x+6),X(832)],fill=(110,110,106))
+    im=Image.new('RGB',(W,H),KRAFT); d=ImageDraw.Draw(im)
+    d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
+    d.rectangle([X(0),X(0),W,X(96)],fill=col)
+    d.text((X(48),X(48)),c['id'],font=D(52),fill=rgb(_P['paper']),anchor='lm')
+    # 서류철 겉장에 찍힌 도장
+    cx,cy,r=X(314),X(430),X(176)
+    d.ellipse([cx-r,cy-r,cx+r,cy+r],outline=col,width=X(7))
+    d.ellipse([cx-r+X(16),cy-r+X(16),cx+r-X(16),cy+r-X(16)],outline=col,width=X(2))
+    d.text((cx,cy-X(26)),name,font=F(50,'Medium'),fill=col,anchor='mm')
+    d.line([cx-X(84),cy+X(22),cx+X(84),cy+X(22)],fill=col,width=X(2))
+    d.text((cx,cy+X(62)),'쿠키 살인 사건',font=M(22),fill=col,anchor='mm')
+    d.text((X(314),X(754)),'티비에 코드를 넣어 연다',font=M(22),fill=GRAY,anchor='mm')
+    d.rectangle([X(40),X(838),X(588),X(842)],fill=col)
     return im
 GOLD=(198,170,110)
 def ending_code_side(c):
     from cookie import draw_cookie
-    im=Image.new('RGB',(W,H),(26,29,33)); d=ImageDraw.Draw(im)
-    for y in range(0,H,X(4)): d.line([0,y,W,y],fill=(24,27,31),width=1)
-    d.text((X(48),X(92)),'ENDING',font=F(30),fill=(150,150,146),anchor='lm')
+    im=Image.new('RGB',(W,H),KRAFT); d=ImageDraw.Draw(im)
+    d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
+    d.text((X(48),X(92)),'엔딩',font=M(26),fill=GRAY,anchor='lm')
     draw_cookie(im, c['code'], X(315), X(360), X(300))
     d=ImageDraw.Draw(im)
     fz=60 if len(c['code'])<=4 else (52 if len(c['code'])==5 else 46)
     d.text((X(315),X(600)),c['code'],font=F(fz,'Medium'),fill=WHITE,anchor='mm')
     d.rectangle([X(230),X(648),X(400),X(652)],fill=GOLD)
-    d.text((X(315),X(724)),'티비가 이 이름을 부르면 뒤집는다',font=F(24),fill=(130,130,126),anchor='mm')
+    d.text((X(315),X(724)),'티비가 이 이름을 부르면 뒤집는다',font=F(24),fill=GRAY,anchor='mm')
     d.line([X(60),X(852),X(570),X(852)],fill=(60,64,68),width=X(2))
-    for x in (60,566): d.ellipse([X(x-6),X(820),X(x+6),X(832)],fill=(110,110,106))
+    for x in (60,566): d.ellipse([X(x-6),X(820),X(x+6),X(832)],fill=LINE)
     return im
 def back_ending(c):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=RED)
-    d.text((X(40),X(92)),'ENDING / '+c['code'],font=M(22),fill=GRAY,anchor='lm')
+    d.text((X(40),X(92)),'엔딩 · '+c['code'],font=M(22),fill=GRAY,anchor='lm')
     d.text((X(40),X(160)),c['title'],font=F(40,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
     f,ls,lh=fit(d,c['back'],X(540),X(590),[27,26,25,24,23,22],1.6)
-    para(d,X(46),X(240),ls,f,lh,(232,230,224))
+    para(d,X(46),X(240),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=RED)
     return im
 def special_front(c):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
-    d.text((X(40),X(92)),'SPECIAL / '+c['sort'],font=M(22),fill=GRAY,anchor='lm')
+    d.text((X(40),X(92)),c['sort'],font=M(22),fill=GRAY,anchor='lm')
     d.text((X(588),X(92)),c['id'],font=D(34),fill=VIO2,anchor='rm')
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
@@ -216,7 +224,7 @@ def special_front(c):
     who='형사만 읽는다' if c.get('only')=='D' else '범인만 읽는다' if c.get('only')=='C' else '둘 다 읽는다'
     d.text((cx,X(514)),who,font=F(27,'Medium'),fill=VIO2 if c.get('only') else GRAY,anchor='mm')
     d.text((X(40),X(606)),'꺼내는 자리',font=F(19,'Medium'),fill=VIO,anchor='lm')
-    d.line([X(170),X(606),X(588),X(606)],fill=(44,56,66),width=X(1))
+    d.line([X(170),X(606),X(588),X(606)],fill=LINE,width=X(1))
     f,ls,lh=fit(d,c['where'],X(548),X(84),[27,25,23,21],1.45)
     para(d,X(40),X(628),ls,f,lh,WHITE)
     footer(d,'티비가 꺼내라고 할 때 뒤집는다',c['id'],VIO2)
@@ -231,7 +239,7 @@ def back_special(c):
     d.text((X(40),X(160)),c['title'],font=F(38,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
     f,ls,lh=fit(d,c['body'],X(540),X(600),[25,24,23,22,21,20,19,18],1.55)
-    para(d,X(46),X(236),ls,f,lh,(232,230,224))
+    para(d,X(46),X(236),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
     return im
 def back(c):

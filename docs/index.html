@@ -2,7 +2,8 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>쿠키 살인 사건 문서</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/*TOKENS*/:root{--bg:#0b0908;--panel:#141a14;--raise:#1b211a;--line:#2f3a2e;--phos:#d8f0c8;--phos-dim:#8aa184;--amber:#e7b55a;--amber-hi:#ffd98a;--red:#c2463c;--ochre:#c69a5b;--slate:#8ca6b4;--violet:#a98be0;--wood:#5b3a21;--wood2:#2e1a0e;--bg:#0b0908;--paper:#141a14;--ink:#d8f0c8;--mute:#8aa184;--line:#2f3a2e;--acc:#e7b55a;--acc2:#c69a5b;--soft:#1b211a;--mono:'Nanum Gothic Coding',monospace;--serif:'Gowun Batang',serif}/*/TOKENS*/
+/*TOKENS*/:root{--bg:#0b0908;--panel:#141a14;--raise:#1b211a;--line:#2f3a2e;--phos:#d8f0c8;--phos-dim:#8aa184;--amber:#e7b55a;--amber-hi:#ffd98a;--red:#c2463c;--ochre:#c69a5b;--slate:#8ca6b4;--violet:#a98be0;--wood:#5b3a21;--wood2:#2e1a0e;--paper:#e9e1d0;--paper-2:#dbd1ba;--kraft:#cdbf9f;--ink:#241e18;--ink-dim:#6d6354;--rule:#b7ab93;--stamp:#a8382c;--bronze:#8a5a1f;--bg:#0b0908;--paper:#141a14;--ink:#d8f0c8;--mute:#8aa184;--line:#2f3a2e;--acc:#e7b55a;--acc2:#c69a5b;--soft:#1b211a;--mono:'Nanum Gothic Coding',monospace;--serif:'Gowun Batang',serif}
+.panel{--paper:#e9e1d0;--ink:#241e18;--mute:#6d6354;--line:#b7ab93;--acc:#a8382c;--acc2:#8a5a1f;--soft:#dbd1ba;color:var(--ink)}/*/TOKENS*/
 *{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif),"Apple SD Gothic Neo","Malgun Gothic",serif;line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%}
 header{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
@@ -16,7 +17,7 @@ header::before{content:"";display:block;height:4px;background:linear-gradient(90
 .tabs button[aria-selected=true]{color:var(--acc);border-bottom-color:var(--acc);font-weight:700}
 .tabs button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
 main{max-width:1100px;margin:0 auto;padding:0 16px 80px}
-.panel{display:none;background:var(--paper);padding:24px 16px 48px;margin:16px 0;border:1px solid var(--line);border-top-color:rgba(231,181,90,.28);box-shadow:0 -1px 0 rgba(231,181,90,.10),0 26px 70px rgba(0,0,0,.55)}
+.panel{display:none;background:var(--paper);padding:24px 16px 48px;margin:16px 0;border:0;border-top:3px solid var(--bronze);box-shadow:0 26px 70px rgba(0,0,0,.6)}
 .panel.on{display:block}
 @media(min-width:800px){.panel{padding:36px 48px 64px}}
 .panel.wide{padding:0;border:0;background:none}

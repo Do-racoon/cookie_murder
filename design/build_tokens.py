@@ -29,12 +29,27 @@ def act_rgb(tk, act):
 
 
 def css_block(tk):
-    """토큰 이름과, 문서 모음이 이미 쓰고 있는 옛 이름을 함께 내보낸다."""
-    parts = ["--%s:%s" % (k, v) for k, v in tk["color"].items()]
-    parts += ["--%s:%s" % (old, tk["color"][new]) for old, new in tk.get("docsAlias", {}).items()]
-    parts.append("--mono:'Nanum Gothic Coding',monospace")
-    parts.append("--serif:'Gowun Batang',serif")
-    return ":root{%s}" % ";".join(parts)
+    """바깥은 어두운 방, 읽는 면은 그 위에 놓인 종이.
+
+    :root 는 방(티비 쪽 색), .panel 은 종이 쪽 색으로 같은 이름들을 덮는다.
+    그래서 머리글·탭은 호박색으로 빛나고, 본문은 종이에 먹으로 찍힌다.
+    """
+    root  = ["--%s:%s" % (k, v) for k, v in tk["color"].items()]
+    root += ["--%s:%s" % (k, v) for k, v in tk.get("paperColor", {}).items()]
+    root += ["--%s:%s" % (o, tk["color"][n]) for o, n in tk.get("docsAlias", {}).items()]
+    root.append("--mono:'Nanum Gothic Coding',monospace")
+    root.append("--serif:'Gowun Batang',serif")
+    panel = ["--%s:%s" % (o, tk["paperColor"][n]) for o, n in tk.get("docsPaperAlias", {}).items()]
+    panel.append("color:var(--ink)")
+    return ":root{%s}\n.panel{%s}" % (";".join(root), ";".join(panel))
+
+
+def paper_rgb(tk, name):
+    return rgb(tk["paperColor"][name])
+
+
+def paper_act_rgb(tk, act):
+    return rgb(tk["paperAct"][act])
 
 
 def main():
