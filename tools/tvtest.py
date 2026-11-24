@@ -38,10 +38,33 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 32 다", ver == 32, ver)
+        check("DEFAULT_DATA.version 이 33 다", ver == 33, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
+
+        ends = pg.evaluate("DEFAULT_DATA.endings")
+        check(
+            "엔딩이 아홉 장이고 id 가 E1~E9 다",
+            [e["id"] for e in ends] == ["E%d" % i for i in range(1, 10)],
+            [e["id"] for e in ends],
+        )
+        codes = [e.get("code") for e in ends]
+        check("엔딩 쿠키 이름이 아홉 개 다 다르다", len(set(codes)) == 9, codes)
+
+        keys = pg.evaluate("VQ.map(q=>q.k)")
+        check("판결 질문이 기소·자수서 둘이다", keys == ["charge", "confess"], keys)
+
+        grid = pg.evaluate(
+            """(()=>{const o={};for(const c of ["all","split","her"])
+               for(const f of ["S1","S2","none"])
+                 o[c+"/"+f]=verdictPick({charge:c,confess:f}).join(",");
+               return o;})()"""
+        )
+        check("3×3 아홉 칸이 서로 다른 엔딩 하나씩이다",
+              sorted(grid.values()) == ["E%d" % i for i in range(1, 10)], grid)
+        check("S1×전부묶기는 E1 이다", grid.get("all/S1") == "E1", grid.get("all/S1"))
+        check("못냄×가르기는 E4 다", grid.get("split/none") == "E4", grid.get("split/none"))
 
         # 알림 띠가 본문 첫 줄을 덮지 않는다 — 화면 아래쪽에 있어야 한다
         box = pg.evaluate("""(()=>{ showTick('검사용 알림'); const t=document.getElementById('ticker');
