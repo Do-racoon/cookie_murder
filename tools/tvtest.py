@@ -55,6 +55,35 @@ def main():
             box,
         )
 
+        sp = pg.evaluate("DEFAULT_DATA.specials||[]")
+        check("특수 카드가 여섯 장이다", len(sp) == 6, len(sp))
+        check(
+            "특수 카드 id 가 X1~X6 이다",
+            [x.get("id") for x in sp] == ["X1", "X2", "X3", "X4", "X5", "X6"],
+            [x.get("id") for x in sp],
+        )
+        x1 = next((x for x in sp if x.get("id") == "X1"), {})
+        check("X1 일기장은 형사만 읽는다", x1.get("only") == "D", x1.get("only"))
+        check("특수 카드마다 본문이 있다", all(len(x.get("text") or "") > 40 for x in sp))
+
+        hooked = pg.evaluate(
+            "Object.entries(DEFAULT_DATA.cards).flatMap(([id,c])=>"
+            "(c.hotspots||[]).filter(h=>h.card).map(h=>id+':'+h.card))"
+        )
+        check(
+            "지점 다섯 곳에 카드가 매달려 있다",
+            sorted(hooked) == ["B4:X5", "B5:X4", "K2:X2", "K6:X1", "K6:X3"],
+            sorted(hooked),
+        )
+        check(
+            "G1 본문이 X6 을 꺼내라고 한다",
+            "X6" in (pg.evaluate("DEFAULT_DATA.cards.G1.text") or ""),
+        )
+        check(
+            "G3 에서 비밀 ③ 지시가 빠졌다",
+            "비밀 ③" not in (pg.evaluate("DEFAULT_DATA.cards.G3.text") or ""),
+        )
+
         b.close()
 
     print()

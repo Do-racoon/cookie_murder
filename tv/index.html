@@ -118,6 +118,7 @@ h1,h2,h3{margin:0;text-wrap:balance;font-weight:700}
 .bigview .photo{aspect-ratio:4/3;width:100%;max-height:72vh;flex:0 0 auto;cursor:crosshair;background:#0a110d}
 .photo .cap{position:absolute;left:4%;right:4%;bottom:4%;background:rgba(6,12,8,.86);border:1px solid var(--amber);border-radius:6px;padding:.5em .8em;color:#f6e9c8;font-size:.95em;line-height:1.45;text-shadow:none;z-index:3}
 .photo .cap b{color:var(--amber);margin-right:.4em}
+.photo .cap .take{display:block;margin:.45em 0 0;padding-top:.4em;border-top:1px solid rgba(231,181,90,.35);color:#ffe6a8;letter-spacing:.02em}
 .photo .cap.flash{animation:fl .5s steps(2) 1}
 .photo .ph{position:absolute;inset:0;z-index:0;background:
    linear-gradient(rgba(216,240,200,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(216,240,200,.10) 1px,transparent 1px),
@@ -373,6 +374,13 @@ const DEFAULT_DATA = {
           "y": 36,
           "r": 10,
           "hint": "창가의 인형들 — 곰인형만 없다. 그건 방 안 소파에"
+        },
+        {
+          "x": 88,
+          "y": 46,
+          "r": 7,
+          "card": "X2",
+          "hint": "복도 끝 우편함 — 303호. 그 밤 집에 있었다"
         }
       ]
     },
@@ -458,6 +466,7 @@ const DEFAULT_DATA = {
           "x": 60,
           "y": 80,
           "r": 9,
+          "card": "X3",
           "hint": "바닥의 붉은 끈 — 피의자가 들고 온 것. 이 집 물건이 아니다"
         },
         {
@@ -465,6 +474,13 @@ const DEFAULT_DATA = {
           "y": 35,
           "r": 9,
           "hint": "발코니 창 — 들어온 길. 그런데 현관은 안에서 열려 있었다"
+        },
+        {
+          "x": 93,
+          "y": 52,
+          "r": 6,
+          "card": "X1",
+          "hint": "책상 옆 서랍 — 공책 한 권. 일기장이다"
         }
       ]
     },
@@ -577,6 +593,13 @@ const DEFAULT_DATA = {
           "y": 70,
           "r": 8,
           "hint": "바닥의 발자국 — 265mm, 창에서 책상으로"
+        },
+        {
+          "x": 87,
+          "y": 60,
+          "r": 8,
+          "card": "X5",
+          "hint": "감식관 — 이 사람이 쓴 감정서가 있다"
         }
       ]
     },
@@ -605,6 +628,13 @@ const DEFAULT_DATA = {
           "y": 28,
           "r": 8,
           "hint": "반창고 — 벽에 부딪힌 자국이 아니다"
+        },
+        {
+          "x": 63,
+          "y": 16,
+          "r": 6,
+          "card": "X4",
+          "hint": "웃는 얼굴 — 이 아이는 말이 많다. 물으면 다 말한다"
         }
       ]
     },
@@ -614,7 +644,7 @@ const DEFAULT_DATA = {
       "act": 3,
       "kind": "text",
       "title": "첫 번째 쿠키 살인",
-      "text": "여성, 20대 후반. 2022년 10월, 달림동 반지하. 손목·발목에 결박 자국, 목에 넓은 압흔 — 벨트. 침입 흔적 없음, 현관은 열려 있었다. 책상에 반으로 쪼갠 쿠키의 반쪽 — 피가 묻지 않았다. 가게 점장을 의심했으나 미제. 처음으로 \"쿠키 살인\"이라 불린 사건. 사망 추정은 새벽 4시 — 그날 아침, 한 경찰 가족의 발인이 있었다. ▶ 형사: 비밀 ②를 읽는다 ▶ 범인: 기억 ③을 읽는다"
+      "text": "여성, 20대 후반. 2022년 10월, 달림동 반지하. 손목·발목에 결박 자국, 목에 넓은 압흔 — 벨트. 침입 흔적 없음, 현관은 열려 있었다. 책상에 반으로 쪼갠 쿠키의 반쪽 — 피가 묻지 않았다. 가게 점장을 의심했으나 미제. 처음으로 \"쿠키 살인\"이라 불린 사건. 사망 추정은 새벽 4시 — 그날 아침, 한 경찰 가족의 발인이 있었다. ▶ 형사: 비밀 ②를 읽는다 ▶ 범인: 기억 ③을 읽는다 ▣ 국과수 감정서 카드 X6을 꺼낸다"
     },
     "G2": {
       "code": "2ㄱ0ㅇ",
@@ -630,7 +660,7 @@ const DEFAULT_DATA = {
       "act": 3,
       "kind": "text",
       "title": "그 뒤의 두 건",
-      "text": "2023년 10월, 2024년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2025년 10월 맥주집이 네 번째로 기록됐고, 다음은 2026년 10월로 예상했다. ▶ 형사: 비밀 ③을 읽는다"
+      "text": "2023년 10월, 2024년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2025년 10월 맥주집이 네 번째로 기록됐고, 다음은 2026년 10월로 예상했다."
     }
   },
   "memory": [
@@ -796,6 +826,14 @@ const DEFAULT_DATA = {
     { "id": "E5", "code": "비스코티", "title": "맛이 없게 생겼군" },
     { "id": "E6", "code": "사블레", "title": "에필로그 신문" }
   ],
+  "specials": [
+    {"id": "X1", "kind": "일기장", "act": 1, "only": "D", "title": "그녀의 일기장", "text": "그 밤 이후, 동생 집 서랍에서 찾았다. 아무에게도 보여 주지 않았다. 마지막 장에 이렇게 적혀 있다.\n\n『피가 좋다. 빨간 게 좋다. 사람들은 웃고 울고 화를 내는데, 나는 그게 뭔지 모르겠다. 그래서 마셔 본다. 쿠키에 찍어서, 천천히. 마시고 나면 그 사람을 조금 알 것 같다. 겁먹은 사람은 쇠맛이 나고, 화난 사람은 뜨겁다.』\n\n이것을 말할지는 당신이 정한다. 범인이 「그녀는 왜 쿠키를 먹을까」의 답을 알아내면, 당신은 동생을 지키지 못한 것이다."},
+    {"id": "X2", "kind": "증언", "act": 1, "title": "옆집 303호의 진술", "text": "303호. 혼자 산다. 그 밤 집에 있었다.\n\n『열한 시쯤에 둘이 올라오는 소리를 들었어요. 말소리는 없었고요. 다투는 소리요? 그런 건 없었어요. 조용했어요, 계속.\n\n그러다 짧게 한 번. 비명이라기보단… 숨 막히는 소리요.\n\n제가 112에 걸려고 폰을 찾는데, 그 전에 벌써 계단에 발소리가 났어요. 경찰이요. 5분도 안 됐을 거예요. 그게 좀 이상하죠. 파출소에서 와도 그것보단 걸리는데.』"},
+    {"id": "X3", "kind": "국과수", "act": 1, "title": "감정서 — 2026년 1월, 302호", "text": "피해자: 여성, 20대 후반. 생존. 의식 없음.\n\n목 — 폭 2.5cm 압흔 한 줄. 현장의 붉은 가방 끈과 너비·직조가 일치.\n\n끈 — 피해자의 혈흔. 그리고 더 오래된 다른 사람의 혈흔. 오래된 쪽은 양이 적어 감정 불가.\n\n손 — 손톱 밑에서 타인의 조직 나오지 않음. 팔·손등에 방어흔 없음.\n\n현관 — 잠금 장치 손상 없음. 안쪽에서 열렸다.\n\n피의자 소지품 — 밀봉된 쿠키 봉지. 안에 쿠키 두 개. 피 묻지 않음.\n\n소견: 피해자는 저항하지 않았다."},
+    {"id": "X4", "kind": "증언", "act": 2, "title": "오락실에서 만난 아이의 진술", "text": "이름은 말하지 않았다. 묻는 대로 다 말한다.\n\n『서연 언니요? 알죠. 자주 왔어요.\n\n언니 말고 같이 오던 사람이 있었어요. 목에 까만 거 두른 사람. 이름은 안 가르쳐 줬어요.\n\n그 사람 눈이 이상해요. 웃는데 눈은 안 웃어요. 눈 안에 달 같은 게 들어 있어요.\n\n그 밤에도 왔어요. 새벽 한 시 넘어서. 혼자였고, 금방 갔어요. 서연 언니는 안 왔고요.』"},
+    {"id": "X5", "kind": "국과수", "act": 2, "title": "감정서 — 2025년 10월, 맥주집", "text": "피해자: 여성, 20대 초반.\n\n머리 — 뒤통수에 함몰. 이것이 먼저다. 이마의 상처는 쓰러지며 생긴 것.\n\n목 — 압흔 있음. 다만 사인은 두부 손상.\n\n바닥 — 265mm 운동화 자국. 창에서 책상 쪽으로, 그다음 침대 쪽으로.\n\n침입 — 창. 잠겨 있지 않았다.\n\n쿠키 — 두 조각 모두 피에 적셔 책상에 나란히 놓였다. 피는 피해자의 것.\n\n소견: 들어와서, 뒤에서, 서툴게."},
+    {"id": "X6", "kind": "국과수", "act": 3, "title": "감정서 — 2022년 10월, 반지하", "text": "피해자: 여성, 20대 후반.\n\n목 — 폭 4cm 의 넓은 압흔. 벨트. 손목·발목에 결박 자국. 결박이 먼저, 목이 나중.\n\n손 — 방어흔 없음. 손톱 밑 깨끗.\n\n침입 — 흔적 없음. 현관은 안에서 열려 있었다.\n\n찻잔 — 두 개. 두 번째 잔의 입술 자국이 작다. 잔은 씻겨 있었다. 지문도, 타액도 나오지 않았다.\n\n쿠키 — 반으로 쪼갠 반쪽이 책상에. 피 묻지 않음. 나머지 반쪽은 현장에 없다. 쪼갠 단면에 미량의 혈흔 — 피해자의 것.\n\n소견: 피해자는 범인을 집에 들였다. 감정할 것이 남지 않아 미제로 종결."}
+  ],
   "shared": true
 };
 const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{n:3,name:"문구",key:"special"},{n:4,name:"기억",key:"memory"}];
@@ -890,7 +928,9 @@ function clickPhoto(ev, id){
   if(ev.target.closest(".cap")){ capIdx=null; lastFound=null; render(); return; }
   let hit=-1; (c.hotspots||[]).forEach((h,i)=>{ if(Math.hypot(x-h.x,y-h.y)<=(h.r||8)) hit=i; });
   if(hit>=0){ const key=id+"#"+hit; lastFound={id,i:hit};
-    if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key); log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다.", who, "good"); }
+    if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key);
+      const sp=specialOf((c.hotspots[hit]||{}).card);
+      log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다."+(sp?" \u25a3 "+sp.kind+" 카드 "+sp.id+eulReul(sp.id)+" 꺼낸다.":""), who, "good"); }
     else { if(capIdx===hit){ capIdx=null; lastFound=null; } else capIdx=hit; render(); } }
   else { S.misses[who].push({id,x:+x.toFixed(1),y:+y.toFixed(1)}); lastFound=null; capIdx=null; log("사진 "+id+"의 한 지점을 눌렀다 — 아무것도 없었다.", who, "bad"); }
 }
@@ -993,6 +1033,11 @@ function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서�
   else { keyMode="code"; i.classList.remove("word"); i.placeholder="코드 4글자"; b.textContent="입력"; $("kmode").textContent="카드 코드를 넣는다"; }
   i.disabled=false; b.disabled=false;
 }
+function specialOf(id){ return (D.specials||[]).find(x=>x.id===id); }
+function eulReul(w){ return /[013678]$/.test(w)?"을":"를"; }
+function capText(h){ if(!h) return ""; let t=esc(h.hint); const sp=h.card&&specialOf(h.card);
+  if(sp) t+=`<b class="take">\u25a3 ${esc(sp.kind)} 카드 ${esc(sp.id)}${eulReul(sp.id)} 꺼낸다${sp.only==="D"?" — 형사만 읽는다":sp.only==="C"?" — 범인만 읽는다":""}</b>`;
+  return t; }
 function spotsHtml(c, id, who, all){ return (c.hotspots||[]).map((h,i)=> (all||S.found[who].includes(id+"#"+i)) ? `<div class="spot ${all?'':'found'}" style="left:${h.x}%;top:${h.y}%;--d:${(h.r||8)*2}%"><i></i><b>${i+1}</b></div>` : "").join(""); }
 function photoHtml(c, id, extra){ return `<div class="photo" ${extra||""}>${c.img?`<img src="${esc(c.img)}" alt="${esc(c.title||id)}">`:`<div class="ph">${id}<small>사진 자리 — 제작자 모드에서 올린다</small></div>`}`; }
 let capIdx=null; /* 사진 위에 열어 둔 설명(지점 번호) */
@@ -1004,7 +1049,7 @@ function renderPhoto(w){
   const tabs=ids.length>1? `<div class="row" style="flex:0 0 auto;gap:4px">${ids.map(id=>`<button data-view="${id}" class="${id===viewCard?'primary':''}" style="padding:2px 7px;font-size:.8em;flex:0 0 auto">${id}</button>`).join("")}</div>`:"";
   const misses=S.misses[w].filter(m=>m.id===viewCard).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
   if(lastFound&&lastFound.id===viewCard&&capIdx===null) capIdx=lastFound.i;
-  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(viewCard+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${esc(h.hint)}</div>`:"";
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(viewCard+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h)}</div>`:"";
   return `${tabs}<div class="photo fill" data-id="${viewCard}">${c.img?`<img src="${esc(c.img)}" alt="${esc(c.title||viewCard)}">`:`<div class="ph">${viewCard}<small>사진 자리 — 제작자 모드에서 올린다</small></div>`}<div class="layer">${spotsHtml(c,viewCard,w,false)}${misses}${cap}</div>
     <div class="plabel"><span>${esc(c.title||viewCard)} · ${viewCard}</span><span>지점 ${foundN}/${(c.hotspots||[]).length}</span></div><button class="pbig" data-big="${viewCard}" title="크게 보기">⤢</button></div>`;
 }
@@ -1014,7 +1059,7 @@ function renderBig(sheet){ /* 큰 화면 보기 — 같은 지점·설명 규칙
   const s=sheet||$("sheet"); const w=me(); const id=bigId; const c=D.cards[id]; if(!c) return;
   const foundN=S.found[w].filter(k=>k.startsWith(id+"#")).length;
   const misses=S.misses[w].filter(m=>m.id===id).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
-  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(id+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${esc(h.hint)}</div>`:"";
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(id+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h)}</div>`:"";
   s.innerHTML=`<div class="bigview"><div class="row" style="align-items:center"><h3 style="flex:1">${esc(c.title||id)} <span class="pill">${id}</span> <span class="pill">지점 ${foundN}/${(c.hotspots||[]).length}</span></h3><button id="bigClose" style="flex:0 0 auto">닫기</button></div>
     <div class="photo" data-id="${id}">${c.img?`<img src="${esc(c.img)}" alt="">`:`<div class="ph">${id}<small>사진 없음</small></div>`}<div class="layer">${spotsHtml(c,id,w,false)}${misses}${cap}</div></div>
     <div class="hint">의심스러운 곳을 누른다. 번호가 붙은 지점을 다시 누르면 설명이 뜬다. 소모 없음.</div></div>`;
