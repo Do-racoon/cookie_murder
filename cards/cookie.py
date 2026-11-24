@@ -40,8 +40,24 @@ def m_sable(d,box):    # 사블레 — 가장자리가 물결진 동그란 쿠�
     def f(t): r=box*0.405*(1+0.055*math.sin(16*t)); return r*math.cos(t), r*math.sin(t)
     _poly_param(d,box,f,480)
 
+def m_langue(d,box):   # 랑그드샤 — 길고 납작한 타원
+    d.ellipse([box*0.055,box*0.335,box*0.945,box*0.665],fill=255)
+def m_macaron(d,box):  # 마카롱 — 껍질 둘 사이에 크림
+    d.ellipse([box*0.095,box*0.175,box*0.905,box*0.525],fill=255)
+    d.rounded_rectangle([box*0.135,box*0.445,box*0.865,box*0.585],radius=box*0.035,fill=255)
+    d.ellipse([box*0.095,box*0.495,box*0.905,box*0.845],fill=255)
+def m_tuile(d,box):    # 튀일 — 기와처럼 휜 조각
+    cx,cy=box*0.5,box*0.80; Ro,Ri=box*0.52,box*0.33
+    pts=[]
+    for i in range(61):
+        t=math.radians(210+i*2.0); pts.append((cx+Ro*math.cos(t),cy+Ro*math.sin(t)))
+    for i in range(61):
+        t=math.radians(330-i*2.0); pts.append((cx+Ri*math.cos(t),cy+Ri*math.sin(t)))
+    d.polygon(pts,fill=255)
+
 SHAPES={"페이스트리":m_pastry,"쇼트브레드":m_short,"진저브레드":m_ginger,
-        "머랭":m_meringue,"비스코티":m_biscotti,"사블레":m_sable}
+        "머랭":m_meringue,"비스코티":m_biscotti,"사블레":m_sable,
+        "랑그드샤":m_langue,"마카롱":m_macaron,"튀일":m_tuile}
 
 def details(d,box,ox,oy,name):
     X=lambda v:(v+0 ,)
@@ -69,6 +85,17 @@ def details(d,box,ox,oy,name):
         for dx,dy in ((-0.24,-0.02),(-0.05,0.04),(0.16,-0.03),(0.28,0.05)):
             x=c+box*dx; y=oy+box/2+box*dy
             d.ellipse([x-box*0.045,y-box*0.028,x+box*0.045,y+box*0.028],fill=DET)
+    elif name=="랑그드샤":
+        d.ellipse([c-box*0.34,oy+box*0.385,c+box*0.34,oy+box*0.615],outline=DET,width=int(box*0.014))
+    elif name=="마카롱":
+        d.line([(c-box*0.355,oy+box*0.515),(c+box*0.355,oy+box*0.515)],fill=DET,width=int(box*0.016))
+        for k in (-2,-1,0,1,2):
+            x=c+k*box*0.145
+            d.line([(x,oy+box*0.455),(x,oy+box*0.575)],fill=DET,width=int(box*0.012))
+    elif name=="튀일":
+        for k in (-1,0,1):
+            t=math.radians(270+k*26); x=c+box*0.42*math.cos(t); y=oy+box*0.80+box*0.42*math.sin(t)
+            d.ellipse([x-box*0.055,y-box*0.028,x+box*0.055,y+box*0.028],fill=DET)
     elif name=="사블레":
         for a in range(6):
             t=a/6*2*math.pi+0.4; x=c+math.cos(t)*box*0.17; y=oy+box/2+math.sin(t)*box*0.17
