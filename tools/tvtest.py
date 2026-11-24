@@ -78,6 +78,21 @@ def main():
             box,
         )
 
+        # 티비의 색과 design/tokens.json 이 어긋나지 않는다
+        import json as _json
+        tk = _json.loads((ROOT / "design" / "tokens.json").read_text(encoding="utf-8"))
+        css = pg.evaluate(
+            "(()=>{const s=getComputedStyle(document.documentElement);const o={};"
+            "for(const v of %s) o[v]=s.getPropertyValue(v).trim(); return o;})()"
+            % _json.dumps(list(tk["fromTv"].values()))
+        )
+        drift = {
+            name: (tk["color"][name], css.get(var))
+            for name, var in tk["fromTv"].items()
+            if css.get(var, "").lower() != tk["color"][name].lower()
+        }
+        check("tokens.json 의 색이 티비와 같다", not drift, drift)
+
         sp = pg.evaluate("DEFAULT_DATA.specials||[]")
         check("특수 카드가 여섯 장이다", len(sp) == 6, len(sp))
         check(
