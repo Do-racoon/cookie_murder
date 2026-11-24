@@ -87,7 +87,7 @@ h1,h2,h3{margin:0;text-wrap:balance;font-weight:700}
 .osd .rec::before{content:"\25cf  ";animation:blink 1.2s steps(1) infinite}
 @keyframes blink{50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.osd .rec::before{animation:none}}
-.ticker{position:absolute;left:3cqw;right:3cqw;z-index:4;pointer-events:none;font-size:.95em;box-shadow:0 4px 14px rgba(0,0,0,.5);color:#f6dc9c;background:rgba(231,181,90,.14);border:1px solid rgba(231,181,90,.6);border-radius:6px;padding:.5em .8em;line-height:1.4;text-shadow:none}
+.ticker{position:absolute;left:3cqw;right:3cqw;bottom:3cqw;z-index:4;pointer-events:none;font-size:.95em;box-shadow:0 4px 14px rgba(0,0,0,.5);color:#f6dc9c;background:rgba(231,181,90,.14);border:1px solid rgba(231,181,90,.6);border-radius:6px;padding:.5em .8em;line-height:1.4;text-shadow:none}
 .ticker.bad{color:#ffb3aa;background:rgba(194,70,60,.16);border-color:rgba(239,154,144,.7)}
 .ticker.good{color:#c8f5c0;background:rgba(184,240,176,.12);border-color:rgba(184,240,176,.6)}
 /* 알림은 불투명 — 아래 글자와 겹쳐 읽히지 않게 */
@@ -316,7 +316,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 31,
+  "version": 32,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -790,7 +790,7 @@ const DEFAULT_DATA = {
   ],
   "endings": [
     { "id": "E1", "code": "페이스트리", "title": "쿠키는 두 개" },
-    { "id": "E2", "code": "졼트브레드", "title": "하나만 했다" },
+    { "id": "E2", "code": "쇼트브레드", "title": "하나만 했다" },
     { "id": "E3", "code": "진저브레드", "title": "문을 닫는다" },
     { "id": "E4", "code": "머랭", "title": "다른 패턴" },
     { "id": "E5", "code": "비스코티", "title": "맛이 없게 생겼군" },
@@ -856,7 +856,7 @@ function showTick(text,kind){ tick={text,kind:kind||"",at:Date.now()}; clearTime
 function kres(text,kind){ /* 입력창 바로 아래에 결과를 남긴다 — 다음 입력까지 유지 */
   const m=$("kmsg"), i=$("keyIn"); if(!m) return; m.hidden=false; m.className="kmsg "+(kind==="bad"?"no":kind==="good"||kind==="sys"?"ok":""); m.textContent=text;
   if(i){ i.classList.remove("ok","no"); void i.offsetWidth; i.classList.add(kind==="bad"?"no":"ok"); setTimeout(()=>i.classList.remove("ok","no"),900); } }
-function paintTick(){ const t=$("ticker"); if(!t) return; const o=document.querySelector(".osd"); if(o) t.style.top=(o.offsetTop+o.offsetHeight+4)+"px"; if(tick.text&&Date.now()-tick.at<9000){ t.hidden=false; t.className="ticker "+(tick.kind==="bad"?"bad":tick.kind==="good"?"good":""); t.textContent=tick.text; } else t.hidden=true; }
+function paintTick(){ const t=$("ticker"); if(!t) return; if(tick.text&&Date.now()-tick.at<9000){ t.hidden=false; t.className="ticker "+(tick.kind==="bad"?"bad":tick.kind==="good"?"good":""); t.textContent=tick.text; } else t.hidden=true; }
 function log(text, who, kind){ S.log.unshift({t:stamp(), text, who:who||"sys", kind:kind||""}); if(S.log.length>200) S.log.length=200; showTick((who==="sys"?"":roleName(who)+": ")+text, kind); if(who===me()||who==="sys") kres(text, kind||"info"); saveState(); zap(); render(); }
 function toast(t){ showTick(t,"bad"); kres(t,"bad"); }
 function zap(){ const s=$("screen"); s.classList.remove("zap"); void s.offsetWidth; s.classList.add("zap"); }

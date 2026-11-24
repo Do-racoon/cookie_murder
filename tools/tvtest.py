@@ -38,7 +38,22 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 31 이상이다", isinstance(ver, int) and ver >= 31, ver)
+        check("DEFAULT_DATA.version 이 32 다", ver == 32, ver)
+
+        e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
+        check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
+
+        # 알림 띠가 본문 첫 줄을 덮지 않는다 — 화면 아래쪽에 있어야 한다
+        box = pg.evaluate("""(()=>{ showTick('검사용 알림'); const t=document.getElementById('ticker');
+            const sc=document.querySelector('.screen'); const b=document.getElementById('body');
+            const r=t.getBoundingClientRect(), s=sc.getBoundingClientRect(), bb=b.getBoundingClientRect();
+            return {hidden:t.hidden, tickTop:r.top, bodyTop:bb.top, scrTop:s.top, scrH:s.height}; })()""")
+        check("알림 띠가 보인다", box["hidden"] is False, box)
+        check(
+            "알림 띠가 화면 아래쪽에 있다",
+            box["tickTop"] > box["scrTop"] + box["scrH"] * 0.6,
+            box,
+        )
 
         b.close()
 
