@@ -9,29 +9,51 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 OUT=str(HERE)+'/'; R=str(HERE)+'/png/'
-ids=[c['id'] for c in CARDS]
-# ---- PDF: A4, 3x3, 앞면 쪽 다음에 좌우를 뒤집은 뒷면 쪽 (긴 변 양면 인쇄)
-cw,ch,gap=63*mm,88*mm,3*mm
-mx=(A4[0]-3*cw-2*gap)/2; my=(A4[1]-3*ch-2*gap)/2
-pdf=canvas.Canvas(OUT+'쿠키살인사건_%d장_양면인쇄_63x88mm.pdf'%len(ids),pagesize=A4)
-pdf.setTitle('Cookie Murder Case - %d cards duplex 63x88mm'%len(ids))
-sheets=[ids[i:i+9] for i in range(0,len(ids),9)]
-for si,sh in enumerate(sheets):
-    for side in ('front','back'):
-        for n,cid in enumerate(sh):
-            r,c=divmod(n,3)
-            if side=='back': c=2-c
-            x=mx+c*(cw+gap); y=A4[1]-my-(r+1)*ch-r*gap
-            im=Image.open(R+'%s_%s.png'%(cid,side)).convert('RGB'); b=io.BytesIO(); im.save(b,'JPEG',quality=93); b.seek(0)
-            from reportlab.lib.utils import ImageReader
-            pdf.drawImage(ImageReader(b),x,y,cw,ch)
-            pdf.setStrokeGray(0.6); pdf.setLineWidth(0.3)
-            for (px,py) in ((x,y),(x+cw,y),(x,y+ch),(x+cw,y+ch)):
-                pass
-        pdf.setFont('Helvetica',7); pdf.setFillGray(0.35)
-        pdf.drawString(mx,my-10,'Sheet %d / %d - %s - actual size 63 x 88 mm - print at 100%%'%(si+1,len(sheets),'FRONT' if side=='front' else 'BACK mirrored for long-edge duplex'))
-        pdf.showPage()
+# 증언·감정서는 서류다 — 63x88 에 넣으면 글자가 7pt 아래로 떨어진다. A6 쪽에 따로 앉힌다.
+BIG = [c['id'] for c in CARDS if c['kind'] == 'special']
+SMALL = [c['id'] for c in CARDS if c['kind'] != 'special']
+ids = SMALL + BIG
+
+from reportlab.lib.utils import ImageReader
+
+
+def place(pdf, cid, side, x, y, w, h):
+    im = Image.open(R + '%s_%s.png' % (cid, side)).convert('RGB')
+    b = io.BytesIO(); im.save(b, 'JPEG', quality=93); b.seek(0)
+    pdf.drawImage(ImageReader(b), x, y, w, h)
+
+
+def lay(pdf, group, cw, ch, cols, rows, label):
+    """앞면 쪽 다음에 좌우를 뒤집은 뒷면 쪽 — 긴 변 양면 인쇄용."""
+    gap = 3 * mm
+    mx = (A4[0] - cols * cw - (cols - 1) * gap) / 2
+    my = (A4[1] - rows * ch - (rows - 1) * gap) / 2
+    per = cols * rows
+    sheets = [group[i:i + per] for i in range(0, len(group), per)]
+    for si, sh in enumerate(sheets):
+        for side in ('front', 'back'):
+            for n, cid in enumerate(sh):
+                r, c = divmod(n, cols)
+                if side == 'back':
+                    c = cols - 1 - c
+                place(pdf, cid, side,
+                      mx + c * (cw + gap), A4[1] - my - (r + 1) * ch - r * gap, cw, ch)
+            pdf.setFont('Helvetica', 7); pdf.setFillGray(0.35)
+            pdf.drawString(mx, max(my - 10, 8),
+                           '%s  sheet %d/%d - actual size %.0f x %.0f mm - print at 100%%  - %s'
+                           % (label, si + 1, len(sheets), cw / mm, ch / mm,
+                              'FRONT' if side == 'front' else 'BACK mirrored for long-edge duplex'))
+            pdf.showPage()
+
+
+pdf = canvas.Canvas(OUT + '쿠키살인사건_%d장_양면인쇄.pdf' % len(ids), pagesize=A4)
+pdf.setTitle('Cookie Murder Case - %d cards duplex (63x88 + A6)' % len(ids))
+lay(pdf, SMALL, 63 * mm, 88 * mm, 3, 3, '63x88')
+# A6 칸(105x148)에 63:88 비를 그대로 지켜 앉힌다 — 디자인을 다시 짤 필요가 없다
+lay(pdf, BIG, 105 * mm, 105 * 88 / 63 * mm, 2, 2, 'A6')
 pdf.save()
+print('PDF — 작은 카드 %d장 + A6 %d장' % (len(SMALL), len(BIG)))
+
 # ---- 앞뒤 전체 비교 PNG
 F=lambda s:ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',s,index=1)
 tw,th=252,352; cols=2; rows=(len(ids)+1)//2
