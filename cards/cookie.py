@@ -1,7 +1,28 @@
 # -*- coding: utf-8 -*-
-import math
+import json, math, os
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
 FILL=(122,99,64); EDGE=(214,186,132); DET=(74,60,38)
+def _tk():   # 일러스트 먹색은 design/tokens.json 의 paperColor.art
+    import sys; sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','design'))
+    from build_tokens import load_tokens, rgb
+    return rgb(load_tokens()['paperColor']['art'])
+ART_FILL=_tk()
+
+# 받아 온 과자 일러스트. 0..1 좌표의 닫힌 다각형 목록, 구멍은 evenodd.
+# 원본 SVG → tools/svg2cookie.py 가 적는다.
+_AP=os.path.join(os.path.dirname(os.path.abspath(__file__)),'art','cookies.json')
+ART=json.load(open(_AP,encoding='utf-8')) if os.path.exists(_AP) else {}
+
+def art_mask(name, box, ss=4):
+    """일러스트를 box 크기의 마스크로. 겹친 다각형은 XOR 해서 구멍을 뚫는다."""
+    a=ART[name]; n=max(8,int(box*ss))
+    ox,oy=(n-a['w']*n)/2,(n-a['h']*n)/2
+    m=Image.new('L',(n,n),0)
+    for sub in a['paths']:
+        lay=Image.new('L',(n,n),0)
+        ImageDraw.Draw(lay).polygon([(ox+x*n,oy+y*n) for x,y in sub],fill=255)
+        m=ImageChops.difference(m,lay)          # 0/255 두 값이니 차 = XOR
+    return m.resize((int(box),int(box)),Image.LANCZOS)
 
 def _poly_param(d,box,fn,n=360):
     pts=[]
@@ -117,6 +138,10 @@ def details(d,box,ox,oy,name):
 
 def draw_cookie(im, name, cx, cy, box):
     """카드 이미지 위 (cx,cy)를 중심으로 box 크기의 쿠키를 그린다."""
+    if name in ART:
+        m=art_mask(name,box)
+        im.paste(ART_FILL,(int(cx-box/2),int(cy-box/2)),m)
+        return
     fn=SHAPES.get(name)
     if not fn: return
     m=Image.new('L',(box,box),0); md=ImageDraw.Draw(m); fn(md,box)
