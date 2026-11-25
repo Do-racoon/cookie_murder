@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 37 다", ver == 37, ver)
+        check("DEFAULT_DATA.version 이 38 다", ver == 38, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -202,6 +202,53 @@ def main():
         check("한 번 누른 뒤 새로고침하면 대기가 풀린다 — 한 번 더 눌러도 판결로 가지 않는다",
               g.get("armReload") == [False, 3, 3], g.get("armReload"))
         check("1막 화면은 여전히 두 질문을 모두 맞혀야 한다고 한다", "두 질문을 모두 맞혀야" in (g.get("act1hint") or ""))
+
+        # ── 서랍 문 · 비비기 멘트 · 히든 엔딩 순서 · 잠금 안내 (2026-11-25 오후) ──
+        def tap(card, x, y):
+            pg.evaluate(f"(()=>{{viewCard='{card}'; ch=2; render();}})()")
+            box = pg.evaluate("(()=>{const L=document.querySelector('.photo .layer')||document.querySelector('.photo'); const r=L.getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
+            pg.mouse.click(box[0] + box[2] * x / 100, box[1] + box[3] * y / 100)
+            pg.wait_for_timeout(50)
+        def fresh1():
+            pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K3"); enterCode("K6"); S.found.D.push("K6#0"); })()""")
+        last = lambda: pg.evaluate("S.log[0].text")
+        fresh1()
+        pg.evaluate("""(()=>{ setChannel(4); answerMemory("3년"); answerMemory("그녀"); })()""")
+        g1 = [pg.evaluate("S.act.D"), last()]
+        check("질문 둘을 맞혀도 서랍 전이면 1막 그대로, 문 안내", g1[0] == 1 and "열지 않은 곳" in g1[1], g1)
+        t = pg.evaluate("""(()=>{ let T=""; const o=toast; toast=x=>{T=x;}; setChannel(4); answerMemory("아무거나"); toast=o; return T; })()""")
+        check("서랍 전에 답을 넣으면 문 안내 토스트", "열지 않은 곳" in t, t)
+        tap("K6", 93, 52)
+        logs = pg.evaluate("S.log.slice(0,3).map(l=>l.text).join(' | ')")
+        check("서랍을 열면 그 자리에서 2막, 비비기 멘트", pg.evaluate("S.act.D") == 2 and "2막으로" in logs and "비벼서 봐라" in logs, logs)
+        fresh1(); tap("K6", 93, 52)
+        pg.evaluate("""(()=>{ setChannel(4); answerMemory("3년"); answerMemory("그녀"); })()""")
+        logs = pg.evaluate("S.log.map(l=>l.text).join(' | ')")
+        check("서랍을 먼저 열면 질문 둘로 바로 2막", pg.evaluate("S.act.D") == 2 and "열지 않은 곳" not in logs, logs[:200])
+        fresh1()
+        pg.evaluate("""(()=>{ S.found.C.push("K6#3"); setChannel(4); answerMemory("3년"); answerMemory("그녀"); })()""")
+        check("범인 시점으로 서랍을 눌러도 문이 열린다", pg.evaluate("S.act.D") == 2)
+        fresh1()
+        pg.evaluate("""(()=>{ setChannel(4); answerMemory("3년"); answerMemory("그녀"); const j=JSON.parse(JSON.stringify(S)); S=migrateState(j); })()""")
+        tap("K6", 93, 52)
+        check("옛 판: 질문 둘만 맞힌 저장값에서 서랍을 누르면 2막", pg.evaluate("S.act.D") == 2)
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=2; S.memDone.D=[1]; enterCode("B3"); enterCode("B5");
+              S.found.D.push("B3#0"); setChannel(4); answerMemory("어머니"); answerMemory("진짜 범인"); const a=S.log[0].text;
+              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); setChannel(4); answerMemory("다리"); const b=S.log[0].text;
+              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("G2"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+              setVerdict("charge","all"); setVerdict("confess","S1"); const c=S.log[0].text; setChannel(4); const d=document.getElementById('body').innerText;
+              return {a,b,c,d}; })()""")
+        check("2→3 전환에도 비비기 멘트", "3막으로" in r["a"] and "비벼서 봐라" in r["a"], r["a"])
+        check("3→판결에는 비비기 멘트 없음", "판결" in r["b"] and "비벼서" not in r["b"], r["b"])
+        c = r["c"]
+        check("둘 다 맞힌 엔딩 기록: 고른 엔딩 먼저, 다 읽은 뒤 마들렌",
+              "다 읽은 뒤" in c and "「마들렌」" in c and c.find("「페이스트리」") < c.find("「마들렌」"), c)
+        check("둘 다 맞힌 판결 화면도 같은 순서", "다 읽은 뒤" in r["d"] and "그녀의 이야기" in r["d"])
+        lk = pg.evaluate("""(()=>{ const go=()=>{ S=freshState(); start(); S.act.D=4; S.memDone.D=[1,2,3]; enterCode("G1"); S.memPart.D[3]=[askByKey("bridge").i];
+              S.verdict={charge:"all"}; setChannel(4); return document.getElementById('body').innerText; };
+              const a=go(); const keep=DEFAULT_DATA.memory; const m=JSON.parse(JSON.stringify(D.memory)); m[2].asks.reverse(); D.memory=m;
+              const b=go(); D.memory=keep; return [a,b]; })()""")
+        check("자수서 잠금 안내가 herReason 질문을 이름표로 찾는다", lk[0] == lk[1] and "그녀가 왜 쿠키를 먹는지" in lk[0], [lk[0][-160:], lk[1][-160:]])
 
         b.close()
 

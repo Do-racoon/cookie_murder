@@ -317,7 +317,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 37,
+  "version": 38,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -668,6 +668,7 @@ const DEFAULT_DATA = {
       "role": "D",
       "from": 1,
       "to": 2,
+      "gate": "K6#3",
       "asks": [
         {
           "who": "범인",
@@ -1008,7 +1009,8 @@ function clickPhoto(ev, id){
   if(hit>=0){ const key=id+"#"+hit; lastFound={id,i:hit};
     if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key);
       const sp=specialOf((c.hotspots[hit]||{}).card);
-      log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다."+(sp?" \u25a3 "+sp.kind+" 카드 "+sp.id+eulReul(sp.id)+" 꺼낸다.":""), who, "good"); }
+      log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다."+(sp?" \u25a3 "+sp.kind+" 카드 "+sp.id+eulReul(sp.id)+" 꺼낸다.":""), who, "good");
+      ["C","D"].forEach(w=>tryAdvance(w)); }
     else { if(capIdx===hit){ capIdx=null; lastFound=null; } else capIdx=hit; render(); } }
   else { S.misses[who].push({id,x:+x.toFixed(1),y:+y.toFixed(1)}); lastFound=null; capIdx=null; log("사진 "+id+"의 한 지점을 눌렀다 — 아무것도 없었다.", who, "bad"); }
 }
@@ -1016,6 +1018,15 @@ function askOpen(who,q){ if(!q.need) return true; return q.need.includes("#") ? 
 function partDone(who,m){ if(!S.memPart) S.memPart={C:{},D:{}}; if(!S.memPart[who]) S.memPart[who]={}; return S.memPart[who][m.from]||[]; }
 function askHit(q,v){ const n=norm(v); if(!n) return false; if((q.answers||[]).some(a=>norm(a)===n)) return true; return !!(q.keys&&q.keys.length&&q.keys.every(g=>g.some(k=>n.includes(norm(k))))); }
 function lateAsks(who){ const out=[]; (D.memory||[]).forEach(m=>{ if(m.role!==who||!S.memDone[who].includes(m.from)||!m.asks) return; const dn=partDone(who,m); m.asks.forEach((q,i)=>{ if(q.optional&&!dn.includes(i)&&askOpen(who,q)) out.push({m,i}); }); }); return out; }
+const GATE_LINE="질문은 다 풀렸다. 그런데 아직 이 방에서 열지 않은 곳이 있다 — 사진을 비벼 본다.";
+const RUB_LINE="\u25b6 옛 사진이라 잘 안 보이면 비벼서 봐라.";
+/* 막 전환 문 — 묶음에 gate(카드#지점)가 있으면 그 지점을 누군가(범인이든 형사든) 열어야 넘어간다 */
+function gateOpen(mm){ if(!mm||!mm.gate) return true; return ["C","D"].some(w=>(S.found[w]||[]).includes(mm.gate)); }
+function reqLeft(who,mm){ const dn=partDone(who,mm); return mm.asks.map((x,i)=>i).filter(i=>!mm.asks[i].optional&&!dn.includes(i)).length; }
+function advanceLine(mm){ return mm.to>=(D.maxAct||4)?"이제 판결이다.":mm.to+"막으로. 그 막의 봉투를 뜯는다. "+RUB_LINE; }
+/* 질문은 다 풀렸는데 문이 닫혀 있던 묶음을, 문이 열린 순간 넘긴다 */
+function tryAdvance(who){ const m=memFor(who); if(!m||!m.asks||!m.asks.length||reqLeft(who,m)||!gateOpen(m)) return false;
+  S.act[who]=m.to; S.memDone[who].push(m.from); ch=4; log("이 방에서 열지 않은 곳을 열었다. "+advanceLine(m), who, "sys"); return true; }
 function answerMemory(v){
   const who=me(); const m=memFor(who); const late=lateAsks(who);
   if(!m&&!late.length){ toast("더는 기억의 질문이 없다."); return; }
@@ -1023,13 +1034,14 @@ function answerMemory(v){
   if(!m||(m.asks&&m.asks.length)){
     const cands=[]; if(m){ const dn=partDone(who,m); m.asks.forEach((q,i)=>{ if(!dn.includes(i)&&askOpen(who,q)&&!(S.act3Closed&&q.key==="bridge")) cands.push({m,i}); }); }
     late.forEach(x=>cands.push(x));
-    if(!cands.length){ toast("아직 질문이 나타나지 않았다. 현장을 더 조사한다."); return; }
+    if(!cands.length){ toast(m&&m.asks&&!reqLeft(who,m)&&!gateOpen(m)?GATE_LINE:"아직 질문이 나타나지 않았다. 현장을 더 조사한다."); return; }
     const h=cands.find(x=>askHit(x.m.asks[x.i],v));
     if(!h){ log("질문에 답했다 — 아니었다.", who, "bad"); return; }
     const r0=route(); const mm=h.m, q=mm.asks[h.i]; S.memPart[who][mm.from]=partDone(who,mm).concat([h.i]); ch=4;
     if(S.verdict&&VQ.every(x=>S.verdict[x.k]!==undefined)&&route()!==r0) setTimeout(()=>toast("갈래가 바뀌었다 — \"처음부터 다시 적는다\"를 누른다."),0);
     if(mm===m){ const dn=S.memPart[who][mm.from]; const req=mm.asks.map((x,i)=>i).filter(i=>!mm.asks[i].optional); const left=req.filter(i=>!dn.includes(i)).length;
-      if(!left){ S.act[who]=mm.to; S.memDone[who].push(mm.from); log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" "+(mm.to>=(D.maxAct||4)?"이제 판결이다.":mm.to+"막으로. 그 막의 봉투를 뜯는다."), who, "sys"); }
+      if(!left&&gateOpen(mm)){ S.act[who]=mm.to; S.memDone[who].push(mm.from); log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" "+advanceLine(mm), who, "sys"); }
+      else if(!left) log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" "+GATE_LINE, who, "good");
       else log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" 남은 질문 "+left+"개.", who, "good"); }
     else log(q.who+"의 질문 — 맞았다. "+(q.ok||""), who, "sys");
     return; }
@@ -1063,16 +1075,21 @@ function setVerdict(k,val){ if(!S.verdict) S.verdict={};
   if(k==="confess"&&(val==="S1"||val==="S2")&&!confessOpen()){ toast("그녀의 이유를 아직 모른다 — 자수서를 쓸 수 없다."); return; }
   if(k==="reset"){ S.verdict={}; log("취조서와 자수서를 처음부터 다시 적는다.","sys","sys"); return; }
   S.verdict[k]=val;
-  if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — 엔딩 카드 "+ids.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집는다.","sys","sys"); }
+  if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — "+endingCall(ids),"sys","sys"); }
   else { saveState(); render(); } }
+/* 엔딩 부르기 — 히든이 있으면 고른 엔딩을 다 읽은 뒤에 뒤집으라고 말한다 */
+function endingCall(ids){ const main=ids.filter(i=>!(endingOf(i)||{}).hidden), hid=ids.filter(i=>(endingOf(i)||{}).hidden);
+  let t="엔딩 카드 "+main.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집어 읽는다.";
+  if(hid.length) t+=" 다 읽은 뒤 — "+hid.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집어 엔딩 책자의 「"+(endingOf(hid[0]).title||"")+"」를 읽는다.";
+  return t; }
 function verdictHtml(){ const v=S.verdict||{}; let s=`<div class="memq reveal"><b>${esc(ROUTE_LINE[route()])}</b></div><div class="memq">취조는 끝났다. 형사는 <b>취조서</b>를, 범인은 <b>자수서</b>를 적는다.</div>`; let asking=false;
   VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); s+=`<div class="memq reveal"><b>${esc(q.form)}</b> · ${esc(q.q)}<br>→ ${esc(o?o[0]:"—")}</div>`; }
     else if(!asking){ asking=true; const lock=q.k==="confess"&&!confessOpen(); s+=`<div class="memq"><b>${esc(q.form)}</b> · ${esc(q.q)}</div><div class="optlist">${q.opts.map(o=>`<button data-vq="${q.k}" data-vv="${esc(o[1])}"${lock&&o[1]!=="none"?" disabled":""}>${esc(o[0])}</button>`).join("")}</div>`;
-      if(lock){ const cm=(D.memory||[]).find(x=>x.from===3&&x.asks); const cq=cm&&cm.asks.find(x=>x.optional); const shown=cq&&askOpen(viewer,cq);
+      if(lock){ const ak=askByKey("herReason"); const cq=ak&&ak.q; const shown=cq&&askOpen(viewer,cq);
         const nc=cq&&cq.need&&D.cards[cq.need.split("#")[0]];
         s+=`<div class="hint" style="color:var(--phos-dim)">그녀가 왜 쿠키를 먹는지 맞혀야 자수서를 쓸 수 있다. `+(shown?`아직 "4 기억"의 범인의 질문이 열려 있다.`:`그 질문은 아직 나타나지 않았다 — ${nc?esc(nc.title.replace(/\s*★$/,""))+"("+esc(nc.code)+") 카드를 열고 ":""}${esc(cq&&cq.lock||"")}`)+`</div>`; } } });
   if(asking) s+=`<div class="hint" style="color:var(--phos-dim)">형사가 먼저 취조서를 적고, 범인이 자수서를 덮어 낸다. 서로의 비밀을 한 번씩 말한 뒤 여기에 적으면, 티비가 열 엔딩 카드의 쿠키 이름을 부른다.</div>`;
-  else { const ids=verdictPick(v); s+=`<div class="memq reveal"><b>엔딩 카드 ${ids.map(i=>"「"+esc(endingOf(i).code)+"」").join(" · ")}</b><br>그 이름이 적힌 카드를 뒤집어 번갈아 읽는다. 다른 카드는 열지 않는다.</div><div class="row" style="flex:0 0 auto"><button data-vq="reset" data-vv="" style="flex:0 0 auto">처음부터 다시 적는다</button></div>`; }
+  else { const ids=verdictPick(v); s+=`<div class="memq reveal"><b>${esc(endingCall(ids))}</b><br>그 이름이 적힌 카드만 뒤집어 번갈아 읽는다. 다른 카드는 열지 않는다.</div><div class="row" style="flex:0 0 auto"><button data-vq="reset" data-vv="" style="flex:0 0 auto">처음부터 다시 적는다</button></div>`; }
   return s; }
 
 /* ===================== RENDER ===================== */
