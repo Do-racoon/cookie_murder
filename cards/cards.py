@@ -218,30 +218,65 @@ def back_ending(c):
     para(d,X(36),X(228),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=RED)
     return im
+def stamp(im, text, cx, cy, r, color, angle=-11):
+    """고무도장 자국 — 비스듬히 찍힌 원형 인장."""
+    pad=int(r*1.5)
+    lay=Image.new('RGBA',(pad*2,pad*2),(0,0,0,0)); sd=ImageDraw.Draw(lay)
+    o=pad
+    sd.ellipse([o-r,o-r,o+r,o+r],outline=color+(235,),width=X(6))
+    sd.ellipse([o-r+X(13),o-r+X(13),o+r-X(13),o+r-X(13)],outline=color+(150,),width=X(2))
+    f=F(40,'Medium'); w=sd.textlength(text,font=f)
+    while w>2*r-X(46) and f.size>X(22):
+        f=F(int(f.size/S)-3,'Medium'); w=sd.textlength(text,font=f)
+    sd.text((o,o-X(8)),text,font=f,fill=color+(235,),anchor='mm')
+    sd.line([o-w/2,o+X(26),o+w/2,o+X(26)],fill=color+(150,),width=X(2))
+    sd.text((o,o+X(52)),'쿠키 살인 사건',font=M(17),fill=color+(150,),anchor='mm')
+    lay=lay.rotate(angle,resample=Image.BICUBIC,center=(o,o))
+    im.paste(lay,(cx-pad,cy-pad),lay)
+
+
+def field(d, y, label, value, vfont=None):
+    """양식 한 줄 — 라벨, 밑선, 값."""
+    d.text((X(40),y),label,font=M(19),fill=GRAY,anchor='lm')
+    d.line([X(40),y+X(21),X(588),y+X(21)],fill=LINE,width=X(1))
+    f=vfont or F(27)
+    d.text((X(166),y),value,font=f,fill=WHITE,anchor='lm')
+
+
 def special_front(c):
+    """증언·감정서의 앞면 — 라벨이 아니라 서류 겉장이다.
+
+    A6 로 커지면 가운데 패널 하나는 허전하다. 1990년대 조서 겉장처럼 칸을 긋고
+    항목을 적고, 한가운데 고무도장을 비스듬히 찍는다.
+    """
     im=sheet(c); d=ImageDraw.Draw(im)
+    col=ACT[c['id'][0]][1]
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
-    d.rectangle([X(34),X(43),X(174),X(47)],fill=VIO)
-    d.text((X(40),X(92)),c['sort'],font=M(22),fill=GRAY,anchor='lm')
+    d.rectangle([X(34),X(43),X(174),X(47)],fill=col)
+
+    d.text((X(40),X(92)),'사건 기록 · %d막'%c['act'],font=M(22),fill=GRAY,anchor='lm')
     d.text((X(588),X(92)),c['id'],font=D(34),fill=WHITE,anchor='rm')
+
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
-    d.text((X(40),X(172)),c['title'],font=tf,fill=WHITE,anchor='lm')
-    d.line([X(40),X(220),X(588),X(220)],fill=LINE,width=X(2))
-    d.rounded_rectangle([X(40),X(262),X(588),X(560)],radius=X(18),fill=PANEL)
-    cx=X(314)
-    d.text((cx,X(330)),'\u25a3',font=F(72),fill=WHITE,anchor='mm')
-    d.text((cx,X(408)),c['sort'],font=F(40,'Medium'),fill=WHITE,anchor='mm')
-    d.text((cx,X(462)),'%d막'%c['act'],font=F(24),fill=GRAY,anchor='mm')
+    d.text((X(40),X(176)),c['title'],font=tf,fill=WHITE,anchor='lm')
+    d.line([X(40),X(222),X(588),X(222)],fill=LINE,width=X(2))
+
     who='형사만 읽는다' if c.get('only')=='D' else '범인만 읽는다' if c.get('only')=='C' else '둘 다 읽는다'
-    d.text((cx,X(514)),who,font=F(27,'Medium'),fill=WHITE if c.get('only') else GRAY,anchor='mm')
-    d.text((X(40),X(606)),'꺼내는 자리',font=M(18,True),fill=WHITE,anchor='lm')
-    d.line([X(170),X(606),X(588),X(606)],fill=LINE,width=X(1))
-    f,ls,lh=fit(d,c['where'],X(548),X(84),[27,25,23,21],1.45)
-    para(d,X(40),X(628),ls,f,lh,WHITE)
-    footer(d,'티비가 꺼내라고 할 때 뒤집는다',c['id'],VIO2)
-    d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
+    field(d,X(274),'문서 종류',c['sort'])
+    field(d,X(340),'취급',who)
+    wf=F(27)
+    while d.textlength(c['where'],font=wf)>X(418) and wf.size>X(17):
+        wf=F(int(wf.size/S)-1)
+    field(d,X(406),'꺼낸 자리',c['where'],wf)
+
+    stamp(im,c['sort'],X(314),X(596),X(132),WHITE)
+
+    footer(d,'티비가 꺼내라고 할 때 뒤집는다',c['id'])
+    d.rectangle([X(40),X(838),X(588),X(842)],fill=col)
     return im
+
+
 def back_special(c):
     im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
