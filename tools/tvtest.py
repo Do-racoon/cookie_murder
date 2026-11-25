@@ -250,6 +250,36 @@ def main():
               const b=go(); D.memory=keep; return [a,b]; })()""")
         check("자수서 잠금 안내가 herReason 질문을 이름표로 찾는다", lk[0] == lk[1] and "그녀가 왜 쿠키를 먹는지" in lk[0], [lk[0][-160:], lk[1][-160:]])
 
+        # ── 비비기 ──
+        def lay(card):
+            pg.evaluate(f"(()=>{{viewCard='{card}'; ch=2; render();}})()")
+            return pg.evaluate("(()=>{const L=document.querySelector('.photo .layer'); if(!L) return null; const r=L.getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
+        def rub(box, pts):
+            X = lambda x: box[0] + box[2] * x / 100; Y = lambda y: box[1] + box[3] * y / 100
+            pg.mouse.move(X(pts[0][0]), Y(pts[0][1])); pg.mouse.down()
+            for x, y in pts[1:]:
+                pg.mouse.move(X(x), Y(y), steps=4)
+            pg.mouse.up(); pg.wait_for_timeout(60)
+        pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K4"); enterCode("K3"); })()""")
+        h = pg.evaluate("D.cards.K4.hotspots[0]")
+        box = lay("K4"); n0 = pg.evaluate("S.log.length")
+        rub(box, [(h["x"] - 15, h["y"]), (h["x"] + 15, h["y"]), (h["x"], h["y"])])
+        glow = pg.evaluate("document.querySelectorAll('.photo .glow').length")
+        check("비비면 못 찾은 지점 근처에서 빛(.glow)이 생긴다", glow >= 1, glow)
+        check("비비기를 지점 위에서 끝내도 지점이 열리지 않는다", pg.evaluate("S.found.D.includes('K4#0')") is False)
+        check("비비기는 기록을 남기지 않는다", pg.evaluate("S.log.length") == n0)
+        pg.wait_for_timeout(1800)
+        check("1.5초 뒤 빛이 사라진다", pg.evaluate("document.querySelectorAll('.photo .glow').length") == 0)
+        box = lay("K4"); pg.mouse.click(box[0] + box[2] * h["x"] / 100, box[1] + box[3] * h["y"] / 100); pg.wait_for_timeout(60)
+        check("짧게 누르면 지금처럼 열린다", pg.evaluate("S.found.D.includes('K4#0')") is True)
+        box = lay("K4"); rub(box, [(h["x"] - 15, h["y"]), (h["x"] + 15, h["y"])])
+        check("이미 찾은 지점은 빛나지 않는다", pg.evaluate("[...document.querySelectorAll('.photo .glow')].every(g=>g.dataset.i!=='0')"))
+        errs0 = len(errs) if 'errs' in dir() else 0
+        pg.evaluate("(()=>{viewCard='K3'; ch=2; render();})()")
+        bb = pg.evaluate("(()=>{const r=document.getElementById('body').getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
+        pg.mouse.move(bb[0] + 50, bb[1] + 50); pg.mouse.down(); pg.mouse.move(bb[0] + 200, bb[1] + 60, steps=5); pg.mouse.up()
+        check("글 카드에서 끌어도 오류 없음", pg.evaluate("document.querySelectorAll('.glow').length") == 0)
+
         b.close()
 
     print()
