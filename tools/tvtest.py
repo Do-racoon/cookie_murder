@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 40 다", ver == 40, ver)
+        check("DEFAULT_DATA.version 이 41 이다", ver == 41, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -134,7 +134,7 @@ def main():
         r = pg.evaluate("""(()=>{ try{ setRoleCode("TV","T9"); start();
           const a=confessOpen(); setVerdict("confess","S1"); const b=(S.verdict||{}).confess;
           setVerdict("confess","none"); const c=S.verdict.confess; setVerdict("reset","");
-          S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); answerMemory("피를 좋아하니까");
+          S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까");
           const d=confessOpen(); setVerdict("confess","S1"); const e=S.verdict.confess;
           const S0=S; S=Object.assign({},S0); delete S.memPart; const f=confessOpen(); S=S0;
           return {a,b:b===undefined?null:b,c,d,e,f}; }catch(err){ return {err:String(err)}; } })()""")
@@ -148,12 +148,12 @@ def main():
         # 4막에 G2 없이 들어오면, 판결 화면의 안내는 "아직 나타나지 않았다"를 말해야 한다
         h = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=4; S.memDone.D=[1,2,3];
           setVerdict("charge","all"); setChannel(4); const t1=document.getElementById('body').innerText;
-          enterCode("G2"); setChannel(4); const t2=document.getElementById('body').innerText;
+          enterCode("G2"); S.found.D.push("G2#0"); setChannel(4); const t2=document.getElementById('body').innerText;
           const dis=[...document.querySelectorAll('[data-vq="confess"]')].filter(x=>x.disabled).length;
           return {t1,t2,dis}; })()""")
         check("G2를 안 열었으면 안내가 질문이 아직 없다고 말한다",
               "열려 있다" not in h["t1"] and "2ㄱ0ㅇ" in h["t1"], h["t1"][-160:])
-        check("G2를 열면 안내가 질문이 열려 있다고 말한다", "열려 있다" in h["t2"], h["t2"][-160:])
+        check("G2 의 쿠키를 찾으면 안내가 질문이 열려 있다고 말한다", "열려 있다" in h["t2"], h["t2"][-160:])
         check("답하기 전에는 S1·S2 두 버튼이 잠겨 있다", h["dis"] == 2, h["dis"])
 
         # 문서 모음의 핸드아웃 탭도 새 목표 문구여야 한다
@@ -169,10 +169,10 @@ def main():
           const a3=DEFAULT_DATA.memory.find(m=>m.from===3).asks.map(q=>q.key); R.keys=a3;
           S3(); enterCode("G1"); answerMemory("다리"); R.det=[route(),confessOpen(),S.act.D];
           setChannel(4); R.detLine=document.getElementById('body').innerText;
-          S3(); enterCode("G2"); answerMemory("피를 좋아하니까"); endAct3(); endAct3(); R.cul=[route(),S.act.D];
+          S3(); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); endAct3(); endAct3(); R.cul=[route(),S.act.D];
           setChannel(4); R.culLine=document.getElementById('body').innerText;
           answerMemory("다리"); R.culBridge=qDone("bridge");
-          S3(); enterCode("G1"); enterCode("G2"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+          S3(); enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); answerMemory("다리");
           setVerdict("charge","all"); setVerdict("confess","S1"); R.both=lastLog();
           S3(); endAct3(); endAct3(); setVerdict("charge","her"); setVerdict("confess","none"); R.none=verdictPick(S.verdict);
           S3(); endAct3(); setChannel(1); setChannel(4); endAct3(); R.arm=S.act.D;
@@ -239,7 +239,7 @@ def main():
         r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=2; S.memDone.D=[1]; enterCode("B3"); enterCode("B5");
               S.found.D.push("B3#0"); setChannel(4); answerMemory("어머니"); answerMemory("진짜 범인"); const a=S.log[0].text;
               S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); setChannel(4); answerMemory("다리"); const b=S.log[0].text;
-              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("G2"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); answerMemory("다리");
               setVerdict("charge","all"); setVerdict("confess","S1"); const c=S.log[0].text; setChannel(4); const d=document.getElementById('body').innerText;
               return {a,b,c,d}; })()""")
         check("2→3 전환에도 비비기 멘트", "3막으로" in r["a"] and "비벼서 봐라" in r["a"], r["a"])
@@ -336,6 +336,10 @@ def main():
           const pre=!!document.querySelector('.picview'); setChannel(4); answerMemory("다리");
           const post=!!document.querySelector('.picview img') && document.querySelector('.picview').innerText.includes('다리'); closeSheet(); return {pre,post}; })()""")
         check("다리 사진은 답하기 전엔 없고, 답하면 뜬다", r["pre"] is False and r["post"] is True, r)
+        r = pg.evaluate("""(()=>{ const q=D.memory.find(x=>x.from===3).asks.find(a=>a.key==="herReason");
+          const sv=JSON.stringify(S); S.opened.D=[...new Set([...S.opened.D,"G2"])]; S.found.D=S.found.D.filter(k=>k!=="G2#0");
+          const a=askOpen("D",q); S.found.D.push("G2#0"); const b=askOpen("D",q); Object.assign(S,JSON.parse(sv)); return {a,b}; })()""")
+        check("3막 범인의 질문은 G2 의 쿠키(기억 ④ 지시)를 찾은 뒤에야 뜬다", r["a"] is False and r["b"] is True, r)
         r = pg.evaluate("""(()=>{ const st=freshState(); st.started=true; st.opened.D=["K1","K2","B2","B4"]; st.found.D=["K1#0","B4#1","K2#0"];
           S=migrateState(st); setChannel(2); render(); return {op:S.opened.D, fd:S.found.D}; })()""")
         check("옛 판(K1·B2·B4 열림)도 오류 없이, 없는 카드는 걸러 낸다", r["op"] == ["K2"] and r["fd"] == ["K2#0"], r)
