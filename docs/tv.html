@@ -929,7 +929,7 @@ function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값
   /* 막의 질문과 엔딩은 언제나 저장소 설계를 쓴다 — 제작자 모드·옛 저장값·상대 폰 설계로 바꾸지 못한다 */
   d.memory=base.memory; d.endings=base.endings;
   return d; }
-function migrateState(st){ const base=freshState(); for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
+function migrateState(st){ const base=freshState(); delete st.endArm; /* 「시간이 끝났다」 한 번 누른 대기는 저장된 판에 남기지 않는다 */ for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
   /* 옛 판(턴·지시 카드)의 로그 줄은 지운다 */ if(Array.isArray(st.log)) st.log=st.log.filter(e=>e&&e.turn===undefined&&!/턴|END|지시 카드|상호작용/.test(e.text||"")); return st; }
 function loadData(){ try{ const j=localStorage.getItem("sbtv2_data"); if(j) return migrate(JSON.parse(j)); }catch(e){} return migrate(null); }
 function saveData(push){ try{ localStorage.setItem("sbtv2_data", JSON.stringify(D)); }catch(e){} if(push&&cref){ cref.set(JSON.parse(JSON.stringify(D))).catch(e=>toast(e&&e.code==="quota_exceeded"?"설계가 너무 크다. 사진은 업로드로 넣어야 한다.":"상대 폰에 설계를 보내지 못했다 (쓰기 권한?). 이 폰에는 저장됐다.")); } }

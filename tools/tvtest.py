@@ -176,6 +176,8 @@ def main():
           S3(); endAct3(); setChannel(1); setChannel(4); endAct3(); R.arm=S.act.D;
           S3(); setChannel(4); R.act3hint=document.getElementById('body').innerText;
           S=freshState(); start(); setChannel(4); R.act1hint=document.getElementById('body').innerText;
+          S3(); endAct3(); const saved=JSON.parse(JSON.stringify(S)); S=migrateState(saved); R.armReload=[!!S.endArm,S.act.D];
+          endAct3(); R.armReload.push(S.act.D);
           const bad1=Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)),{memory:[]});
           const bad2=JSON.parse(JSON.stringify(DEFAULT_DATA)); bad2.memory[2].asks.reverse();
           R.mig=[JSON.stringify(migrate(bad1).memory)===JSON.stringify(DEFAULT_DATA.memory),
@@ -197,6 +199,8 @@ def main():
         check("옛 설계·바꾼 질문은 저장소 질문으로 되돌린다", g.get("mig") == [True, True], g.get("mig"))
         check("3막 화면은 '두 질문을 모두'라고 하지 않고 형사의 질문으로 판결에 간다고 한다",
               "두 질문을 모두 맞혀야" not in (g.get("act3hint") or "") and "형사의 질문을 맞히면 판결" in (g.get("act3hint") or ""))
+        check("한 번 누른 뒤 새로고침하면 대기가 풀린다 — 한 번 더 눌러도 판결로 가지 않는다",
+              g.get("armReload") == [False, 3, 3], g.get("armReload"))
         check("1막 화면은 여전히 두 질문을 모두 맞혀야 한다고 한다", "두 질문을 모두 맞혀야" in (g.get("act1hint") or ""))
 
         b.close()
