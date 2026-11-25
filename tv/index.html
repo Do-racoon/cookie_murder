@@ -1004,13 +1004,16 @@ function enterCode(v){
 }
 /* 비비기 — 사진을 문지르면 손가락이 지나간 곳 근처의 못 찾은 지점이 잠깐 빛난다. 위치만 알려 준다(여는 건 누르기). 상태·기록은 바꾸지 않는다. */
 const RUB_MIN=0.06, RUB_PAD=4, GLOW_MS=1500;
+/* 휴대폰은 문지른 직후의 첫 탭에 click 을 안 내 주기도 한다 — 그래서 사진 위의 누르기는 손을 뗄 때(pointerup) 직접 처리하고,
+   뒤따라오는 click 은 버린다. 화면이 다시 그려져 사진 요소가 바뀌어도 버리도록 시각은 바깥에 둔다. */
+let tapHandledAt=0, rubEndedAt=0;
 function bindRub(ph, id){
   let st=null, rubbed=false;
   const layerOf=()=>ph.querySelector(".layer")||ph;
-  ph.addEventListener("pointerdown",ev=>{ rubbed=false; if(ev.target.closest(".pbig,.cap")) { st=null; return; } st={x:ev.clientX,y:ev.clientY,d:0}; });
-  ph.addEventListener("pointermove",ev=>{ if(!st) return; const L=layerOf(), r=L.getBoundingClientRect(); if(!r.width) return;
+  ph.addEventListener("pointerdown",ev=>{ rubbed=false; st={x:ev.clientX,y:ev.clientY,d:0,big:!!ev.target.closest(".pbig"),cap:!!ev.target.closest(".cap")}; });
+  ph.addEventListener("pointermove",ev=>{ if(!st||st.big) return; const L=layerOf(), r=L.getBoundingClientRect(); if(!r.width) return;
     st.d+=Math.hypot(ev.clientX-st.x,ev.clientY-st.y); st.x=ev.clientX; st.y=ev.clientY;
-    if(!rubbed&&st.d>=r.width*RUB_MIN) rubbed=true;
+    if(!rubbed&&!st.cap&&st.d>=r.width*RUB_MIN) rubbed=true;
     if(!rubbed) return;
     const c=D.cards[id]; if(!c||!S||!S.opened[me()].includes(id)) return;
     const x=(ev.clientX-r.left)/r.width*100, y=(ev.clientY-r.top)/r.height*100;
@@ -1019,10 +1022,16 @@ function bindRub(ph, id){
       g=document.createElement("div"); g.className="glow"; g.dataset.i=i; g.style.left=h.x+"%"; g.style.top=h.y+"%";
       g.style.width=(2*hr)+"%"; g.style.height=(2*hr*r.width/r.height)+"%"; L.appendChild(g);
       setTimeout(()=>{ if(g.isConnected) g.remove(); },GLOW_MS); }); });
-  const end=()=>{ st=null; };
-  ph.addEventListener("pointerup",end); ph.addEventListener("pointercancel",end); ph.addEventListener("pointerleave",end);
-  /* 비비기로 끝난 동작 뒤의 click 한 번은 누르기로 치지 않는다 */
-  ph.addEventListener("click",ev=>{ if(rubbed){ rubbed=false; ev.stopImmediatePropagation(); ev.preventDefault(); } },true);
+  ph.addEventListener("pointerup",ev=>{ const t=st; st=null; if(!t) return;
+    if(rubbed){ rubEndedAt=Date.now(); return; }
+    const L=layerOf(), r=L.getBoundingClientRect(); if(t.d>=Math.max(12,(r.width||0)*RUB_MIN)) return;
+    tapHandledAt=Date.now();
+    if(t.big){ const bg=ph.querySelector(".pbig"); bigView(bg&&bg.dataset.big||id); return; }
+    clickPhoto({currentTarget:ph,target:ev.target,clientX:ev.clientX,clientY:ev.clientY}, id); });
+  const end=()=>{ if(rubbed) rubEndedAt=Date.now(); st=null; };
+  ph.addEventListener("pointercancel",end); ph.addEventListener("pointerleave",end);
+  /* 손을 뗄 때 이미 처리한 누르기, 또는 비비기 바로 뒤의 click 은 버린다 */
+  ph.addEventListener("click",ev=>{ const now=Date.now(); if(rubbed||now-tapHandledAt<800||now-rubEndedAt<60){ rubbed=false; ev.stopImmediatePropagation(); ev.preventDefault(); } },true);
 }
 function clickPhoto(ev, id){
   const who=me(); const c=D.cards[id]; if(!S.opened[who].includes(id)) return;

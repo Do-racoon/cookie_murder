@@ -286,6 +286,29 @@ def main():
         pg.mouse.move(bb[0] + 50, bb[1] + 50); pg.mouse.down(); pg.mouse.move(bb[0] + 200, bb[1] + 60, steps=5); pg.mouse.up()
         check("글 카드에서 끌어도 오류 없음", pg.evaluate("document.querySelectorAll('.glow').length") == 0)
 
+        # ── 휴대폰 터치 (문지른 뒤 첫 탭을 브라우저가 click 으로 안 내 주는 경우) ──
+        tctx = b.new_context(**p.devices["iPhone 13"]); tp = tctx.new_page(); tp.goto(pg.url.split("#")[0]); tp.wait_for_timeout(400)
+        cdp = tctx.new_cdp_session(tp)
+        def T(pts, w=350):
+            cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": pts[0][0], "y": pts[0][1]}]})
+            for x, y in pts[1:]:
+                tp.wait_for_timeout(16); cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x, "y": y}]})
+            cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []}); tp.wait_for_timeout(w)
+        def tl(sel):
+            return tp.evaluate(f"(()=>{{const L=document.querySelector('{sel}'); if(!L) return null; const r=L.getBoundingClientRect(); return [r.left,r.top,r.width,r.height]}})()")
+        tp.evaluate('(()=>{setRoleCode("TV","T9"); S=freshState(); start(); enterCode("K4"); viewCard="K4"; ch=2; render();})()'); tp.wait_for_timeout(200)
+        th = tp.evaluate("D.cards.K4.hotspots[0]"); bx = tl(".photo .layer"); TP = lambda x, y: (bx[0] + bx[2] * x / 100, bx[1] + bx[3] * y / 100)
+        T([TP(th["x"] - 18 + i * 3, th["y"]) for i in range(13)])
+        T([TP(th["x"], th["y"])])
+        check("터치: 문지른 뒤 빛난 자리를 바로 탭하면 열린다", tp.evaluate("S.found.D.includes('K4#0')"))
+        bx = tl(".photo .layer"); T([TP(20, 50), TP(40, 50), TP(60, 52), TP(80, 50)])
+        pb = tl(".photo .pbig"); T([(pb[0] + pb[2] / 2, pb[1] + pb[3] / 2)])
+        check("터치: 문지른 뒤 ⤢ 첫 탭에 크게 보기가 열린다", tp.evaluate("!!document.querySelector('.bigview')"))
+        tp.evaluate("closeSheet()"); tp.evaluate("(()=>{viewCard='K4'; ch=2; capIdx=null; lastFound=null; render();})()"); tp.wait_for_timeout(700)
+        n0 = tp.evaluate("S.log.length"); bx = tl(".photo .layer"); T([TP(th["x"], th["y"])])
+        check("터치: 찾은 지점을 한 번 탭하면 한 번만 반응한다(설명 열기)", tp.evaluate("capIdx") == 0, tp.evaluate("[capIdx, !!document.querySelector('.bigview'), S.found.D, S.log.slice(0,2).map(l=>l.text)]"))
+        tctx.close()
+
         b.close()
 
     print()
