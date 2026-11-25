@@ -52,6 +52,7 @@ def main(argv=None) -> int:
             c = d["cards"].setdefault(cid, {"kind": "photo"})
             for k in ("title", "img", "act"):
                 if k in ov: c[k] = ov[k]
+            if "img" in ov: c["kind"] = "photo"
             if "hotspots" in ov: c["hotspots"] = ov["hotspots"]
     gone = set((draft or {}).get("remove", []))
     notes = (draft or {}).get("notes", {})
