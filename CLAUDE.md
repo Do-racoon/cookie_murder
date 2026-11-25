@@ -29,7 +29,7 @@ git add -A && git commit -m "<무엇을 왜>" && git push origin main
 | 무엇 | 원본 | 저장소 쪽 |
 |---|---|---|
 | 티비 | `tv/source.html` (저장소) | 고친 뒤 `python3 tools/build.py` → `tv/index.html`, `docs/tv.html` 생성. 그다음 아티팩트에 게시 |
-| 문서 모음 페이지 | `docs/index.html` (저장소) | 고친 뒤 아티팩트에 게시 |
+| 문서 모음 페이지 | `docs/index.html` (저장소) | 고친 뒤 아티팩트에 게시. 티비 설계를 바꿨으면 먼저 `python3 tools/build_testtab.py` (테스트 코드 탭을 다시 그린다) |
 | 기획서 · 핸드아웃 | claude.ai 문서(Claude Docs) — 동시 편집이 되는 곳 | 고친 뒤 문서를 markdown으로 내보내 `text/`에 덮어쓰고 커밋 |
 | 제출본 | `submission-2026-11-22/` | **손대지 않는다.** 11/22에 실제로 낸 파일 그대로 |
 
@@ -104,3 +104,16 @@ git add -A && git commit -m "<무엇을 왜>" && git push origin main
 - 질감(스캔라인·유리 광택·나무결 바탕)은 티비에만 둔다. 나무결은 문서 모음 맨 위 띠 한 줄만.
 
 설계와 그 고침: `docs/superpowers/specs/2026-11-24-디자인-통일-design.md`
+
+## 9. 싱크 — 문서가 설계와 어긋나지 않게
+
+손으로 적은 숫자와 카드 이름은 반드시 어긋난다. 그래서 검사로 묶어 뒀다.
+
+- `python3 tools/synctest.py` — 문서 모음·기획서·핸드아웃이 `tv/source.html` 과
+  `cards/cards.py` 에서 벗어났는지 본다. 없어진 카드 번호, 특수 카드 목록, 엔딩 쿠키
+  이름, 카드 장수, 떼어 낸 ▶ 지시, 카드 코드를 대조한다.
+- `python3 tools/build_testtab.py` — 문서 모음의 「테스트 코드」 탭을 티비 설계에서
+  다시 그린다. 그 탭은 **손으로 고치지 않는다.**
+- `python3 tools/tvtest.py` · `python3 tools/docstest.py` — 티비와 문서 모음 자체 검사.
+
+설계를 바꾼 뒤에는 넷 다 돌리고 푸시한다.
