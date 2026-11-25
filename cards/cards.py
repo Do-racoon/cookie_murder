@@ -254,23 +254,26 @@ def special_front(c):
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=col)
 
-    d.text((X(40),X(92)),'사건 기록 · %d막'%c['act'],font=M(22),fill=GRAY,anchor='lm')
-    d.text((X(588),X(92)),c['id'],font=D(34),fill=WHITE,anchor='rm')
+    d.text((X(40),X(88)),'사건 기록',font=M(22),fill=GRAY,anchor='lm')
+    d.text((X(588),X(88)),c['id'],font=D(34),fill=WHITE,anchor='rm')
+
+    # 막은 멀리서도 보여야 한다 — 분류 탭처럼 네모 안에 크게
+    af=M(52,True); at='%d막'%c['act']
+    aw=d.textlength(at,font=af); bx=X(40)+aw+X(34)
+    d.rectangle([X(40),X(128),bx,X(208)],outline=WHITE,width=X(3))
+    d.text(((X(40)+bx)//2,X(169)),at,font=af,fill=WHITE,anchor='mm')
+    d.text((bx+X(22),X(172)),ACT['KBG'[c['act']-1]][0],font=F(30),fill=GRAY,anchor='lm')
 
     tf=F(46,'Medium')
     if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
-    d.text((X(40),X(176)),c['title'],font=tf,fill=WHITE,anchor='lm')
-    d.line([X(40),X(222),X(588),X(222)],fill=LINE,width=X(2))
+    d.text((X(40),X(272)),c['title'],font=tf,fill=WHITE,anchor='lm')
+    d.line([X(40),X(318),X(588),X(318)],fill=LINE,width=X(2))
 
     who='형사만 읽는다' if c.get('only')=='D' else '범인만 읽는다' if c.get('only')=='C' else '둘 다 읽는다'
-    field(d,X(274),'문서 종류',c['sort'])
-    field(d,X(340),'취급',who)
-    wf=F(27)
-    while d.textlength(c['where'],font=wf)>X(418) and wf.size>X(17):
-        wf=F(int(wf.size/S)-1)
-    field(d,X(406),'꺼낸 자리',c['where'],wf)
+    field(d,X(374),'문서 종류',c['sort'])
+    field(d,X(440),'취급',who)
 
-    stamp(im,c['sort'],X(314),X(596),X(132),WHITE)
+    stamp(im,c['sort'],X(314),X(624),X(128),WHITE)
 
     footer(d,'티비가 꺼내라고 할 때 뒤집는다',c['id'])
     d.rectangle([X(40),X(838),X(588),X(842)],fill=col)
