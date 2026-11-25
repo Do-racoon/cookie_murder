@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 38 다", ver == 38, ver)
+        check("DEFAULT_DATA.version 이 39 다", ver == 39, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -108,7 +108,9 @@ def main():
         check("일기장 지점은 카드가 아니라 비밀 ③을 가리킨다",
               len(diary) == 1 and not diary[0].get("card")
               and "비밀 ③" in diary[0].get("hint", ""), diary)
-        check("특수 카드마다 본문이 있다", all(len(x.get("text") or "") > 40 for x in sp))
+        check("특수 카드에 본문이 없다 — 글은 카드에만 있다",
+              not any(x.get("text") for x in sp),
+              [x["id"] for x in sp if x.get("text")])
 
         hooked = pg.evaluate(
             "Object.entries(DEFAULT_DATA.cards).flatMap(([id,c])=>"

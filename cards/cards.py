@@ -12,6 +12,7 @@ TK=load_tokens()
 _C=TK['color']
 FD=str(ROOT/'design'/'fonts')+'/'
 _FACE={'Regular':('serif','400'),'Medium':('serif','700'),'Bold':('serif','700'),
+       'Voice':('voice','400'),                                     # 증언 목소리 — 여기 말고 쓰지 않는다
        'Mono':('mono','400'),'MonoBold':('mono','700'),'Digit':('digit','400')}
 def F(sz,w='Regular'):
     kind,wt=_FACE[w]
@@ -75,8 +76,21 @@ CARDS=[
       back='두 사람 다 그녀에게 닿았다.\n\n엔딩 책자의 「그녀의 이야기」를 읽는다.\n\n고른 엔딩을 다 읽은 뒤에 연다.'),
 ]
 VIO=rgb(TK['paperAct']['X']); VIO2=rgb(_P['stamp'])
+# 증언·감정서의 본문. 티비는 "카드를 꺼내라"고만 하고, 글은 여기 카드에만 있다.
+SPECIAL_BODY={
+ 'X2': "303호. 혼자 산다. 그 밤 집에 있었다.\n\n『열한 시쯤에 둘이 올라오는 소리를 들었어요. 말소리는 없었고요. 다투는 소리요? 그런 건 없었어요. 조용했어요, 계속.\n\n그러다 짧게 한 번. 비명이라기보단… 숨 막히는 소리요.\n\n제가 112에 걸려고 폰을 찾는데, 그 전에 벌써 계단에 발소리가 났어요. 경찰이요. 5분도 안 됐을 거예요. 그게 좀 이상하죠. 파출소에서 와도 그것보단 걸리는데.』",
+ 'X3': "피해자: 여성, 20대 후반. 생존. 의식 없음.\n\n목 — 폭 2.5cm 압흔 한 줄. 현장의 붉은 가방 끈과 너비·직조가 일치.\n\n끈 — 피해자의 혈흔. 그리고 더 오래된 다른 사람의 혈흔. 오래된 쪽은 양이 적어 감정 불가.\n\n손 — 손톱 밑에서 타인의 조직 나오지 않음. 팔·손등에 방어흔 없음.\n\n현관 — 잠금 장치 손상 없음. 안쪽에서 열렸다.\n\n피의자 소지품 — 밀봉된 쿠키 봉지. 안에 쿠키 두 개. 피 묻지 않음.\n\n소견: 피해자는 저항하지 않았다.",
+ 'X4': "이름은 말하지 않았다. 묻는 대로 다 말한다.\n\n『서연 언니요? 알죠. 자주 왔어요.\n\n언니 말고 같이 오던 사람이 있었어요. 목에 까만 거 두른 사람. 이름은 안 가르쳐 줬어요.\n\n그 사람 눈이 이상해요. 웃는데 눈은 안 웃어요. 눈 안에 달 같은 게 들어 있어요.\n\n그 밤에도 왔어요. 새벽 한 시 넘어서. 혼자였고, 금방 갔어요. 서연 언니는 안 왔고요.』",
+ 'X5': "피해자: 여성, 20대 초반.\n\n머리 — 뒤통수에 함몰. 이것이 먼저다. 이마의 상처는 쓰러지며 생긴 것.\n\n목 — 압흔 있음. 다만 사인은 두부 손상.\n\n바닥 — 265mm 운동화 자국. 창에서 책상 쪽으로, 그다음 침대 쪽으로.\n\n침입 — 창. 잠겨 있지 않았다.\n\n쿠키 — 두 조각 모두 피에 적셔 책상에 나란히 놓였다. 피는 피해자의 것.\n\n소견: 들어와서, 뒤에서, 서툴게.",
+ 'X6': "피해자: 여성, 20대 후반.\n\n목 — 폭 4cm 의 넓은 압흔. 벨트. 손목·발목에 결박 자국. 결박이 먼저, 목이 나중.\n\n손 — 방어흔 없음. 손톱 밑 깨끗.\n\n침입 — 흔적 없음. 현관은 안에서 열려 있었다.\n\n찻잔 — 두 개. 두 번째 잔의 입술 자국이 작다. 잔은 씻겨 있었다. 지문도, 타액도 나오지 않았다.\n\n쿠키 — 반으로 쪼갠 반쪽이 책상에. 피 묻지 않음. 나머지 반쪽은 현장에 없다. 쪼갠 단면에 미량의 혈흔 — 피해자의 것.\n\n소견: 피해자는 범인을 집에 들였다. 감정할 것이 남지 않아 미제로 종결.",
+}
+
 def load_specials():
-    """tv/source.html 의 DEFAULT_DATA 에서 특수 카드와 그 카드를 꺼내는 자리를 읽는다."""
+    """특수 카드를 짓는다 — 뼈대는 티비에서, 글은 SPECIAL_BODY 에서.
+
+    티비는 어떤 카드가 몇 막에 어느 사진에서 나오는지만 알고, 본문은 모른다.
+    그래서 같은 글이 두 군데 있다가 어긋나는 일이 없다.
+    """
     src=(ROOT/'tv'/'source.html').read_text(encoding='utf-8')
     D=json.loads(re.search(r'const DEFAULT_DATA\s*=\s*(\{.*?\n\});',src,re.S).group(1))
     where={}
@@ -89,7 +103,7 @@ def load_specials():
     out=[]
     for x in D.get('specials') or []:
         out.append(dict(id=x['id'],kind='special',title=x['title'],sort=x['kind'],act=x.get('act',1),
-                        only=x.get('only'),body=x['text'],
+                        only=x.get('only'),body=SPECIAL_BODY[x['id']],
                         where=where.get(x['id'],'티비의 지시를 따른다')))
     return out
 
@@ -120,6 +134,24 @@ def fit(d,text,maxw,maxh,sizes,lead=1.5,w='Regular',who=''):
         if h<=maxh: return f,ls,lh
     OVERFLOW.append((who or text[:12], len(text), int(h-maxh)))
     return f,ls,lh
+def split_voice(text):
+    """증언 본문을 (경찰이 적은 머리말, 증인이 한 말) 로 가른다.
+
+    『 로 열리는 데서부터가 증인의 목소리다. 그 앞은 조서를 적은 사람의 메모다.
+    한 장 안에서 적은 사람과 말한 사람이 글꼴로 갈린다.
+    """
+    i=text.find('『')
+    return (text,'') if i<0 else (text[:i].rstrip('\n'), text[i:])
+def fit2(d,head,quote,maxw,maxh,sizes,lead=1.5,who=''):
+    """글꼴이 다른 두 덩어리를 한 칸에. 둘을 같이 재야 크기가 맞는다."""
+    for sz in sizes:
+        fa=F(sz); fb=F(sz,'Voice'); lh=sz*S*lead
+        la=wrap(d,head,fa,maxw) if head else []
+        lb=wrap(d,quote,fb,maxw) if quote else []
+        h=sum(lh if l else lh*0.5 for l in la+lb)+(lh*0.5 if la and lb else 0)
+        if h<=maxh: return fa,la,fb,lb,lh
+    OVERFLOW.append((who or head[:12], len(head)+len(quote), int(h-maxh)))
+    return fa,la,fb,lb,lh
 def para(d,x,y,ls,f,lh,fill):
     for l in ls:
         if l: d.text((x,y),l,font=f,fill=fill); y+=lh
@@ -298,8 +330,13 @@ def back_special(c):
     if c.get('only')=='D': d.text((X(588),X(92)),'형사만 읽는다',font=F(24,'Medium'),fill=WHITE,anchor='rm')
     d.text((X(40),X(160)),c['title'],font=F(38,'Medium'),fill=WHITE,anchor='lm')
     d.line([X(40),X(206),X(588),X(206)],fill=LINE,width=X(2))
-    f,ls,lh=fit(d,c['body'],X(560),X(624),BODY,LEAD,who=c['id'])
-    para(d,X(36),X(224),ls,f,lh,WHITE)
+    if c['sort']=='증언':
+        fa,la,fb,lb,lh=fit2(d,*split_voice(c['body']),X(560),X(624),BODY,LEAD,who=c['id'])
+        y=para(d,X(36),X(224),la,fa,lh,WHITE)
+        para(d,X(36),y+lh*0.5,lb,fb,lh,WHITE)
+    else:
+        f,ls,lh=fit(d,c['body'],X(560),X(624),BODY,LEAD,who=c['id'])
+        para(d,X(36),X(224),ls,f,lh,WHITE)
     d.rectangle([X(40),X(838),X(588),X(842)],fill=VIO)
     return im
 def back(c):

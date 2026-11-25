@@ -16,6 +16,7 @@ PKGS = {
     "VT323":             ("@fontsource/vt323", False, [400]),
     "NanumGothicCoding": ("@fontsource/nanum-gothic-coding", True, [400, 700]),
     "GowunBatang":       ("@fontsource/gowun-batang", True, [400, 700]),
+    "GowunDodum":        ("@fontsource/gowun-dodum", True, [400]),      # 증언 목소리 전용
 }
 
 # 글꼴에 반드시 있어야 하는 글자 — 카드 본문에서 모은 것에 이것을 더한다
@@ -29,13 +30,16 @@ EXTRA = ("0123456789"
 def source_strings(path):
     """파이썬 소스 안의 문자열 리터럴을 전부 모은다.
 
-    "증거 식별 코드" 처럼 그리는 코드에 박힌 문구를 놓치지 않으면서, 주석과 식별자는
-    끌어오지 않는다. (주석까지 넣으면 쓰지도 않는 글자가 글꼴에 섞인다.)
+    "증거 식별 코드" 처럼 그리는 코드에 박힌 문구를 놓치지 않으면서, 주석·독스트링·
+    식별자는 끌어오지 않는다. (설명글까지 넣으면 카드에 찍지도 않는 글자가 글꼴에
+    섞이고, 설명 한 줄 고칠 때마다 글꼴을 다시 받아야 한다.)
     """
     import ast
     tree = ast.parse(pathlib.Path(path).read_text(encoding="utf-8"))
+    docs = {id(n.value) for n in ast.walk(tree) if isinstance(n, ast.Expr)}
     return "".join(n.value for n in ast.walk(tree)
-                   if isinstance(n, ast.Constant) and isinstance(n.value, str))
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str)
+                   and id(n) not in docs)
 
 
 def card_chars():
