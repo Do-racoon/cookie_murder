@@ -11,9 +11,15 @@ git -C /home/claude/cookie_murder pull --rebase origin main
 
 작업 중간에 시간이 걸렸다면 커밋 직전에 한 번 더 받는다.
 
+저장소를 처음 받았으면 한 번: `bash tools/install-hooks.sh` — 푸시할 때마다 `tools/check.py` 가 돌고,
+실패하면 푸시가 멈춘다. GitHub 에서도 `main` 에 올라갈 때마다 같은 검사가 돈다(`.github/workflows/check.yml`).
+
 ## 2. 고친 뒤에 — 바로 커밋하고 바로 푸시한다
 
 - 한 가지 수정 = 커밋 하나. 여러 수정을 모아 두지 않는다.
+- **푸시 전에 `python3 tools/check.py` 가 통과해야 한다.** 빌드 누락, 티비·문서 검사, 문서끼리 어긋남
+  (옛 규칙 문구, 카드·엔딩 수, 질문 이름표), 설계를 바꾸고 `version` 을 안 올린 것을 잡는다.
+  버린 규칙 문구는 `tools/consistency.py` 의 `BANNED` 에 더해 둔다.
 - 푸시는 `main`에 바로 한다. 사용자 지시: "고치면 메인에 푸시".
 
 ```bash
@@ -123,4 +129,4 @@ git add -A && git commit -m "<무엇을 왜>" && git push origin main
   다시 그린다. 그 탭은 **손으로 고치지 않는다.**
 - `python3 tools/tvtest.py` · `python3 tools/docstest.py` — 티비와 문서 모음 자체 검사.
 
-설계를 바꾼 뒤에는 넷 다 돌리고 푸시한다.
+설계를 바꾼 뒤에는 `python3 tools/check.py` 하나로 다 돌리고 푸시한다.
