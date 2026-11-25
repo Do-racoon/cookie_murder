@@ -118,7 +118,7 @@ def main():
         )
         check(
             "지점 네 곳에 카드가 매달려 있다",
-            sorted(hooked) == ["B4:X5", "B5:X4", "K2:X2", "K6:X3"],
+            sorted(hooked) == ["B3:X5", "B5:X4", "K2:X2", "K6:X3"],
             sorted(hooked),
         )
         check(
@@ -207,7 +207,7 @@ def main():
 
         # ── 서랍 문 · 비비기 멘트 · 히든 엔딩 순서 · 잠금 안내 (2026-11-25 오후) ──
         def tap(card, x, y):
-            pg.evaluate(f"(()=>{{viewCard='{card}'; ch=2; render();}})()")
+            pg.evaluate(f"(()=>{{ if(!$('shutter').hidden) closeSheet(); viewCard='{card}'; ch=2; render();}})()")
             box = pg.evaluate("(()=>{const L=document.querySelector('.photo .layer')||document.querySelector('.photo'); const r=L.getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
             pg.mouse.click(box[0] + box[2] * x / 100, box[1] + box[3] * y / 100)
             pg.wait_for_timeout(50)
@@ -256,7 +256,7 @@ def main():
 
         # ── 비비기 ──
         def lay(card):
-            pg.evaluate(f"(()=>{{viewCard='{card}'; ch=2; render();}})()")
+            pg.evaluate(f"(()=>{{ if(!$('shutter').hidden) closeSheet(); viewCard='{card}'; ch=2; render();}})()")
             return pg.evaluate("(()=>{const L=document.querySelector('.photo .layer'); if(!L) return null; const r=L.getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
         def rub(box, pts):
             X = lambda x: box[0] + box[2] * x / 100; Y = lambda y: box[1] + box[3] * y / 100
@@ -310,6 +310,35 @@ def main():
         n0 = tp.evaluate("S.log.length"); bx = tl(".photo .layer"); T([TP(th["x"], th["y"])])
         check("터치: 찾은 지점을 한 번 탭하면 한 번만 반응한다(설명 열기)", tp.evaluate("capIdx") == 0, tp.evaluate("[capIdx, !!document.querySelector('.bigview'), S.found.D, S.log.slice(0,2).map(l=>l.text)]"))
         tctx.close()
+
+        # ── 사진 단서 개편 (2026-11-26) ──
+        r = pg.evaluate("""(()=>{ const ids=Object.keys(D.cards);
+          S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("6ㅈ1ㅂ"); enterCode("4ㄹ7ㅎ"); enterCode("2ㄱ0ㅇ");
+          const yrs=JSON.stringify(DEFAULT_DATA).match(/20(22|23|24|25|26)[년.]/g);
+          return {ids, op:S.opened.D.slice(), g2:D.cards.G2.kind, g2h:(D.cards.G2.hotspots||[])[0]&&D.cards.G2.hotspots[0].hint, yrs}; })()""")
+        check("K1·B2·B4 카드가 없다", not set(r["ids"]) & {"K1", "B2", "B4"}, r["ids"])
+        check("B6·G4 가 새 코드로 열린다", "B6" in r["op"] and "G4" in r["op"], r["op"])
+        check("G2 는 사진 카드이고 지점 1 에 ▶ 범인 기억 ④", r["g2"] == "photo" and "기억 ④" in (r["g2h"] or ""), [r["g2"], r["g2h"]])
+        check("티비 설계에 옛 연도(2022~2026)가 없다", not r["yrs"], r["yrs"])
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K6"); viewCard="K6"; ch=2; render();
+          const before=!!document.querySelector('.picview'); S.found.D.push("K6#0"); openPicFor("K6",0); const a=!!document.querySelector('.picview img') && document.querySelector('.picview').innerText.includes('곰인형');
+          closeSheet(); const b=!document.querySelector('.picview') && ch===2; return {before,a,b}; })()""")
+        check("곰인형 눈 → 이어지는 사진이 뜨고 닫으면 돌아온다", (not r["before"]) and r["a"] and r["b"], r)
+        box = pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K6"); viewCard="K6"; ch=2; capIdx=null; lastFound=null; render();
+          const r=document.querySelector('.photo .layer').getBoundingClientRect(); return [r.left,r.top,r.width,r.height]; })()""")
+        hh = pg.evaluate("D.cards.K6.hotspots[0]")
+        pg.mouse.click(box[0] + box[2] * hh["x"] / 100, box[1] + box[3] * hh["y"] / 100); pg.wait_for_timeout(120)
+        check("곰인형 눈을 처음 찾으면 확대 사진이 저절로 뜬다", pg.evaluate("!!document.querySelector('.picview img') && document.querySelector('.picview').innerText.includes('곰인형')"))
+        pg.evaluate("closeSheet()")
+        pg.evaluate("(()=>{viewCard='K6'; ch=2; capIdx=0; render();})()")
+        check("설명에 「사진을 본다」 단추가 있다", pg.evaluate("!!document.querySelector('.photo .cap [data-pic]')"))
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("4ㄹ7ㅎ");
+          const pre=!!document.querySelector('.picview'); setChannel(4); answerMemory("다리");
+          const post=!!document.querySelector('.picview img') && document.querySelector('.picview').innerText.includes('다리'); closeSheet(); return {pre,post}; })()""")
+        check("다리 사진은 답하기 전엔 없고, 답하면 뜬다", r["pre"] is False and r["post"] is True, r)
+        r = pg.evaluate("""(()=>{ const st=freshState(); st.started=true; st.opened.D=["K1","K2","B2","B4"]; st.found.D=["K1#0","B4#1","K2#0"];
+          S=migrateState(st); setChannel(2); render(); return {op:S.opened.D, fd:S.found.D}; })()""")
+        check("옛 판(K1·B2·B4 열림)도 오류 없이, 없는 카드는 걸러 낸다", r["op"] == ["K2"] and r["fd"] == ["K2#0"], r)
 
         b.close()
 

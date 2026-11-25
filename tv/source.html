@@ -121,6 +121,8 @@ h1,h2,h3{margin:0;text-wrap:balance;font-weight:700}
 .bigview .photo{aspect-ratio:4/3;width:100%;max-height:72vh;flex:0 0 auto;cursor:crosshair;background:#0a110d}
 .photo .cap{position:absolute;left:4%;right:4%;bottom:4%;background:rgba(6,12,8,.86);border:1px solid var(--amber);border-radius:6px;padding:.5em .8em;color:#f6e9c8;font-size:.95em;line-height:1.45;text-shadow:none;z-index:3}
 .photo .cap b{color:var(--amber);margin-right:.4em}
+.photo .cap .picbtn{display:block;margin:.45em 0 0;padding:.3em .6em;font:inherit;background:transparent;color:#ffe6a8;border:1px solid rgba(231,181,90,.55);border-radius:4px;cursor:pointer}
+.picview img{display:block;width:100%;height:auto;max-height:72vh;object-fit:contain;border-radius:6px;margin:.5em 0}
 .photo .cap .take{display:block;margin:.45em 0 0;padding-top:.4em;border-top:1px solid rgba(231,181,90,.35);color:#ffe6a8;letter-spacing:.02em}
 .photo .cap.flash{animation:fl .5s steps(2) 1}
 .photo .ph{position:absolute;inset:0;z-index:0;background:
@@ -324,34 +326,6 @@ const DEFAULT_DATA = {
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
-    "K1": {
-      "code": "8ㅎ8ㅎ",
-      "who": "D",
-      "act": 1,
-      "kind": "photo",
-      "title": "현관 앞 CCTV ★",
-      "img": "/_blob/f51d26fa1ebbacf138b96ab3bca8ae12",
-      "hotspots": [
-        {
-          "x": 30,
-          "y": 9,
-          "r": 8,
-          "hint": "★처마 밑 돔 카메라 — 경찰 장비가 아니다. 누가 달았나"
-        },
-        {
-          "x": 63,
-          "y": 64,
-          "r": 8,
-          "hint": "문손잡이의 토끼 열쇠고리 — 오락실 경품. 그녀가 좋아하는 것"
-        },
-        {
-          "x": 46,
-          "y": 88,
-          "r": 8,
-          "hint": "바닥의 달림공원 안내지 — 다리로 가는 길"
-        }
-      ]
-    },
     "K2": {
       "code": "1ㅁ5ㅈ",
       "who": "D",
@@ -364,7 +338,7 @@ const DEFAULT_DATA = {
           "x": 36,
           "y": 86,
           "r": 9,
-          "hint": "★달림국밥 영수증 — 새벽 1:50, 2인분. 누구와 먹었나"
+          "hint": "★남산국밥 영수증 — 새벽 1:50, 2인분. 누구와 먹었나"
         },
         {
           "x": 61,
@@ -407,19 +381,19 @@ const DEFAULT_DATA = {
           "x": 38,
           "y": 44,
           "r": 10,
-          "hint": "★하트 모양 쿠키 — 그 쿠키. \"제일 싫어하는 쿠키\"라던 사람이 들고 있다"
+          "hint": "★하트 모양 쿠키 — 그녀가 들고 있다. 그런데 그녀는 먹는 건 싫다고 했다"
         },
         {
           "x": 52,
           "y": 24,
           "r": 8,
-          "hint": "눈 — 달이 있다"
+          "hint": "눈 — 깊은 사연이 있는 것 같다. 다크서클이 있다"
         },
         {
           "x": 62,
           "y": 70,
           "r": 8,
-          "hint": "초커와 피어싱 — 오락실 리듬게임 자리의 그 사람"
+          "hint": "보랏빛 머리, 초커와 피어싱 — 오락실에 사는 것 같은 사람. 제멋대로지만 밝은 편이다"
         }
       ]
     },
@@ -441,13 +415,13 @@ const DEFAULT_DATA = {
           "x": 50,
           "y": 40,
           "r": 8,
-          "hint": "눈 — 달이 없다. \"맛이 없게 생겼군\"은 형사에게 한 말"
+          "hint": "눈 — 선량한 편이다. 범인 같지 않다. 다크서클이 있다"
         },
         {
           "x": 50,
           "y": 82,
           "r": 9,
-          "hint": "셔츠 — 보건소 유니폼이 아니다. 구치소 지급품"
+          "hint": "인적 사항 — 남성, 30대 초반. 보건소 직원"
         }
       ]
     },
@@ -463,27 +437,31 @@ const DEFAULT_DATA = {
           "x": 24,
           "y": 37,
           "r": 6,
-          "hint": "★곰인형의 눈 — 렌즈다. 인형 안에 카메라가 들어 있다. 누군가 이 방을 보고 있었다 ▶ 형사: 비밀 ①을 읽는다"
+          "hint": "★곰인형의 눈 — 자세히 보니 카메라 렌즈다. 누군가 이 방을 감시하고 있다 ▶ 형사: 비밀 ①을 읽는다",
+          "card": "X3",
+          "pic": {
+            "src": "img/bear-eye.jpg",
+            "cap": "곰인형의 눈 — 장갑 낀 손으로 젖히자 렌즈가 보인다. 누군가 이 방을 보고 있었다."
+          }
         },
         {
           "x": 60,
           "y": 80,
           "r": 9,
-          "card": "X3",
-          "hint": "바닥의 붉은 끈 — 피의자가 들고 온 것. 이 집 물건이 아니다"
+          "hint": "바닥의 붉은 끈 — 피해자의 물건이 아니다. 피의자가 손수 들고 온 것 같다"
         },
         {
           "x": 57,
           "y": 35,
           "r": 9,
-          "hint": "발코니 창 — 들어온 길. 그런데 현관은 안에서 열려 있었다"
+          "hint": "발코니 창 — 누군가 들어온 흔적이 있다. 잠긴 흔적이 있지만, 왠지 열려 있다"
         },
         {
           "x": 93,
           "y": 52,
           "r": 6,
           "only": "D",
-          "hint": "책상 옆 서랍 — 공책 한 권. 일기장이다 ▶ 형사: 비밀 ③을 읽는다"
+          "hint": "책상 옆 서랍 — 피해자의 일기장이다 ▶ 형사: 비밀 ③을 읽는다"
         }
       ]
     },
@@ -499,47 +477,19 @@ const DEFAULT_DATA = {
           "x": 70,
           "y": 78,
           "r": 9,
-          "hint": "★명찰 \"서연\" — 맥주집 새벽 2시 퇴근"
+          "hint": "★명찰 \"서연\" — 누군가와 자연스럽게 이야기를 나누고 있다. 친한 사이 같다"
         },
         {
           "x": 26,
           "y": 38,
           "r": 9,
-          "hint": "뒤의 남자 손님 — 등을 돌리고 있다. 화장실 쪽"
+          "hint": "남자 손님들 — 가끔씩 서연을 쳐다본다. 인기가 많은 것 같다. 요즘 누가 따라온다고 했었다. 겁에 질린 표정도 지었었다"
         },
         {
           "x": 86,
           "y": 16,
           "r": 8,
-          "hint": "메뉴판 — 보건소 옆 가게"
-        }
-      ]
-    },
-    "B2": {
-      "code": "5ㅇ0ㅋ",
-      "who": "D",
-      "act": 2,
-      "kind": "photo",
-      "title": "피해자의 방 ★",
-      "img": "/_blob/f2ffa379f4783094bd79d27243a044ff",
-      "hotspots": [
-        {
-          "x": 60,
-          "y": 74,
-          "r": 10,
-          "hint": "★가방 — 끈이 떼어져 없다. 피해자의 물건. 끈은 현장에 없다. 가져갔다"
-        },
-        {
-          "x": 50,
-          "y": 22,
-          "r": 8,
-          "hint": "열린 발코니 창 — 미리 열려 있었다"
-        },
-        {
-          "x": 74,
-          "y": 36,
-          "r": 8,
-          "hint": "의자에 걸친 옷 — 갈아입으려던 참이었다"
+          "hint": "메뉴판 — 싸고 맛도 좋아서 주로 남자 손님이 온다"
         }
       ]
     },
@@ -548,7 +498,7 @@ const DEFAULT_DATA = {
       "who": "D",
       "act": 2,
       "kind": "photo",
-      "title": "책상 위 쿠키 ★",
+      "title": "국과수 촬영 — 책상 위 쿠키 ★",
       "img": "/_blob/4458b4cf1422dbb34f3b023bd6e70ae1",
       "hotspots": [
         {
@@ -561,48 +511,20 @@ const DEFAULT_DATA = {
           "x": 76,
           "y": 30,
           "r": 8,
-          "hint": "문에 끼인 슬리퍼 — 나갈 때 열어 둔 것"
+          "hint": "문에 끼인 슬리퍼 — 이걸로 문이 안 잠겨, 여러 사람이 드나든 흔적이 있다. 강도일 수도 있지만, 쿠키 때문에 경찰은 연쇄 살인이라고 주장한다"
         },
         {
           "x": 30,
           "y": 12,
           "r": 8,
-          "hint": "벽의 사진 — 웃고 있는 피해자, 오락실 앞"
-        }
-      ]
-    },
-    "B4": {
-      "code": "9ㅎ1ㅌ",
-      "who": "D",
-      "act": 2,
-      "kind": "photo",
-      "title": "국과수 촬영 ★",
-      "img": "/_blob/31d590ad3241ac231f5d3727507ec433",
-      "hotspots": [
-        {
-          "x": 72,
-          "y": 26,
-          "r": 10,
-          "hint": "★침대의 피 — 뒤통수를 먼저 쳤다. 이마가 아니다"
+          "hint": "벽의 사진 — 웃고 있는 피해자. 해맑은 사람이었던 것 같다. 그 옆 사진에는 다리가 찍혀 있다"
         },
         {
-          "x": 44,
-          "y": 48,
-          "r": 8,
-          "hint": "슬리퍼 위치 — 문틀"
-        },
-        {
-          "x": 50,
-          "y": 70,
-          "r": 8,
-          "hint": "바닥의 발자국 — 265mm, 창에서 책상으로"
-        },
-        {
-          "x": 87,
-          "y": 60,
-          "r": 8,
-          "card": "X5",
-          "hint": "감식관 — 이 사람이 쓴 감정서가 있다"
+          "x": 81,
+          "y": 64,
+          "r": 7,
+          "hint": "증거 번호표 2 — 감식관이 남긴 표지. 이 현장의 감정서가 있다",
+          "card": "X5"
         }
       ]
     },
@@ -618,26 +540,60 @@ const DEFAULT_DATA = {
           "x": 86,
           "y": 46,
           "r": 10,
-          "hint": "★리듬게임 기기 — 평화로운 게임만. 매일 여기 있다"
+          "hint": "★그녀가 좋아하는 리듬게임 — 격투게임보다 리듬게임이나 인형뽑기를 좋아했다"
         },
         {
           "x": 78,
           "y": 40,
           "r": 7,
-          "hint": "손목시계 — 새벽 1시 10분"
+          "hint": "손목시계 — 새벽 1시를 가리키고 있다"
         },
         {
-          "x": 56,
-          "y": 28,
+          "x": 60,
+          "y": 30,
           "r": 8,
-          "hint": "반창고 — 벽에 부딪힌 자국이 아니다"
+          "hint": "웃는 얼굴 — 내기에 이긴 걸 해맑게 즐거워하고 있다. 늘 오락실에 사는 것 같다",
+          "card": "X4"
         },
         {
-          "x": 63,
-          "y": 16,
+          "x": 54,
+          "y": 70,
+          "r": 9,
+          "hint": "헤드셋 — 목이 유독 가늘다. 직업은 프리랜서라고 했는데, 정확히 무슨 일인지는 모른다"
+        }
+      ]
+    },
+    "B6": {
+      "code": "6ㅈ1ㅂ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "편의점 CCTV — 새벽 2시 41분 ★",
+      "img": "img/conv-cctv.jpg",
+      "hotspots": [
+        {
+          "x": 21,
+          "y": 25,
+          "r": 7,
+          "hint": "★유리문에 비친 사람 — 보랏빛 머리. 가게 밖에서 서연을 보고 있다"
+        },
+        {
+          "x": 52,
+          "y": 72,
+          "r": 8,
+          "hint": "어깨에 멘 가방 — 붉은 끈이 달려 있다"
+        },
+        {
+          "x": 79,
+          "y": 62,
+          "r": 7,
+          "hint": "소주 한 병 — 퇴근 뒤 혼자 마실 술. 현금으로 낸다"
+        },
+        {
+          "x": 92,
+          "y": 7,
           "r": 6,
-          "card": "X4",
-          "hint": "웃는 얼굴 — 이 아이는 말이 많다. 물으면 다 말한다"
+          "hint": "02:41 — 퇴근하고 41분 뒤. 집까지는 걸어서 5분"
         }
       ]
     },
@@ -647,15 +603,41 @@ const DEFAULT_DATA = {
       "act": 3,
       "kind": "text",
       "title": "첫 번째 쿠키 살인",
-      "text": "여성, 20대 후반. 2022년 10월, 달림동 반지하. 손목·발목에 결박 자국, 목에 넓은 압흔 — 벨트. 침입 흔적 없음, 현관은 열려 있었다. 책상에 반으로 쪼갠 쿠키의 반쪽 — 피가 묻지 않았다. 가게 점장을 의심했으나 미제. 처음으로 \"쿠키 살인\"이라 불린 사건. 사망 추정은 새벽 4시 — 그날 아침, 한 경찰 가족의 발인이 있었다. ▶ 형사: 비밀 ②를 읽는다 ▶ 범인: 기억 ③을 읽는다 ▣ 국과수 감정서 카드 X6을 꺼낸다"
+      "text": "여성, 20대 후반. 2015년 10월, 달림동 반지하. 손목·발목에 결박 자국, 목에 넓은 압흔 — 벨트. 침입 흔적 없음, 현관은 열려 있었다. 책상에 반으로 쪼갠 쿠키의 반쪽 — 피가 묻지 않았다. 가게 점장을 의심했으나 미제. 처음으로 \"쿠키 살인\"이라 불린 사건. 사망 추정은 새벽 4시 — 그날 아침, 한 경찰 가족의 발인이 있었다. ▶ 형사: 비밀 ②를 읽는다 ▶ 범인: 기억 ③을 읽는다 ▣ 국과수 감정서 카드 X6을 꺼낸다"
     },
     "G2": {
       "code": "2ㄱ0ㅇ",
       "who": "D",
       "act": 3,
-      "kind": "text",
-      "title": "반지하의 책상",
-      "text": "책상 위, 반으로 쪼갠 쿠키의 남은 반쪽 — 피가 없다. 먹은 반쪽에만 피를 댔다. 맥주집과 다르다. 찻잔이 두 개, 두 번째 잔의 입술 자국이 작다 — 손님은 아는 사람. 벽의 사진: 오락실 앞, 피해자 옆에 초커를 한 여자. 눈에 달이 있다. ▶ 범인: 기억 ④를 읽는다"
+      "kind": "photo",
+      "title": "반지하의 책상 ★",
+      "img": "img/banjiha-desk.jpg",
+      "hotspots": [
+        {
+          "x": 54,
+          "y": 61,
+          "r": 8,
+          "hint": "★반으로 쪼갠 쿠키의 남은 반쪽 — 피가 없다. 먹은 반쪽에만 피를 댔다. 맥주집과 다르다 ▶ 범인: 기억 ④를 읽는다"
+        },
+        {
+          "x": 25,
+          "y": 59,
+          "r": 8,
+          "hint": "찻잔 두 개 — 한쪽에 작은 립스틱 자국. 손님은 아는 사람이었다"
+        },
+        {
+          "x": 82,
+          "y": 20,
+          "r": 9,
+          "hint": "벽의 사진 — 오락실 앞, 피해자 옆에 초커를 한 여자. 눈에 달이 있다"
+        },
+        {
+          "x": 40,
+          "y": 79,
+          "r": 9,
+          "hint": "책상에 눌린 자국 — 벨트. 묶는 것이 먼저였다"
+        }
+      ]
     },
     "G3": {
       "code": "6ㄱ6ㅍ",
@@ -663,7 +645,45 @@ const DEFAULT_DATA = {
       "act": 3,
       "kind": "text",
       "title": "그 뒤의 두 건",
-      "text": "2023년 10월, 2024년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2025년 10월 맥주집이 네 번째로 기록됐고, 다음은 2026년 10월로 예상했다."
+      "text": "2016년 10월, 2017년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2018년 10월 맥주집이 네 번째로 기록됐고, 다음은 2019년 10월로 예상했다."
+    },
+    "G4": {
+      "code": "4ㄹ7ㅎ",
+      "who": "D",
+      "act": 3,
+      "kind": "photo",
+      "title": "사건기록 — 2015년 10월 14일 ★",
+      "img": "img/record-living.jpg",
+      "hotspots": [
+        {
+          "x": 31,
+          "y": 52,
+          "r": 8,
+          "hint": "★책상 위의 피 — 서울중부경찰서는 강도 사건으로 기록했다"
+        },
+        {
+          "x": 52,
+          "y": 70,
+          "r": 8,
+          "hint": "바닥의 핏자국 — 현관 쪽으로 이어지지 않는다. 방 안에서 끊긴다"
+        },
+        {
+          "x": 77,
+          "y": 45,
+          "r": 7,
+          "hint": "현관 — 안에서 잠겨 있었다. 신발 두 켤레"
+        },
+        {
+          "x": 63,
+          "y": 48,
+          "r": 6,
+          "hint": "열린 방문 — 안쪽 방의 옷장",
+          "pic": {
+            "src": "img/closet.jpg",
+            "cap": "옷장 안 — 밀봉된 하트 쿠키, 뜯지 않았다. 벽의 작은 피 손자국 — 어른 손이 아니다. 그날 누군가 이 옷장 안에 있었다."
+          }
+        }
+      ]
     }
   },
   "memory": [
@@ -816,7 +836,11 @@ const DEFAULT_DATA = {
             "다리 아래"
           ],
           "ok": "다리. 그에게 쿠키를 건넨 아이가 있었다.",
-          "key": "bridge"
+          "key": "bridge",
+          "pic": {
+            "src": "img/bridge.jpg",
+            "cap": "다리 — 저녁의 난간. 쿠키 부스러기가 아직 남아 있다."
+          }
         }
       ],
       "ask": "그녀는 왜 쿠키를 먹을까? / 피의자가 피 묻은 쿠키를 처음 받아먹은 곳은 어디인가?",
@@ -888,7 +912,7 @@ const DEFAULT_DATA = {
       "id": "X3",
       "kind": "국과수",
       "act": 1,
-      "title": "감정서 — 2026년 1월, 302호"
+      "title": "감정서 — 2019년 1월, 302호"
     },
     {
       "id": "X4",
@@ -900,13 +924,13 @@ const DEFAULT_DATA = {
       "id": "X5",
       "kind": "국과수",
       "act": 2,
-      "title": "감정서 — 2025년 10월, 맥주집"
+      "title": "감정서 — 2018년 10월, 맥주집"
     },
     {
       "id": "X6",
       "kind": "국과수",
       "act": 3,
-      "title": "감정서 — 2022년 10월, 반지하"
+      "title": "감정서 — 2015년 10월, 반지하"
     }
   ],
   "shared": true
@@ -928,7 +952,9 @@ function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값
   /* 막의 질문과 엔딩은 언제나 저장소 설계를 쓴다 — 제작자 모드·옛 저장값·상대 폰 설계로 바꾸지 못한다 */
   d.memory=base.memory; d.endings=base.endings;
   return d; }
-function migrateState(st){ const base=freshState(); delete st.endArm; /* 「시간이 끝났다」 한 번 누른 대기는 저장된 판에 남기지 않는다 */ for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
+function migrateState(st){ const base=freshState(); delete st.endArm;
+  /* 없어진 카드(옛 설계의 K1·B2·B4 등)는 열린 목록·찾은 지점에서 걸러 낸다 */
+  ["C","D"].forEach(w=>{ if(st.opened&&st.opened[w]) st.opened[w]=st.opened[w].filter(id=>D.cards[id]); if(st.found&&st.found[w]) st.found[w]=st.found[w].filter(k=>D.cards[k.split("#")[0]]); }); /* 「시간이 끝났다」 한 번 누른 대기는 저장된 판에 남기지 않는다 */ for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
   /* 옛 판(턴·지시 카드)의 로그 줄은 지운다 */ if(Array.isArray(st.log)) st.log=st.log.filter(e=>e&&e.turn===undefined&&!/턴|END|지시 카드|상호작용/.test(e.text||"")); return st; }
 function loadData(){ try{ const j=localStorage.getItem("sbtv2_data"); if(j) return migrate(JSON.parse(j)); }catch(e){} return migrate(null); }
 function saveData(push){ try{ localStorage.setItem("sbtv2_data", JSON.stringify(D)); }catch(e){} if(push&&cref){ cref.set(JSON.parse(JSON.stringify(D))).catch(e=>toast(e&&e.code==="quota_exceeded"?"설계가 너무 크다. 사진은 업로드로 넣어야 한다.":"상대 폰에 설계를 보내지 못했다 (쓰기 권한?). 이 폰에는 저장됐다.")); } }
@@ -1033,13 +1059,15 @@ function clickPhoto(ev, id){
   const L=ev.currentTarget.querySelector(".layer")||ev.currentTarget; const r=L.getBoundingClientRect(); if(!r.width) return;
   const x=(ev.clientX-r.left)/r.width*100, y=(ev.clientY-r.top)/r.height*100; if(x<0||x>100||y<0||y>100) return;
   if(ev.target.closest(".pbig")) return;
+  const pb=ev.target.closest("[data-pic]"); if(pb){ openPicFor(id, +pb.dataset.pic); return; }
   if(ev.target.closest(".cap")){ capIdx=null; lastFound=null; render(); return; }
   let hit=-1; (c.hotspots||[]).forEach((h,i)=>{ if(Math.hypot(x-h.x,y-h.y)<=(h.r||8)) hit=i; });
   if(hit>=0){ const key=id+"#"+hit; lastFound={id,i:hit};
     if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key);
       const sp=specialOf((c.hotspots[hit]||{}).card);
       log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다."+(sp?" \u25a3 "+sp.kind+" 카드 "+sp.id+eulReul(sp.id)+" 꺼낸다.":""), who, "good");
-      ["C","D"].forEach(w=>tryAdvance(w, true)); /* 사진에 머문다 — 방금 연 지점의 설명(▶ 지시)을 가리지 않게 */ }
+      ["C","D"].forEach(w=>tryAdvance(w, true)); /* 사진에 머문다 — 방금 연 지점의 설명(▶ 지시)을 가리지 않게 */
+      if(c.hotspots[hit].pic) openPicFor(id, hit); /* 이어지는 사진은 처음 찾을 때 저절로 뜬다 */ }
     else { if(capIdx===hit){ capIdx=null; lastFound=null; } else capIdx=hit; render(); } }
   else { S.misses[who].push({id,x:+x.toFixed(1),y:+y.toFixed(1)}); lastFound=null; capIdx=null; log("사진 "+id+"의 한 지점을 눌렀다 — 아무것도 없었다.", who, "bad"); }
 }
@@ -1073,6 +1101,7 @@ function answerMemory(v){
       else if(!left) log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" "+GATE_LINE, who, "good");
       else log(q.who+"의 질문 — 맞았다. "+(q.ok||"")+" 남은 질문 "+left+"개.", who, "good"); }
     else log(q.who+"의 질문 — 맞았다. "+(q.ok||""), who, "sys");
+    if(q.pic) openPic(q.pic.src, q.pic.cap); /* 맞힌 뒤에만 뜨는 장면(다리) */
     return; }
   const ok=(m.answers||[]).some(a=>norm(a)===norm(v));
   if(ok){ S.act[who]=m.to; S.memDone[who].push(m.from); ch=4; log("기억에 답했다 — 맞았다. "+roleName(who)+"은(는) "+m.to+"막으로. 그 막의 카드가 열린다.", who, "sys"); }
@@ -1177,7 +1206,11 @@ function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서�
 }
 function specialOf(id){ return (D.specials||[]).find(x=>x.id===id); }
 function eulReul(w){ return /[013678]$/.test(w)?"을":"를"; }
-function capText(h){ if(!h) return ""; let t=esc(h.hint); const sp=h.card&&specialOf(h.card);
+/* 이어지는 사진 — 지점(pic) 또는 막의 질문(pic)에 붙은 사진을 시트로 띄운다. 닫으면 원래 화면으로 */
+function openPic(src, cap){ openSheet(sh=>{ sh.innerHTML=`<div class="picview"><div class="row" style="align-items:center"><h3 style="flex:1">이어지는 사진</h3><button id="picClose" style="flex:0 0 auto">닫기</button></div><img src="${esc(src)}" alt=""><p class="hint">${esc(cap||"")}</p></div>`; $("picClose").onclick=closeSheet; }); }
+function openPicFor(id, i){ const h=((D.cards[id]||{}).hotspots||[])[i]; if(h&&h.pic) openPic(h.pic.src, h.pic.cap); }
+function capText(h, i){ if(!h) return ""; let t=esc(h.hint); const sp=h.card&&specialOf(h.card);
+  if(h.pic) t+=`<button class="take picbtn" data-pic="${i}">사진을 본다 ▸</button>`;
   if(sp) t+=`<b class="take">\u25a3 ${esc(sp.kind)} 카드 ${esc(sp.id)}${eulReul(sp.id)} 꺼낸다${sp.only==="D"?" — 형사만 읽는다":sp.only==="C"?" — 범인만 읽는다":""}</b>`;
   return t; }
 function spotsHtml(c, id, who, all){ return (c.hotspots||[]).map((h,i)=> (all||S.found[who].includes(id+"#"+i)) ? `<div class="spot ${all?'':'found'}" style="left:${h.x}%;top:${h.y}%;--d:${(h.r||8)*2}%"><i></i><b>${i+1}</b></div>` : "").join(""); }
@@ -1191,7 +1224,7 @@ function renderPhoto(w){
   const tabs=ids.length>1? `<div class="row" style="flex:0 0 auto;gap:4px">${ids.map(id=>`<button data-view="${id}" class="${id===viewCard?'primary':''}" style="padding:2px 7px;font-size:.8em;flex:0 0 auto">${id}</button>`).join("")}</div>`:"";
   const misses=S.misses[w].filter(m=>m.id===viewCard).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
   if(lastFound&&lastFound.id===viewCard&&capIdx===null) capIdx=lastFound.i;
-  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(viewCard+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h)}</div>`:"";
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(viewCard+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h,capIdx)}</div>`:"";
   return `${tabs}<div class="photo fill" data-id="${viewCard}">${c.img?`<img src="${esc(c.img)}" alt="${esc(c.title||viewCard)}">`:`<div class="ph">${viewCard}<small>사진 자리 — 제작자 모드에서 올린다</small></div>`}<div class="layer">${spotsHtml(c,viewCard,w,false)}${misses}${cap}</div>
     <div class="plabel"><span>${esc(c.title||viewCard)} · ${viewCard}</span><span>지점 ${foundN}/${(c.hotspots||[]).length}</span></div><button class="pbig" data-big="${viewCard}" title="크게 보기">⤢</button></div>`;
 }
@@ -1201,7 +1234,7 @@ function renderBig(sheet){ /* 큰 화면 보기 — 같은 지점·설명 규칙
   const s=sheet||$("sheet"); const w=me(); const id=bigId; const c=D.cards[id]; if(!c) return;
   const foundN=S.found[w].filter(k=>k.startsWith(id+"#")).length;
   const misses=S.misses[w].filter(m=>m.id===id).map(m=>`<div class="spot miss" style="left:${m.x}%;top:${m.y}%"><i></i></div>`).join("");
-  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(id+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h)}</div>`:"";
+  const h=capIdx!==null&&c.hotspots&&c.hotspots[capIdx]; const cap=h&&S.found[w].includes(id+"#"+capIdx)? `<div class="cap flash"><b>${capIdx+1}</b>${capText(h,capIdx)}</div>`:"";
   s.innerHTML=`<div class="bigview"><div class="row" style="align-items:center"><h3 style="flex:1">${esc(c.title||id)} <span class="pill">${id}</span> <span class="pill">지점 ${foundN}/${(c.hotspots||[]).length}</span></h3><button id="bigClose" style="flex:0 0 auto">닫기</button></div>
     <div class="photo" data-id="${id}">${c.img?`<img src="${esc(c.img)}" alt="">`:`<div class="ph">${id}<small>사진 없음</small></div>`}<div class="layer">${spotsHtml(c,id,w,false)}${misses}${cap}</div></div>
     <div class="hint">의심스러운 곳을 누른다. 번호가 붙은 지점을 다시 누르면 설명이 뜬다. 소모 없음.</div></div>`;
