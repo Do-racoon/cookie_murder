@@ -19,6 +19,7 @@ import synctest  # noqa: E402  (tv_data: tv/source.html 의 DEFAULT_DATA)
 
 TOK = json.loads((ROOT / "design" / "tokens.json").read_text(encoding="utf-8"))
 P, ACT = TOK["paperColor"], TOK["paperAct"]
+FLAG = {"new": "새로", "chg": "바뀜"}
 ACTNAME = {1: "1막 — 현행범 현장", 2: "2막 — 맥주집", 3: "3막 — 반지하"}
 
 
@@ -41,8 +42,19 @@ def roles(d):
     return out
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    argv = argv or []
     d = synctest.tv_data()
+    draft = None
+    if "--draft" in argv:   # 고칠 안: 티비 설계는 그대로 두고, 안(JSON)을 얹어 검토용으로만 그린다
+        draft = json.loads((ROOT / argv[argv.index("--draft") + 1]).read_text(encoding="utf-8"))
+        for cid, ov in draft.get("cards", {}).items():
+            c = d["cards"].setdefault(cid, {"kind": "photo"})
+            for k in ("title", "img", "act"):
+                if k in ov: c[k] = ov[k]
+            if "hotspots" in ov: c["hotspots"] = ov["hotspots"]
+    gone = set((draft or {}).get("remove", []))
+    notes = (draft or {}).get("notes", {})
     specials = {x["id"]: x for x in d.get("specials", [])}
     R = roles(d)
     cards = [(k, c) for k, c in d["cards"].items() if c.get("kind") == "photo"]
@@ -84,15 +96,20 @@ def main() -> int:
                 idle += 1
                 does.append(("none", "이어지는 곳 없음 — 읽을거리만"))
             li = "".join(f'<li class="{k}">{html.escape(t)}</li>' for k, t in does)
-            rows.append(f'<li class="spot" id="{cid}-{n}"><b class="sn">{cid}-{n}</b>'
-                        f'{"<span class=star>★</span>" if star else ""}'
+            flag = h.get("flag", "")
+            was = f'<p class="was">지금: {html.escape(h["was"])}</p>' if h.get("was") else ""
+            rows.append(f'<li class="spot {flag}" id="{cid}-{n}"><b class="sn">{cid}-{n}</b>'
+                        + (f'<span class="flag">{FLAG.get(flag, "")}</span>' if flag else "")
+                        + f'{"<span class=star>★</span>" if star else ""}'
                         f'<span class="xy">x {h["x"]} · y {h["y"]} · 반경 {r}</span>'
-                        f'<p>{html.escape(text)}</p><ul class="does">{li}</ul></li>')
+                        f'<p>{html.escape(text)}</p>{was}<ul class="does">{li}</ul></li>')
         cr = "".join(f'<p class="cardrole">{html.escape(t)}</p>' for t in card_roles)
+        if cid in notes: cr = f'<p class="note">{html.escape(notes[cid])}</p>' + cr
         uri = img_uri(c.get("img", ""))
         sections.append(
-            f'<article class="card" id="{cid}"><header><span class="cid">{cid}</span>'
-            f'<h3>{html.escape(c.get("title",""))}</h3><span class="code">{html.escape(c.get("code",""))}</span>'
+            f'<article class="card{" gone" if cid in gone else ""}" id="{cid}"><header><span class="cid">{cid}</span>'
+            + ('<span class="gonetag">이 카드는 빠진다</span>' if cid in gone else "")
+            + f'<h3>{html.escape(c.get("title",""))}</h3><span class="code">{html.escape(c.get("code",""))}</span>'
             f'<span class="cnt">지점 {len(hs)}</span></header>'
             f'<div class="grid"><figure class="ph">'
             + (f'<img src="{uri}" alt="{html.escape(c.get("title",""))} 사진">' if uri else '<div class="noimg">사진 없음</div>')
@@ -141,18 +158,29 @@ main{{padding-block:8px 48px;padding-left:max(16px,env(safe-area-inset-left,0px)
 .does{{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:.8rem}}
 .does li{{padding:2px 6px;border-radius:3px;background:var(--paper2)}}
 .does .read{{color:#3d2a7a}} .does .card{{color:#4f3f7d}} .does .ask{{color:#355a6d}} .does .gate{{color:var(--stamp);font-weight:700}}
+.note{{margin:0 0 8px;font-size:.9rem;background:#fff6dc;border:1px solid #d8b75f;border-radius:4px;padding:6px 9px}}
+.was{{margin:0 0 6px;font-size:.82rem;color:var(--dim);text-decoration:line-through}}
+.flag{{font-family:var(--mono);font-size:.72rem;background:var(--stamp);color:var(--paper);border-radius:3px;padding:0 5px;margin-right:6px}}
+.spot.new{{border-color:var(--stamp)}} .spot.chg{{border-color:#c79a3a}}
+.card.gone{{opacity:.5}} .gonetag{{font-family:var(--mono);font-size:.8rem;color:var(--paper);background:var(--stamp);padding:1px 8px;border-radius:3px}}
 .does .none{{color:var(--dim);background:transparent;border:1px dashed var(--rule)}} .does .note{{color:var(--dim);background:transparent}}
 </style>
-<div class="top"><h1>사진 단서 검토</h1>
+<div class="top"><h1>{"사진 단서 — 고칠 안" if draft else "사진 단서 검토"}</h1>
 <p>티비가 실제로 반응하는 자리를 원으로 그렸다. 원 크기가 누르면 열리는 범위다. 번호(예: K2-3)로 짚어 말하면 된다. 사진 {len(cards)}장 · 지점 {total}개 · 아무 데도 이어지지 않는 지점 {idle}개.</p>
 <nav>{toc}</nav></div>
 <main><div class="legend"><span>★ 핵심 지점</span><span>▶ 누구에게 읽으라는 지시</span><span>▣ 꺼내는 특수 카드</span><span>막의 질문이 나타나는 곳</span><span>막 전환 문</span><span>점선 = 이어지는 곳 없음</span></div>
 {''.join(sections)}
 </main>"""
-    (ROOT / "docs" / "clues.html").write_text(page, encoding="utf-8")
-    print(f"docs/clues.html — 사진 {len(cards)}장, 지점 {total}개, 이어지는 곳 없음 {idle}개")
+    if draft:
+        head = "".join(f"<li>{html.escape(x)}</li>" for x in draft.get("summary", []))
+        page = page.replace("<title>사진 단서 검토</title>", "<title>사진 단서 고칠 안</title>").replace(
+            '<main><div class="legend">', f'<main><ul class="summary">{head}</ul><div class="legend">')
+        page = page.replace("</style>", ".summary{margin:14px 0 0;padding-left:1.2em;display:grid;gap:4px}</style>")
+    out = ROOT / "docs" / ("clues-draft.html" if draft else "clues.html")
+    out.write_text(page, encoding="utf-8")
+    print(f"{out.relative_to(ROOT)} — 사진 {len(cards)}장, 지점 {total}개, 이어지는 곳 없음 {idle}개")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
