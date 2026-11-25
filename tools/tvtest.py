@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 39 다", ver == 39, ver)
+        check("DEFAULT_DATA.version 이 40 다", ver == 40, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
