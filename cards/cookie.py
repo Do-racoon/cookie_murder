@@ -55,9 +55,18 @@ def m_tuile(d,box):    # 튀일 — 기와처럼 휜 조각
         t=math.radians(330-i*2.0); pts.append((cx+Ri*math.cos(t),cy+Ri*math.sin(t)))
     d.polygon(pts,fill=255)
 
+def m_madeleine(d,box): # 마들렌 — 조개 모양: 위가 둥근 부채꼴, 아래가 좁은 혹
+    cx,cy=box*0.5,box*0.70; R=box*0.40
+    pts=[]
+    for i in range(181):
+        t=math.radians(195+i*150/180); r=R*(1+0.035*math.sin(9*(t-math.radians(195))))
+        pts.append((cx+r*math.cos(t),cy+r*math.sin(t)))
+    pts+= [(cx+box*0.10,cy+box*0.02),(cx+box*0.06,cy+box*0.10),(cx-box*0.06,cy+box*0.10),(cx-box*0.10,cy+box*0.02)]
+    d.polygon(pts,fill=255)
+
 SHAPES={"페이스트리":m_pastry,"쇼트브레드":m_short,"진저브레드":m_ginger,
         "머랭":m_meringue,"비스코티":m_biscotti,"사블레":m_sable,
-        "랑그드샤":m_langue,"마카롱":m_macaron,"튀일":m_tuile}
+        "랑그드샤":m_langue,"마카롱":m_macaron,"튀일":m_tuile,"마들렌":m_madeleine}
 
 def details(d,box,ox,oy,name):
     X=lambda v:(v+0 ,)
@@ -96,6 +105,10 @@ def details(d,box,ox,oy,name):
         for k in (-1,0,1):
             t=math.radians(270+k*26); x=c+box*0.42*math.cos(t); y=oy+box*0.80+box*0.42*math.sin(t)
             d.ellipse([x-box*0.055,y-box*0.028,x+box*0.055,y+box*0.028],fill=DET)
+    elif name=="마들렌":
+        for k in (-3,-2,-1,0,1,2,3):
+            t=math.radians(270+k*17); x0=c; y0=oy+box*0.74
+            d.line([(x0+box*0.06*math.cos(t),y0+box*0.06*math.sin(t)),(x0+box*0.34*math.cos(t),y0+box*0.34*math.sin(t))],fill=DET,width=int(box*0.014))
     elif name=="사블레":
         for a in range(6):
             t=a/6*2*math.pi+0.4; x=c+math.cos(t)*box*0.17; y=oy+box/2+math.sin(t)*box*0.17
