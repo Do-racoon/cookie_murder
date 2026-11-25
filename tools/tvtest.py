@@ -221,6 +221,8 @@ def main():
         tap("K6", 93, 52)
         logs = pg.evaluate("S.log.slice(0,3).map(l=>l.text).join(' | ')")
         check("서랍을 열면 그 자리에서 2막, 비비기 멘트", pg.evaluate("S.act.D") == 2 and "2막으로" in logs and "비벼서 봐라" in logs, logs)
+        sc = pg.evaluate("[ch, document.getElementById('body').innerText]")
+        check("질문 먼저 → 서랍을 누르면 사진에 서랍 설명(▶ 형사: 비밀 ③)이 그대로 보인다", sc[0] == 2 and "비밀 ③" in sc[1], [sc[0], sc[1][-200:]])
         fresh1(); tap("K6", 93, 52)
         pg.evaluate("""(()=>{ setChannel(4); answerMemory("3년"); answerMemory("그녀"); })()""")
         logs = pg.evaluate("S.log.map(l=>l.text).join(' | ')")
@@ -274,7 +276,11 @@ def main():
         check("짧게 누르면 지금처럼 열린다", pg.evaluate("S.found.D.includes('K4#0')") is True)
         box = lay("K4"); rub(box, [(h["x"] - 15, h["y"]), (h["x"] + 15, h["y"])])
         check("이미 찾은 지점은 빛나지 않는다", pg.evaluate("[...document.querySelectorAll('.photo .glow')].every(g=>g.dataset.i!=='0')"))
-        errs0 = len(errs) if 'errs' in dir() else 0
+        box = lay("K4"); X = lambda x: box[0] + box[2] * x / 100; Y = lambda y: box[1] + box[3] * y / 100
+        pg.mouse.move(X(30), Y(50)); pg.mouse.down(); pg.mouse.move(X(70), Y(50), steps=6); pg.mouse.move(box[0] + box[2] + 40, Y(50), steps=3); pg.mouse.up()
+        pg.click(".photo .pbig"); pg.wait_for_timeout(120)
+        check("비비다 사진 밖에서 놓은 뒤 ⤢(크게 보기)를 누르면 바로 열린다", pg.evaluate("!!document.querySelector('.bigview')"))
+        pg.evaluate("closeSheet()")
         pg.evaluate("(()=>{viewCard='K3'; ch=2; render();})()")
         bb = pg.evaluate("(()=>{const r=document.getElementById('body').getBoundingClientRect(); return [r.left,r.top,r.width,r.height];})()")
         pg.mouse.move(bb[0] + 50, bb[1] + 50); pg.mouse.down(); pg.mouse.move(bb[0] + 200, bb[1] + 60, steps=5); pg.mouse.up()

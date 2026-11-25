@@ -1007,7 +1007,7 @@ const RUB_MIN=0.06, RUB_PAD=4, GLOW_MS=1500;
 function bindRub(ph, id){
   let st=null, rubbed=false;
   const layerOf=()=>ph.querySelector(".layer")||ph;
-  ph.addEventListener("pointerdown",ev=>{ if(ev.target.closest(".pbig,.cap")) { st=null; return; } st={x:ev.clientX,y:ev.clientY,d:0}; rubbed=false; });
+  ph.addEventListener("pointerdown",ev=>{ rubbed=false; if(ev.target.closest(".pbig,.cap")) { st=null; return; } st={x:ev.clientX,y:ev.clientY,d:0}; });
   ph.addEventListener("pointermove",ev=>{ if(!st) return; const L=layerOf(), r=L.getBoundingClientRect(); if(!r.width) return;
     st.d+=Math.hypot(ev.clientX-st.x,ev.clientY-st.y); st.x=ev.clientX; st.y=ev.clientY;
     if(!rubbed&&st.d>=r.width*RUB_MIN) rubbed=true;
@@ -1035,7 +1035,7 @@ function clickPhoto(ev, id){
     if(!S.found[who].includes(key)){ capIdx=hit; S.found[who].push(key);
       const sp=specialOf((c.hotspots[hit]||{}).card);
       log("사진 "+id+"의 지점 "+(hit+1)+" — 무언가를 찾았다. 설명이 사진 위에 뜬다."+(sp?" \u25a3 "+sp.kind+" 카드 "+sp.id+eulReul(sp.id)+" 꺼낸다.":""), who, "good");
-      ["C","D"].forEach(w=>tryAdvance(w)); }
+      ["C","D"].forEach(w=>tryAdvance(w, true)); /* 사진에 머문다 — 방금 연 지점의 설명(▶ 지시)을 가리지 않게 */ }
     else { if(capIdx===hit){ capIdx=null; lastFound=null; } else capIdx=hit; render(); } }
   else { S.misses[who].push({id,x:+x.toFixed(1),y:+y.toFixed(1)}); lastFound=null; capIdx=null; log("사진 "+id+"의 한 지점을 눌렀다 — 아무것도 없었다.", who, "bad"); }
 }
@@ -1050,8 +1050,8 @@ function gateOpen(mm){ if(!mm||!mm.gate) return true; return ["C","D"].some(w=>(
 function reqLeft(who,mm){ const dn=partDone(who,mm); return mm.asks.map((x,i)=>i).filter(i=>!mm.asks[i].optional&&!dn.includes(i)).length; }
 function advanceLine(mm){ return mm.to>=(D.maxAct||4)?"이제 판결이다.":mm.to+"막으로. 그 막의 봉투를 뜯는다. "+RUB_LINE; }
 /* 질문은 다 풀렸는데 문이 닫혀 있던 묶음을, 문이 열린 순간 넘긴다 */
-function tryAdvance(who){ const m=memFor(who); if(!m||!m.asks||!m.asks.length||reqLeft(who,m)||!gateOpen(m)) return false;
-  S.act[who]=m.to; S.memDone[who].push(m.from); ch=4; log("이 방에서 열지 않은 곳을 열었다. "+advanceLine(m), who, "sys"); return true; }
+function tryAdvance(who, stay){ const m=memFor(who); if(!m||!m.asks||!m.asks.length||reqLeft(who,m)||!gateOpen(m)) return false;
+  S.act[who]=m.to; S.memDone[who].push(m.from); if(!stay) ch=4; log("이 방에서 열지 않은 곳을 열었다. "+advanceLine(m), who, "sys"); return true; }
 function answerMemory(v){
   const who=me(); const m=memFor(who); const late=lateAsks(who);
   if(!m&&!late.length){ toast("더는 기억의 질문이 없다."); return; }
