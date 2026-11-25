@@ -22,7 +22,8 @@ def main():
     errors = []
 
     with sync_playwright() as p:
-        b = p.chromium.launch(executable_path="/usr/bin/google-chrome",
+        chrome = pathlib.Path("/usr/bin/google-chrome")
+        b = p.chromium.launch(**({"executable_path": str(chrome)} if chrome.exists() else {}),
                               args=["--allow-file-access-from-files", "--no-sandbox"])
         pg = b.new_page(viewport={"width": 1100, "height": 820})
         pg.on("console", lambda m: errors.append(m.text)
