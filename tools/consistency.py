@@ -47,7 +47,8 @@ def main(argv) -> int:
     d = data_of(tv_src)
 
     # 1. 금지 문구
-    files = sorted((ROOT / "text").glob("*.md")) + [ROOT / "docs" / "index.html", ROOT / "tv" / "source.html"]
+    files = sorted((ROOT / "text").glob("*.md")) + [ROOT / "docs" / "index.html", ROOT / "tv" / "source.html",
+                                                ROOT / "cards" / "cards.py"]
     for f in files:
         t = f.read_text(encoding="utf-8")
         hits = [b for b in BANNED if b in t]
