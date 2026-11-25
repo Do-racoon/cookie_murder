@@ -40,19 +40,19 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 35 다", ver == 35, ver)
+        check("DEFAULT_DATA.version 이 36 다", ver == 36, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
 
         ends = pg.evaluate("DEFAULT_DATA.endings")
         check(
-            "엔딩이 아홉 장이고 id 가 E1~E9 다",
-            [e["id"] for e in ends] == ["E%d" % i for i in range(1, 10)],
+            "엔딩이 열 장이고 id 가 E1~E10 다",
+            [e["id"] for e in ends] == ["E%d" % i for i in range(1, 11)],
             [e["id"] for e in ends],
         )
         codes = [e.get("code") for e in ends]
-        check("엔딩 쿠키 이름이 아홉 개 다 다르다", len(set(codes)) == 9, codes)
+        check("엔딩 쿠키 이름이 열 개 다 다르다", len(set(codes)) == 10, codes)
 
         keys = pg.evaluate("VQ.map(q=>q.k)")
         check("판결 질문이 기소·자수서 둘이다", keys == ["charge", "confess"], keys)
@@ -60,7 +60,7 @@ def main():
         grid = pg.evaluate(
             """(()=>{const o={};for(const c of ["all","split","her"])
                for(const f of ["S1","S2","none"])
-                 o[c+"/"+f]=verdictPick({charge:c,confess:f}).join(",");
+                 o[c+"/"+f]=VGRID[c+"/"+f];
                return o;})()"""
         )
         check("3×3 아홉 칸이 서로 다른 엔딩 하나씩이다",
@@ -158,6 +158,41 @@ def main():
         hub = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
         check("문서 모음 핸드아웃 탭에 옛 범인 목표가 없다", "이름을 듣고 나면 선택해야 한다" not in hub)
         check("문서 모음 핸드아웃 탭에 형사 목표 새 문장이 있다", "자수서를 쓸 수 있게 된다" in hub)
+
+        # ── 엔딩 갈래 (2026-11-25) ──
+        g = pg.evaluate("""(()=>{ const R={}; const S3=()=>{ S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; };
+          const lastLog=()=>S.log[0].text;
+          try{
+          const E=DEFAULT_DATA.endings; R.n=E.length; R.last=E[E.length-1];
+          const a3=DEFAULT_DATA.memory.find(m=>m.from===3).asks.map(q=>q.key); R.keys=a3;
+          S3(); enterCode("G1"); answerMemory("다리"); R.det=[route(),confessOpen(),S.act.D];
+          setChannel(4); R.detLine=document.getElementById('body').innerText;
+          S3(); enterCode("G2"); answerMemory("피를 좋아하니까"); endAct3(); endAct3(); R.cul=[route(),S.act.D];
+          setChannel(4); R.culLine=document.getElementById('body').innerText;
+          answerMemory("다리"); R.culBridge=qDone("bridge");
+          S3(); enterCode("G1"); enterCode("G2"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+          setVerdict("charge","all"); setVerdict("confess","S1"); R.both=lastLog();
+          S3(); endAct3(); endAct3(); setVerdict("charge","her"); setVerdict("confess","none"); R.none=verdictPick(S.verdict);
+          S3(); endAct3(); setChannel(1); setChannel(4); endAct3(); R.arm=S.act.D;
+          const bad1=Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)),{memory:[]});
+          const bad2=JSON.parse(JSON.stringify(DEFAULT_DATA)); bad2.memory[2].asks.reverse();
+          R.mig=[JSON.stringify(migrate(bad1).memory)===JSON.stringify(DEFAULT_DATA.memory),
+                 JSON.stringify(migrate(bad2).memory)===JSON.stringify(DEFAULT_DATA.memory)];
+          }catch(e){ R.err=String(e); } return R; })()""")
+        check("갈래 검사가 오류 없이 돈다", "err" not in g, g.get("err"))
+        check("엔딩이 열 장이고 마지막이 히든 마들렌이다",
+              g.get("n") == 10 and (g.get("last") or {}).get("id") == "E10"
+              and (g.get("last") or {}).get("code") == "마들렌" and (g.get("last") or {}).get("hidden") is True, g.get("last"))
+        check("3막 질문에 herReason·bridge 이름표", sorted(k or "" for k in (g.get("keys") or [])) == ["bridge", "herReason"], g.get("keys"))
+        check("형사만 맞히면 연쇄 살인마 갈래, 자수서 잠김, 4막", g.get("det") == ["detective", False, 4], g.get("det"))
+        check("형사만 — 판결 화면에 연쇄 살인마", "연쇄 살인마" in (g.get("detLine") or ""))
+        check("범인만 맞히고 시간이 끝나면 자수 갈래, 4막", g.get("cul") == ["culprit", 4], g.get("cul"))
+        check("범인만 — 판결 화면에 자수", "자수" in (g.get("culLine") or ""))
+        check("시간이 끝난 뒤에는 형사의 질문이 닫힌다", g.get("culBridge") is False, g.get("culBridge"))
+        check("둘 다 맞히면 고른 엔딩 뒤에 마들렌", "페이스트리" in (g.get("both") or "") and "마들렌" in (g.get("both") or ""), g.get("both"))
+        check("둘 다 못 맞히면 취조서와 상관없이 E4", g.get("none") == ["E4"], g.get("none"))
+        check("한 번만 누르고 채널을 옮기면 넘어가지 않는다", g.get("arm") == 3, g.get("arm"))
+        check("옛 설계·바꾼 질문은 저장소 질문으로 되돌린다", g.get("mig") == [True, True], g.get("mig"))
 
         b.close()
 
