@@ -1,0 +1,7 @@
+# 검사(tools/check.py)와 카드 만들기에 쓰는 패키지 — 2026-11-25 기준 최신 판으로 고정
+playwright==1.65.2
+pillow==13.0.0
+reportlab==5.1.1
+markdown==3.11.3
+brotli==1.2.1
+fonttools==4.68.0
