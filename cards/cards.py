@@ -129,13 +129,21 @@ def base(c):
     im=sheet(c); d=ImageDraw.Draw(im)
     d.rectangle([X(5),X(5),W-X(6),H-X(6)],outline=LINE,width=X(2))
     d.rectangle([X(34),X(43),X(174),X(47)],fill=ACT[c['id'][0]][1])
-    act=ACT[c['id'][0]][0]
-    d.text((X(40),X(92)),'사건 기록 · '+act,font=F(24),fill=GRAY,anchor='lm')
-    d.text((X(588),X(92)),c['id'],font=D(34),fill=WHITE,anchor='rm')
-    tf=F(46,'Medium')
-    if d.textlength(c['title'],font=tf)>X(548): tf=F(38,'Medium')
-    d.text((X(40),X(172)),c['title'],font=tf,fill=WHITE,anchor='lm')
-    d.line([X(40),X(220),X(588),X(220)],fill=LINE,width=X(2))
+    k=c['id'][0]; act=ACT[k][0]
+    # 막은 섞인 더미에서 갈라내야 하니 네모 탭으로 크게 — 머리글 줄 안에 앉힌다
+    n={'K':'1막','B':'2막','G':'3막'}.get(k)
+    x=X(40)
+    if n:
+        af=M(34,True); aw=d.textlength(n,font=af); bx=x+aw+X(24)
+        d.rectangle([x,X(62),bx,X(122)],outline=WHITE,width=X(3))
+        d.text(((x+bx)//2,X(92)),n,font=af,fill=WHITE,anchor='mm')
+        x=bx+X(18)
+    d.text((x,X(94)),act,font=F(26),fill=GRAY,anchor='lm')
+    d.text((X(588),X(94)),c['id'],font=D(34),fill=WHITE,anchor='rm')
+    tf=F(44,'Medium')
+    if d.textlength(c['title'],font=tf)>X(548): tf=F(36,'Medium')
+    d.text((X(40),X(186)),c['title'],font=tf,fill=WHITE,anchor='lm')
+    d.line([X(40),X(228),X(588),X(228)],fill=LINE,width=X(2))
     return im,d
 def footer(d,label,big,color=ORA2):
     d.line([X(40),X(739),X(588),X(739)],fill=LINE,width=X(2))
