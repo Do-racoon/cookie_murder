@@ -317,7 +317,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 36,
+  "version": 37,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -1185,7 +1185,7 @@ function renderMemory(w){
       : `<div class="memq" style="opacity:.55"><b>${esc(q.who)}의 질문</b> — 잠겨 있다<br>${esc(q.lock||"현장을 더 조사하면 나타난다.")}</div>`).join("");
     if(m.asks.some(q=>q.optional)) s+=`<div class="hint" style="color:var(--phos-dim)">마지막 범인의 질문은 막을 넘기는 데 필요하지 않다. 판결이 끝날 때까지 언제든 답할 수 있다.</div>`;
     if(m.from===3) s+=`<div class="row" style="flex:0 0 auto"><button data-end3="1" style="flex:0 0 auto">${S.endArm?"한 번 더 누르면 판결로 간다 — 되돌릴 수 없다":"시간이 끝났다 — 판결로 간다"}</button></div>`;
-    s+=`<div class="hint" style="color:var(--phos-dim)">두 질문을 모두 맞혀야 다음 막이 열린다. 범인의 질문의 답은 형사가, 형사의 질문의 답은 범인이 알고 있다 — 묻고, 내어 주고, 받아 낸다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다 — 어느 질문의 답이든 순서 없이. 횟수 제한 없음.</div>`; }
+    s+=`<div class="hint" style="color:var(--phos-dim)">${m.asks.some(q=>q.optional)?"형사의 질문을 맞히면 판결로 간다.":"두 질문을 모두 맞혀야 다음 막이 열린다."} 범인의 질문의 답은 형사가, 형사의 질문의 답은 범인이 알고 있다 — 묻고, 내어 주고, 받아 낸다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다 — 어느 질문의 답이든 순서 없이. 횟수 제한 없음.</div>`; }
   else if(m) s+=`<div class="memq">${esc(m.ask)}</div><div class="hint" style="color:var(--phos-dim)">답은 사진의 힌트·문구·취조에서 들은 말 속에 있다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다. 횟수 제한 없음.</div>`;
   else { const lt=lateAsks(w); if(lt.length) s+=lt.map(x=>{ const q=x.m.asks[x.i]; return `<div class="memq"><b>${esc(q.who)}의 질문 — 아직 열려 있다</b><br>${esc(q.ask)}</div>`; }).join("")+`<div class="hint" style="color:var(--phos-dim)">판결이 끝날 때까지 답할 수 있다.</div>`; s+=verdictHtml(); }
   return s;

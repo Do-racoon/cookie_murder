@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 36 다", ver == 36, ver)
+        check("DEFAULT_DATA.version 이 37 다", ver == 37, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -174,6 +174,8 @@ def main():
           setVerdict("charge","all"); setVerdict("confess","S1"); R.both=lastLog();
           S3(); endAct3(); endAct3(); setVerdict("charge","her"); setVerdict("confess","none"); R.none=verdictPick(S.verdict);
           S3(); endAct3(); setChannel(1); setChannel(4); endAct3(); R.arm=S.act.D;
+          S3(); setChannel(4); R.act3hint=document.getElementById('body').innerText;
+          S=freshState(); start(); setChannel(4); R.act1hint=document.getElementById('body').innerText;
           const bad1=Object.assign(JSON.parse(JSON.stringify(DEFAULT_DATA)),{memory:[]});
           const bad2=JSON.parse(JSON.stringify(DEFAULT_DATA)); bad2.memory[2].asks.reverse();
           R.mig=[JSON.stringify(migrate(bad1).memory)===JSON.stringify(DEFAULT_DATA.memory),
@@ -193,6 +195,9 @@ def main():
         check("둘 다 못 맞히면 취조서와 상관없이 E4", g.get("none") == ["E4"], g.get("none"))
         check("한 번만 누르고 채널을 옮기면 넘어가지 않는다", g.get("arm") == 3, g.get("arm"))
         check("옛 설계·바꾼 질문은 저장소 질문으로 되돌린다", g.get("mig") == [True, True], g.get("mig"))
+        check("3막 화면은 '두 질문을 모두'라고 하지 않고 형사의 질문으로 판결에 간다고 한다",
+              "두 질문을 모두 맞혀야" not in (g.get("act3hint") or "") and "형사의 질문을 맞히면 판결" in (g.get("act3hint") or ""))
+        check("1막 화면은 여전히 두 질문을 모두 맞혀야 한다고 한다", "두 질문을 모두 맞혀야" in (g.get("act1hint") or ""))
 
         b.close()
 
