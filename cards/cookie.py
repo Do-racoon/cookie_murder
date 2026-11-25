@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import json, math, os
-from PIL import Image, ImageDraw, ImageFilter, ImageChops
-FILL=(122,99,64); EDGE=(214,186,132); DET=(74,60,38)
+import json, os
+from PIL import Image, ImageDraw, ImageChops
 def _tk():   # 일러스트 먹색은 design/tokens.json 의 paperColor.art
     import sys; sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','design'))
     from build_tokens import load_tokens, rgb
@@ -24,129 +23,8 @@ def art_mask(name, box, ss=4):
         m=ImageChops.difference(m,lay)          # 0/255 두 값이니 차 = XOR
     return m.resize((int(box),int(box)),Image.LANCZOS)
 
-def _poly_param(d,box,fn,n=360):
-    pts=[]
-    for i in range(n+1):
-        t=i/n*2*math.pi; x,y=fn(t); pts.append((box/2+x,box/2+y))
-    d.polygon(pts,fill=255)
-
-def m_pastry(d,box):   # 페이스트리 — 하트
-    def f(t):
-        x=16*math.sin(t)**3
-        y=-(13*math.cos(t)-5*math.cos(2*t)-2*math.cos(3*t)-math.cos(4*t))
-        return x*box/40, y*box/40
-    _poly_param(d,box,f,240)
-def m_short(d,box):    # 쇼트브레드 — 직사각 핑거
-    w,h=box*0.42,box*0.78
-    d.rounded_rectangle([box/2-w/2,box/2-h/2,box/2+w/2,box/2+h/2],radius=box*0.045,fill=255)
-def m_ginger(d,box):   # 진저브레드 — 사람 모양
-    c=box/2
-    d.ellipse([c-box*0.155,box*0.08,c+box*0.155,box*0.39],fill=255)
-    d.rounded_rectangle([c-box*0.165,box*0.34,c+box*0.165,box*0.68],radius=box*0.07,fill=255)
-    for s in (-1,1):
-        d.line([(c+s*box*0.10,box*0.44),(c+s*box*0.39,box*0.57)],fill=255,width=int(box*0.115))
-        d.ellipse([c+s*box*0.39-box*0.057,box*0.57-box*0.057,c+s*box*0.39+box*0.057,box*0.57+box*0.057],fill=255)
-        d.line([(c+s*box*0.075,box*0.63),(c+s*box*0.19,box*0.89)],fill=255,width=int(box*0.125))
-        d.ellipse([c+s*box*0.19-box*0.062,box*0.89-box*0.062,c+s*box*0.19+box*0.062,box*0.89+box*0.062],fill=255)
-def m_meringue(d,box): # 머랭 — 짜 올린 꼭지
-    for wf,yf in ((0.58,0.79),(0.50,0.665),(0.41,0.545),(0.31,0.43)):
-        w=box*wf; yy=box*yf
-        d.ellipse([box/2-w/2,yy-box*0.145,box/2+w/2,yy+box*0.075],fill=255)
-    d.polygon([(box/2-box*0.105,box*0.44),(box/2+box*0.105,box*0.44),(box/2+box*0.045,box*0.205)],fill=255)
-    d.ellipse([box/2+box*0.012,box*0.195,box/2+box*0.072,box*0.255],fill=255)
-def m_biscotti(d,box): # 비스코티 — 비스듬히 자른 조각
-    p=[(0.09,0.345),(0.93,0.315),(0.91,0.655),(0.07,0.685)]
-    d.polygon([(box*a,box*b) for a,b in p],fill=255)
-def m_sable(d,box):    # 사블레 — 가장자리가 물결진 동그란 쿠키
-    def f(t): r=box*0.405*(1+0.055*math.sin(16*t)); return r*math.cos(t), r*math.sin(t)
-    _poly_param(d,box,f,480)
-
-def m_langue(d,box):   # 랑그드샤 — 길고 납작한 타원
-    d.ellipse([box*0.055,box*0.335,box*0.945,box*0.665],fill=255)
-def m_macaron(d,box):  # 마카롱 — 껍질 둘 사이에 크림
-    d.ellipse([box*0.095,box*0.175,box*0.905,box*0.525],fill=255)
-    d.rounded_rectangle([box*0.135,box*0.445,box*0.865,box*0.585],radius=box*0.035,fill=255)
-    d.ellipse([box*0.095,box*0.495,box*0.905,box*0.845],fill=255)
-def m_tuile(d,box):    # 튀일 — 기와처럼 휜 조각
-    cx,cy=box*0.5,box*0.80; Ro,Ri=box*0.52,box*0.33
-    pts=[]
-    for i in range(61):
-        t=math.radians(210+i*2.0); pts.append((cx+Ro*math.cos(t),cy+Ro*math.sin(t)))
-    for i in range(61):
-        t=math.radians(330-i*2.0); pts.append((cx+Ri*math.cos(t),cy+Ri*math.sin(t)))
-    d.polygon(pts,fill=255)
-
-def m_madeleine(d,box): # 마들렌 — 조개 모양: 위가 둥근 부채꼴, 아래가 좁은 혹
-    cx,cy=box*0.5,box*0.70; R=box*0.40
-    pts=[]
-    for i in range(181):
-        t=math.radians(195+i*150/180); r=R*(1+0.035*math.sin(9*(t-math.radians(195))))
-        pts.append((cx+r*math.cos(t),cy+r*math.sin(t)))
-    pts+= [(cx+box*0.10,cy+box*0.02),(cx+box*0.06,cy+box*0.10),(cx-box*0.06,cy+box*0.10),(cx-box*0.10,cy+box*0.02)]
-    d.polygon(pts,fill=255)
-
-SHAPES={"페이스트리":m_pastry,"쇼트브레드":m_short,"진저브레드":m_ginger,
-        "머랭":m_meringue,"비스코티":m_biscotti,"사블레":m_sable,
-        "랑그드샤":m_langue,"마카롱":m_macaron,"튀일":m_tuile,"마들렌":m_madeleine}
-
-def details(d,box,ox,oy,name):
-    X=lambda v:(v+0 ,)
-    c=ox+box/2
-    if name=="페이스트리":
-        for k in (-1,0,1):
-            d.line([(c+k*box*0.11-box*0.08,oy+box*0.33),(c+k*box*0.11+box*0.04,oy+box*0.60)],fill=DET,width=int(box*0.022))
-    elif name=="쇼트브레드":
-        for r in range(3):
-            for col in (-1,1):
-                x=c+col*box*0.075; y=oy+box*0.30+r*box*0.19
-                d.ellipse([x-box*0.021,y-box*0.021,x+box*0.021,y+box*0.021],fill=DET)
-    elif name=="진저브레드":
-        for s in (-1,1):
-            d.ellipse([c+s*box*0.055-box*0.021,oy+box*0.195,c+s*box*0.055+box*0.021,oy+box*0.237],fill=DET)
-        d.arc([c-box*0.07,oy+box*0.23,c+box*0.07,oy+box*0.32],20,160,fill=DET,width=int(box*0.018))
-        for i in range(2):
-            y=oy+box*0.47+i*box*0.10
-            d.ellipse([c-box*0.025,y-box*0.025,c+box*0.025,y+box*0.025],fill=DET)
-    elif name=="머랭":
-        for wf,yf in ((0.50,0.665),(0.41,0.545),(0.31,0.43)):
-            w=box*wf; yy=oy+box*yf
-            d.arc([c-w/2,yy-box*0.145,c+w/2,yy+box*0.075],200,340,fill=DET,width=int(box*0.018))
-    elif name=="비스코티":
-        for dx,dy in ((-0.24,-0.02),(-0.05,0.04),(0.16,-0.03),(0.28,0.05)):
-            x=c+box*dx; y=oy+box/2+box*dy
-            d.ellipse([x-box*0.045,y-box*0.028,x+box*0.045,y+box*0.028],fill=DET)
-    elif name=="랑그드샤":
-        d.ellipse([c-box*0.34,oy+box*0.385,c+box*0.34,oy+box*0.615],outline=DET,width=int(box*0.014))
-    elif name=="마카롱":
-        d.line([(c-box*0.355,oy+box*0.515),(c+box*0.355,oy+box*0.515)],fill=DET,width=int(box*0.016))
-        for k in (-2,-1,0,1,2):
-            x=c+k*box*0.145
-            d.line([(x,oy+box*0.455),(x,oy+box*0.575)],fill=DET,width=int(box*0.012))
-    elif name=="튀일":
-        for k in (-1,0,1):
-            t=math.radians(270+k*26); x=c+box*0.42*math.cos(t); y=oy+box*0.80+box*0.42*math.sin(t)
-            d.ellipse([x-box*0.055,y-box*0.028,x+box*0.055,y+box*0.028],fill=DET)
-    elif name=="마들렌":
-        for k in (-3,-2,-1,0,1,2,3):
-            t=math.radians(270+k*17); x0=c; y0=oy+box*0.74
-            d.line([(x0+box*0.06*math.cos(t),y0+box*0.06*math.sin(t)),(x0+box*0.34*math.cos(t),y0+box*0.34*math.sin(t))],fill=DET,width=int(box*0.014))
-    elif name=="사블레":
-        for a in range(6):
-            t=a/6*2*math.pi+0.4; x=c+math.cos(t)*box*0.17; y=oy+box/2+math.sin(t)*box*0.17
-            d.ellipse([x-box*0.022,y-box*0.022,x+box*0.022,y+box*0.022],fill=DET)
-        d.ellipse([c-box*0.028,oy+box/2-box*0.028,c+box*0.028,oy+box/2+box*0.028],fill=DET)
-
 def draw_cookie(im, name, cx, cy, box):
-    """카드 이미지 위 (cx,cy)를 중심으로 box 크기의 쿠키를 그린다."""
-    if name in ART:
-        m=art_mask(name,box)
-        im.paste(ART_FILL,(int(cx-box/2),int(cy-box/2)),m)
-        return
-    fn=SHAPES.get(name)
-    if not fn: return
-    m=Image.new('L',(box,box),0); md=ImageDraw.Draw(m); fn(md,box)
-    m=m.filter(ImageFilter.GaussianBlur(0.6))
-    ring=ImageChops.subtract(m.filter(ImageFilter.MaxFilter(max(3,int(box*0.022)//2*2+1))),m)
-    ox,oy=int(cx-box/2),int(cy-box/2)
-    im.paste(FILL,(ox,oy),m); im.paste(EDGE,(ox,oy),ring)
-    details(ImageDraw.Draw(im),box,ox,oy,name)
+    """카드 이미지 위 (cx,cy)를 중심으로 box 크기의 과자를 찍는다."""
+    if name not in ART:
+        raise SystemExit('「%s」 일러스트가 없다 — SVG 를 tools/svg2cookie.py 로 넣어라' % name)
+    im.paste(ART_FILL,(int(cx-box/2),int(cy-box/2)),art_mask(name,box))
