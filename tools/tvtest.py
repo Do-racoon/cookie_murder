@@ -40,7 +40,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 34 다", ver == 34, ver)
+        check("DEFAULT_DATA.version 이 35 다", ver == 35, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -96,14 +96,18 @@ def main():
         check("tokens.json 의 색이 티비와 같다", not drift, drift)
 
         sp = pg.evaluate("DEFAULT_DATA.specials||[]")
-        check("특수 카드가 여섯 장이다", len(sp) == 6, len(sp))
+        check("특수 카드가 다섯 장이다 — 일기장은 핸드아웃", len(sp) == 5, len(sp))
         check(
-            "특수 카드 id 가 X1~X6 이다",
-            [x.get("id") for x in sp] == ["X1", "X2", "X3", "X4", "X5", "X6"],
+            "특수 카드 id 가 X2~X6 이다",
+            [x.get("id") for x in sp] == ["X2", "X3", "X4", "X5", "X6"],
             [x.get("id") for x in sp],
         )
-        x1 = next((x for x in sp if x.get("id") == "X1"), {})
-        check("X1 일기장은 형사만 읽는다", x1.get("only") == "D", x1.get("only"))
+        diary = pg.evaluate(
+            "(DEFAULT_DATA.cards.K6.hotspots||[]).filter(h=>/일기장/.test(h.hint||''))"
+        )
+        check("일기장 지점은 카드가 아니라 비밀 ③을 가리킨다",
+              len(diary) == 1 and not diary[0].get("card")
+              and "비밀 ③" in diary[0].get("hint", ""), diary)
         check("특수 카드마다 본문이 있다", all(len(x.get("text") or "") > 40 for x in sp))
 
         hooked = pg.evaluate(
@@ -111,8 +115,8 @@ def main():
             "(c.hotspots||[]).filter(h=>h.card).map(h=>id+':'+h.card))"
         )
         check(
-            "지점 다섯 곳에 카드가 매달려 있다",
-            sorted(hooked) == ["B4:X5", "B5:X4", "K2:X2", "K6:X1", "K6:X3"],
+            "지점 네 곳에 카드가 매달려 있다",
+            sorted(hooked) == ["B4:X5", "B5:X4", "K2:X2", "K6:X3"],
             sorted(hooked),
         )
         check(
