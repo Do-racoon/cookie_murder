@@ -54,7 +54,7 @@ def main():
 
     check("옛 다크모드 분기가 없다", "prefers-color-scheme" not in src)
     check("인쇄용 스타일이 있다", "@media print" in src)
-    check("구성이 카드 31장이다", "카드 31장" in src and "카드 22장" not in src and "카드 30장" not in src)
+    check("구성이 카드 30장이다", "카드 30장" in src and "카드 22장" not in src and "카드 31장" not in src)
     check("엔딩이 열이다", "엔딩은 열" in src and "엔딩은 다섯" not in src and "엔딩은 아홉" not in src)
 
     print()
