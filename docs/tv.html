@@ -322,7 +322,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 43,
+  "version": 44,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -562,6 +562,40 @@ const DEFAULT_DATA = {
         }
       ]
     },
+    "B7": {
+      "code": "8ㅅ5ㄴ",
+      "who": "D",
+      "act": 2,
+      "kind": "photo",
+      "title": "맥주집 근처 골목 — 새벽 2시 ★",
+      "img": "img/pub-street.jpg",
+      "hotspots": [
+        {
+          "x": 88,
+          "y": 10,
+          "r": 7,
+          "hint": "★전봇대의 CCTV — 골목이 아니라 하늘을 보고 있다. 이 길만은 찍히지 않는다. 누가 그걸 알았나"
+        },
+        {
+          "x": 45,
+          "y": 28,
+          "r": 8,
+          "hint": "보건소 — 셔터가 내려져 있다. 맥주집 바로 옆, 피의자의 일터다"
+        },
+        {
+          "x": 62,
+          "y": 54,
+          "r": 6,
+          "hint": "골목 끝 오락실 — 새벽에도 불이 켜져 있다. 리듬게임 기계"
+        },
+        {
+          "x": 75,
+          "y": 57,
+          "r": 6,
+          "hint": "혼자 걷는 사람 — 2시 퇴근길. 버스 정류장 쪽으로"
+        }
+      ]
+    },
     "B6": {
       "code": "6ㅈ1ㅂ",
       "who": "D",
@@ -645,6 +679,42 @@ const DEFAULT_DATA = {
       "kind": "text",
       "title": "그 뒤의 두 건",
       "text": "2016년 10월, 2017년 10월. 혼자 사는 여성, 현장에 쿠키. 두 현장 모두 심하게 훼손되어 감식할 것이 남지 않았다. 경찰이 알아낸 것은 주기뿐이다 — 1년에 한 번, 10월. 그 뒤로 경찰들은 그 쿠키를 불길하다며 먹지 않는다. 2018년 10월 맥주집이 네 번째로 기록됐고, 다음은 2019년 10월로 예상했다."
+    },
+    "G5": {
+      "code": "3ㅍ9ㄷ",
+      "who": "D",
+      "act": 3,
+      "kind": "photo",
+      "title": "달림천 다리 — 2007년 봄 ★",
+      "img": "img/bridge.jpg",
+      "need": "G2#0",
+      "lock": "범인이 기억 ④를 읽을 때 열린다.",
+      "hotspots": [
+        {
+          "x": 39,
+          "y": 48,
+          "r": 5,
+          "hint": "★난간 위의 쿠키 부스러기 — 누가 누구에게 건넸나"
+        },
+        {
+          "x": 55,
+          "y": 42,
+          "r": 7,
+          "hint": "두 아이 — 하나는 난간에 걸터앉고, 하나는 옆에 서 있다. 초등학교 6학년쯤"
+        },
+        {
+          "x": 70,
+          "y": 28,
+          "r": 6,
+          "hint": "멀리 교회 십자가 — 저녁 불이 막 켜졌다"
+        },
+        {
+          "x": 75,
+          "y": 10,
+          "r": 6,
+          "hint": "막 켜지는 가로등 — 해 질 녘. 이 다리 위에서 쿠키를 처음 먹었다"
+        }
+      ]
     },
     "G4": {
       "code": "4ㄹ7ㅎ",
@@ -819,7 +889,7 @@ const DEFAULT_DATA = {
           "who": "형사",
           "need": "G1",
           "lock": "형사가 비밀 ②를 읽으면 나타난다.",
-          "ask": "피의자가 피 묻은 쿠키를 처음 받아먹은 곳은 어디인가?",
+          "ask": "피의자가 처음 쿠키를 먹은 곳은 어디인가?",
           "answers": [
             "다리",
             "다리 위",
@@ -831,14 +901,10 @@ const DEFAULT_DATA = {
             "다리 아래"
           ],
           "ok": "다리. 그에게 쿠키를 건넨 아이가 있었다.",
-          "key": "bridge",
-          "pic": {
-            "src": "img/bridge.jpg",
-            "cap": "달림천 다리 — 2007년 봄, 해 질 녘. 난간 위의 두 아이. 난간에 쿠키 부스러기가 남아 있다."
-          }
+          "key": "bridge"
         }
       ],
-      "ask": "그녀는 왜 쿠키를 먹을까? / 피의자가 피 묻은 쿠키를 처음 받아먹은 곳은 어디인가?",
+      "ask": "그녀는 왜 쿠키를 먹을까? / 피의자가 처음 쿠키를 먹은 곳은 어디인가?",
       "answers": [],
       "reveal": "형사는 펜을 든다. 적을 것인가. — 이제 판결이다."
     }
@@ -1016,6 +1082,7 @@ function enterCode(v){
   const c=D.cards[id];
   if(c.who&&c.who!==who){ log("코드 "+id+" — "+roleName(c.who)+"의 카드다. 열리지 않는다.", who, "bad"); return; }
   if((c.act||1)>S.act[who]){ log("코드 "+v+" — 지직. 아직 열리지 않는다.", who, "bad"); return; }
+  if(c.need&&!S.opened[who].includes(id)&&!S.found[who].includes(c.need)){ log("코드 "+v+" — 지직. 아직 열리지 않는다. "+(c.lock||""), who, "bad"); return; }
   const already=S.opened[who].includes(id);
   if(!already) S.opened[who].push(id);
   viewCard=id; capIdx=null; lastFound=null; ch= c.kind==="photo"?2:3;
@@ -1107,10 +1174,20 @@ function answerMemory(v){
 }
 
 /* ===================== 판결 — 티비가 열 엔딩 카드를 부른다 ===================== */
+/* 취조서·자수서는 같은 한 문장 — 「연쇄 살인범은 ______이다.」 형사가 먼저, 범인이 덮어서 나중에 적는다. */
 const VQ=[
- {k:"charge",form:"취조서",q:"「피의자는 연쇄 살인마이다. 쿠키 살인 네 건은 모두 □의 소행이다」",opts:[["전부 피의자에게 묶는다","all"],["손을 가른다 — 나머지는 신원 미상","split"],["동생의 이름을 적는다","her"]]},
- {k:"confess",form:"자수서",q:"「내가 저지른 쿠키 살인은 □건이다」",opts:[["네 건 전부 — S1을 낸다","S1"],["한 건, 맥주집 — S2를 낸다","S2"],["자수서를 쓰지 못했다","none"]]}
+ {k:"charge",form:"취조서",who:"형사",q:"「연쇄 살인범은 ______이다.」",opts:[["전부 피의자에게 묶는다","all"],["손을 가른다 — 나머지는 신원 미상","split"],["동생의 이름을 적는다","her"]]},
+ {k:"confess",form:"자수서",who:"범인",q:"「연쇄 살인범은 ______이다.」",opts:[["전부 내가 했다 — S1을 뒤집는다","S1"],["나는 하나만 했다 — S2를 뒤집는다","S2"],["자수서를 쓰지 못했다","none"]]}
 ];
+const HER_W=["김서연","서연","그녀","동생","여동생","다리 위","그 애","그애","그 아이"], ME_W=["피의자","범인","이 남자","그 남자","이남자","그남자","나","내가","저","본인"];
+const hasW=(t,ws)=>ws.some(w=>norm(t).includes(norm(w)));
+function chargeOf(t){ return hasW(t,HER_W)?"her":hasW(t,ME_W)?"all":"split"; }
+function confessOf(t){ return hasW(t,HER_W)?"S2":hasW(t,ME_W)?"S1":null; }
+function verdictText(k,t){ t=String(t||"").trim(); if(!t) return;
+  if(k==="confess"&&!(S.verdict&&S.verdict.charge!==undefined)){ toast("형사가 먼저 취조서를 적는다."); return; }
+  const val=k==="charge"?chargeOf(t):confessOf(t);
+  if(!val){ toast("「연쇄 살인범은 ___이다」 — 누구인지 적는다. 못 쓰면 「쓰지 못했다」를 누른다."); return; }
+  if(!S.verdict) S.verdict={}; S.verdict[k+"Text"]=t; setVerdict(k,val); }
 function endingOf(id){ return (D.endings||[]).find(e=>e.id===id)||{id:id,code:id,title:id}; }
 const VGRID={"all/S1":"E1","her/S2":"E2","all/none":"E3","split/none":"E4","her/none":"E5",
              "split/S2":"E6","all/S2":"E7","her/S1":"E8","split/S1":"E9"};
@@ -1130,6 +1207,7 @@ function endAct3(){ const who=me(); if(!canAct(who)||S.act[who]!==3) return;
 function setVerdict(k,val){ if(!S.verdict) S.verdict={};
   if(k==="confess"&&(val==="S1"||val==="S2")&&!confessOpen()){ toast("그녀의 이유를 아직 모른다 — 자수서를 쓸 수 없다."); return; }
   if(k==="reset"){ S.verdict={}; log("취조서와 자수서를 처음부터 다시 적는다.","sys","sys"); return; }
+  if(k==="confess"&&S.verdict.charge===undefined){ toast("형사가 먼저 취조서를 적는다."); return; }
   S.verdict[k]=val;
   if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — "+endingCall(ids),"sys","sys"); }
   else { saveState(); render(); } }
@@ -1141,12 +1219,15 @@ function endingCall(ids){ const main=ids.filter(i=>!(endingOf(i)||{}).hidden), h
   if(hid.length) t+=" 다 읽은 뒤 — "+hid.map(i=>"「"+endingOf(i).code+"」").join(" · ")+josaEul(last(hid))+" 뒤집어 엔딩 책자의 「"+(endingOf(hid[0]).title||"")+"」를 읽는다.";
   return t; }
 function verdictHtml(){ const v=S.verdict||{}; let s=`<div class="memq reveal"><b>${esc(ROUTE_LINE[route()])}</b></div><div class="memq">취조는 끝났다. 형사는 <b>취조서</b>를, 범인은 <b>자수서</b>를 적는다.</div>`; let asking=false;
-  VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); s+=`<div class="memq reveal"><b>${esc(q.form)}</b> · ${esc(q.q)}<br>→ ${esc(o?o[0]:"—")}</div>`; }
-    else if(!asking){ asking=true; const lock=q.k==="confess"&&!confessOpen(); s+=`<div class="memq"><b>${esc(q.form)}</b> · ${esc(q.q)}</div><div class="optlist">${q.opts.map(o=>`<button data-vq="${q.k}" data-vv="${esc(o[1])}"${lock&&o[1]!=="none"?" disabled":""}>${esc(o[0])}</button>`).join("")}</div>`;
+  VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); const tx=v[q.k+"Text"]; s+=`<div class="memq reveal"><b>${esc(q.form)}</b> (${esc(q.who)}) · 「연쇄 살인범은 <b>${esc(tx||"—")}</b>${josaEul(tx)==="을"?"이다":"다"}.」<br>→ ${esc(o?o[0]:"—")}</div>`; }
+    else if(!asking){ asking=true; const lock=q.k==="confess"&&!confessOpen();
+      s+=`<div class="memq"><b>${esc(q.form)}</b> (${esc(q.who)}가 적는다) · ${esc(q.q)}</div>`;
+      if(!lock) s+=`<div class="row" style="flex:0 0 auto"><input id="vqIn" data-vk="${q.k}" placeholder="누구인가" autocomplete="off" style="flex:1"><button data-vqt="${q.k}" style="flex:0 0 auto">적는다</button></div>`;
+      if(q.k==="confess") s+=`<div class="optlist"><button data-vq="confess" data-vv="none">자수서를 쓰지 못했다</button></div>`;
       if(lock){ const ak=askByKey("herReason"); const cq=ak&&ak.q; const shown=cq&&askOpen(viewer,cq);
         const nc=cq&&cq.need&&D.cards[cq.need.split("#")[0]];
         s+=`<div class="hint" style="color:var(--phos-dim)">그녀가 왜 쿠키를 먹는지 맞혀야 자수서를 쓸 수 있다. `+(shown?`아직 "4 기억"의 범인의 질문이 열려 있다.`:`그 질문은 아직 나타나지 않았다 — ${nc?esc(nc.title.replace(/\s*★$/,""))+"("+esc(nc.code)+") 카드를 열고 ":""}${esc(cq&&cq.lock||"")}`)+`</div>`; } } });
-  if(asking) s+=`<div class="hint" style="color:var(--phos-dim)">형사가 먼저 취조서를 적고, 범인이 자수서를 덮어 낸다. 서로의 비밀을 한 번씩 말한 뒤 여기에 적으면, 티비가 열 엔딩 카드의 쿠키 이름을 부른다.</div>`;
+  if(asking) s+=`<div class="hint" style="color:var(--phos-dim)">같은 문장을 형사가 먼저 적고, 범인은 덮어서 나중에 적는다 — 김서연·그녀·동생 / 피의자·나 / 그 밖의 말. 다 적으면 티비가 열 엔딩 카드의 쿠키 이름을 부른다.</div>`;
   else { const ids=verdictPick(v); s+=`<div class="memq reveal"><b>${esc(endingCall(ids))}</b><br>그 이름이 적힌 카드만 뒤집어 번갈아 읽는다. 다른 카드는 열지 않는다.</div><div class="row" style="flex:0 0 auto"><button data-vq="reset" data-vv="" style="flex:0 0 auto">처음부터 다시 적는다</button></div>`; }
   return s; }
 
@@ -1192,6 +1273,8 @@ function renderInner(){
   if(!$("shutter").hidden&&$("sheet").querySelector(".bigview")) renderBig();
   body.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ viewCard=b.dataset.view; capIdx=null; lastFound=null; render(); });
   body.querySelectorAll("[data-vq]").forEach(b=>b.onclick=()=>setVerdict(b.dataset.vq,b.dataset.vv));
+  body.querySelectorAll("[data-vqt]").forEach(b=>b.onclick=()=>{ const i=$("vqIn"); verdictText(b.dataset.vqt, i&&i.value); });
+  const vin=$("vqIn"); if(vin) vin.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); verdictText(vin.dataset.vk, vin.value); } };
   body.querySelectorAll("[data-end3]").forEach(b=>b.onclick=()=>endAct3());
 }
 let keyMode="code";

@@ -41,7 +41,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 43 이다", ver == 43, ver)
+        check("DEFAULT_DATA.version 이 44 이다", ver == 44, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -133,8 +133,8 @@ def main():
 
         # 자수서는 3막 범인의 질문("그녀는 왜 쿠키를 먹을까")을 맞혀야 쓴다
         r = pg.evaluate("""(()=>{ try{ setRoleCode("TV","T9"); start();
-          const a=confessOpen(); setVerdict("confess","S1"); const b=(S.verdict||{}).confess;
-          setVerdict("confess","none"); const c=S.verdict.confess; setVerdict("reset","");
+          const a=confessOpen(); setVerdict("charge","all"); setVerdict("confess","S1"); const b=(S.verdict||{}).confess;
+          setVerdict("confess","none"); const c=S.verdict.confess; setVerdict("reset",""); setVerdict("charge","all");
           S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 마셔 그들을 이해하려고");
           const d=confessOpen(); setVerdict("confess","S1"); const e=S.verdict.confess;
           const S0=S; S=Object.assign({},S0); delete S.memPart; const f=confessOpen(); S=S0;
@@ -150,12 +150,12 @@ def main():
         h = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=4; S.memDone.D=[1,2,3];
           setVerdict("charge","all"); setChannel(4); const t1=document.getElementById('body').innerText;
           enterCode("G2"); S.found.D.push("G2#0"); setChannel(4); const t2=document.getElementById('body').innerText;
-          const dis=[...document.querySelectorAll('[data-vq="confess"]')].filter(x=>x.disabled).length;
+          const dis=document.querySelector('[data-vqt="confess"]')?0:2;
           return {t1,t2,dis}; })()""")
         check("G2를 안 열었으면 안내가 질문이 아직 없다고 말한다",
               "열려 있다" not in h["t1"] and "2ㄱ0ㅇ" in h["t1"], h["t1"][-160:])
         check("G2 의 쿠키를 찾으면 안내가 질문이 열려 있다고 말한다", "열려 있다" in h["t2"], h["t2"][-160:])
-        check("답하기 전에는 S1·S2 두 버튼이 잠겨 있다", h["dis"] == 2, h["dis"])
+        check("답하기 전에는 자수서 적는 칸이 없다(쓰지 못했다만)", h["dis"] == 2, h["dis"])
 
         # 문서 모음의 핸드아웃 탭도 새 목표 문구여야 한다
         hub = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
@@ -333,10 +333,28 @@ def main():
         pg.evaluate("closeSheet()")
         pg.evaluate("(()=>{viewCard='K6'; ch=2; capIdx=0; render();})()")
         check("설명에 「사진을 본다」 단추가 있다", pg.evaluate("!!document.querySelector('.photo .cap [data-pic]')"))
-        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("4ㄹ7ㅎ");
-          const pre=!!document.querySelector('.picview'); setChannel(4); answerMemory("다리");
-          const post=!!document.querySelector('.picview img') && document.querySelector('.picview').innerText.includes('다리'); closeSheet(); return {pre,post}; })()""")
-        check("다리 사진은 답하기 전엔 없고, 답하면 뜬다", r["pre"] is False and r["post"] is True, r)
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); enterCode("3ㅍ9ㄷ");
+          const pre=S.opened.D.includes("G5"); S.found.D.push("G2#0"); enterCode("3ㅍ9ㄷ"); const post=S.opened.D.includes("G5");
+          const q=askByKey("bridge").q; return {pre,post,kind:D.cards.G5.kind,n:D.cards.G5.hotspots.length,ask:q.ask,pic:!!q.pic}; })()""")
+        check("다리 카드 G5 는 G2 의 쿠키(▶ 기억 ④)를 찾은 뒤에야 열린다", r["pre"] is False and r["post"] is True and r["kind"] == "photo" and r["n"] == 4, r)
+        check("3막 형사의 질문은 '피의자가 처음 쿠키를 먹은 곳'이고, 답 뒤의 따로 뜨는 사진은 없다", "처음 쿠키를 먹은 곳" in r["ask"] and not r["pic"], r)
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=2; S.memDone.D=[1]; enterCode("8ㅅ5ㄴ");
+          return {op:S.opened.D.includes("B7"), n:(D.cards.B7.hotspots||[]).length, act:D.cards.B7.act}; })()""")
+        check("맥주집 골목 B7 이 2막에 열리고 지점이 넷", r["op"] and r["n"] == 4 and r["act"] == 2, r)
+        r = pg.evaluate("""(()=>({c:["김서연","서연","그녀","동생","피의자","범인","이 남자","모른다","신원 미상"].map(t=>chargeOf(t)),
+          k:["나","피의자","김서연","그녀","다리 위 그 애","모른다"].map(t=>confessOf(t))}))()""")
+        check("취조서 「연쇄 살인범은 ___이다」 — 김서연·그녀·동생은 동생, 피의자·범인은 전부, 그 밖은 손을 가른다",
+              r["c"] == ["her","her","her","her","all","all","all","split","split"], r["c"])
+        check("자수서 같은 문장 — 나·피의자는 S1, 김서연·그녀·다리 위 그 애는 S2, 그 밖은 적지 않은 것",
+              r["k"] == ["S1","S1","S2","S2","S2",None], r["k"])
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=4; S.memDone.D=[1,2,3];
+          const qa=askByKey("herReason"), qb=askByKey("bridge"); S.memPart.D[3]=[qa.i,qb.i];
+          verdictText("confess","나"); const early=(S.verdict||{}).confess;
+          verdictText("charge","김서연"); verdictText("confess","다리 위 그 애"); const v=Object.assign({},S.verdict); setChannel(4);
+          const body=document.getElementById('body').innerText; return {early, v, ids:verdictPick(S.verdict), body}; })()""")
+        check("형사가 먼저 — 취조서 전에는 자수서를 받지 않는다", r["early"] is None, r["early"])
+        check("취조서 김서연 × 자수서 그 애 → 동생/S2 → 엔딩 2 와 히든", r["v"].get("charge") == "her" and r["v"].get("confess") == "S2" and r["ids"] == ["E2", "E10"], r)
+        check("판결 화면에 두 사람이 적은 말이 남는다", "김서연" in r["body"] and "다리 위 그 애" in r["body"], r["body"][:300])
         r = pg.evaluate("""(()=>{ const q=D.memory.find(x=>x.from===3).asks.find(a=>a.key==="herReason");
           const sv=JSON.stringify(S); S.opened.D=[...new Set([...S.opened.D,"G2"])]; S.found.D=S.found.D.filter(k=>k!=="G2#0");
           const a=askOpen("D",q); S.found.D.push("G2#0"); const b=askOpen("D",q); Object.assign(S,JSON.parse(sv)); return {a,b}; })()""")
