@@ -41,7 +41,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 42 이다", ver == 42, ver)
+        check("DEFAULT_DATA.version 이 43 이다", ver == 43, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -361,7 +361,7 @@ def main():
           m.asks.forEach(q=>answerMemory(q.answers[0])); const html=renderMemory("D"); return {act:S.act.D, gate:html.includes(GATE_LINE)}; })()""")
         check("1막 질문을 다 풀었는데 서랍이 닫혀 있으면 기억 화면에 그 안내가 남아 있다", r["act"] == 1 and r["gate"], r)
         r = pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K2"); enterCode("K3"); const a=renderMemory("D"); S.act.D=4; const b=renderMemory("D");
-          return {a:(a.match(/열린 카드 (\d+)장/)||[])[1], b4:/4막/.test(b.slice(0,120))}; })()""")
+          return {a:(a.match(/열린 카드 ([0-9]+)장/)||[])[1], b4:/4막/.test(b.slice(0,120))}; })()""")
         check("기억 화면의 열린 카드 수는 실제로 연 카드다, 판결 때 '4막'이라 하지 않는다", r["a"] == "2" and not r["b4"], r)
         r = pg.evaluate("""(()=>({only:D.cards.K6.hotspots.some(h=>h.only), b6:D.cards.B6.hotspots.map(h=>h.hint).join(" ")}))()""")
         check("K6 서랍 지점에 쓰이지 않는 only 표시가 없다", not r["only"], r)
