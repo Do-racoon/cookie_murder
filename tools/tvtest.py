@@ -41,7 +41,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 44 이다", ver == 44, ver)
+        check("DEFAULT_DATA.version 이 45 이다", ver == 45, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -336,7 +336,7 @@ def main():
         r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); enterCode("3ㅍ9ㄷ");
           const pre=S.opened.D.includes("G5"); S.found.D.push("G2#0"); enterCode("3ㅍ9ㄷ"); const post=S.opened.D.includes("G5");
           const q=askByKey("bridge").q; return {pre,post,kind:D.cards.G5.kind,n:D.cards.G5.hotspots.length,ask:q.ask,pic:!!q.pic}; })()""")
-        check("다리 카드 G5 는 G2 의 쿠키(▶ 기억 ④)를 찾은 뒤에야 열린다", r["pre"] is False and r["post"] is True and r["kind"] == "photo" and r["n"] == 4, r)
+        check("다리 카드 G5 는 G2 의 쿠키(▶ 기억 ④)를 찾은 뒤에야 열린다", r["pre"] is False and r["post"] is True and r["kind"] == "photo" and r["n"] == 3, r)
         check("3막 형사의 질문은 '피의자가 처음 쿠키를 먹은 곳'이고, 답 뒤의 따로 뜨는 사진은 없다", "처음 쿠키를 먹은 곳" in r["ask"] and not r["pic"], r)
         r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=2; S.memDone.D=[1]; enterCode("8ㅅ5ㄴ");
           return {op:S.opened.D.includes("B7"), n:(D.cards.B7.hotspots||[]).length, act:D.cards.B7.act}; })()""")
