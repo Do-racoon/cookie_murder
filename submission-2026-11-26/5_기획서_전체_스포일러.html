@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>쿠키 살인 사건 — 기획서</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>body{max-width:860px;margin:2em auto;padding:0 16px;font:16px/1.7 'Gowun Batang',serif;color:#2a2118;background:#f4ead6}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px}td,th{border:1px solid #b9a27a;padding:.4em .6em;vertical-align:top}th{background:#e6d6b4}h1,h2{font-family:'Nanum Gothic Coding',monospace}</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">쿠키 살인 사건 — 기획서</h1>
+</header>
+<h1 id="쿠키-살인-사건-기획서">쿠키 살인 사건 기획서</h1>
+<p>Oct 30, 2026 · <span class="citation"
+data-cites="임도연">@임도연</span></p>
+<p><em>2026-11-22 축소판 (현장 셋 · 손 둘 · 티비 한 대). 두 사람의
+알리바이 (텀블벅 2인 머미 기획전) 제출용.</em></p>
+<h2 id="개요">1. 개요</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>항목</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>작품명</td>
+<td>쿠키 살인 사건</td>
+</tr>
+<tr class="even">
+<td>장르</td>
+<td>2인 대립형 취조 머더미스터리 — 범인 vs 형사. 범인 찾기가 아니라
+“쿠키 살인을 어느 손에 묶느냐”와 “누가 상대를 먼저 읽느냐”</td>
+</tr>
+<tr class="odd">
+<td>인원</td>
+<td>2인. GM 없음 — 판정은 티비(웹페이지)와 룰북의 판결표</td>
+</tr>
+<tr class="even">
+<td>플레이 시간</td>
+<td>약 75분. 준비 10분 + 취조 50분(타이머) + 판결·엔딩 15분</td>
+</tr>
+<tr class="odd">
+<td>카드</td>
+<td>30장 — 현장 카드 13 · 선택 카드 2 · 엔딩 카드 10 (63×88mm) · 특수
+카드 5 (A6)</td>
+</tr>
+<tr class="even">
+<td>그 밖의 구성</td>
+<td>종이 HO(공용 프롤로그 · 범인 HO · 형사 HO · 엔딩 책자) · 티비(테이블
+가운데 한 대, 웹페이지) · 정답 봉투(오프라인용)</td>
+</tr>
+<tr class="odd">
+<td>지원 트랙</td>
+<td>Track 02 기믹·시스템 (주) · Track 01 세계관·스토리 (부)</td>
+</tr>
+<tr class="even">
+<td>일정</td>
+<td>11/22 제출 → 11월 말 테스트 플레이 → 12월 중순 채점 확정 → 12월 말
+원고·카드 디자인 → 1월 런칭</td>
+</tr>
+</tbody>
+</table>
+<h2 id="기획-의도">2. 기획 의도</h2>
+<p>2인 머미는 거의 전부 협력 추리나 둘 중에 하나가 범인인 게 많습니다.
+이 작품은 반대로 갑니다. 여기는 두 사람이 마주 앉아 서로를 읽는
+취조실입니다. 형사는 범인과 현장을 캐고, 범인은 자신과 형사의 과거를
+캡니다.</p>
+<p>규칙의 중심 : <strong>거짓말은 자유지만 카드는 부인할 수
+없습니다.</strong> 그래서 거짓말은 사실들 사이의 연결을 끊기 위해
+사용하고, 카드를 이어 붙이는 것이 유일한 진실이 됩니다.</p>
+<h2 id="시놉시스">3. 시놉시스</h2>
+<p>취조실. 테이블 하나, 의자 둘, 물은 없다. 살인 미수로 체포된 남자가
+앉아 있다. 한 달 전, 한 여자의 집에서 그녀의 목을 조르던 중에 잡혔다.
+경찰은 그를 연쇄 살인 ’쿠키 살인’의 범인으로 본다 — 3년 전 반지하에서
+혼자 살던 여성이 죽고 현장에 쿠키가 놓인 뒤로, 1년에 한 번, 10월이면
+같은 일이 일어났다. 지난 10월 맥주집 아르바이트생이 네 번째였다. 경찰은
+다음이 내년 10월일 거라 생각했다. 그런데 석 달 만에 이 남자가 현행범으로
+잡혔다. 남자는 한 달 동안 한마디도 하지 않다가, 갑자기 자기를 잡은
+형사와만 말하겠다고 했다. 테이블 가운데에는 작은 티비가 켜져 있다.</p>
+<p>남자가 형사의 눈을 한참 보고 말한다. “당신은… 맛이 없게 생겼군.”</p>
+<p>형사에게는 이 현행범이 연쇄 살인범이라고 자백하는 것이 가장 좋다.
+그래서 그와 마주 앉아 사건들을 하나씩 파헤치기 시작한다. 그리고 결말에
+다다랐을 때, 형사는 어떤 선택을 할지 골라야 한다.</p>
+<h2 id="세계관-최면-취조-같은-꿈">4. 세계관 — 최면 취조, 같은 꿈</h2>
+<p>두 사람은 최면 취조를 하고 있다. 피의자가 자기를 잡은 형사와만
+말하겠다고 했을 때 검찰이 허가한 방식이다. 두 사람은 같은 꿈을 꾸면서
+이야기한다. 티비가 그 꿈이다 — 둘이 같은 화면을 본다. 그래서 범인은 잃은
+기억을 되찾을 수 있고, 형사는 자기가 무심코 지나친 기억을 처음 마주한다.
+판결은 꿈에서 깨는 순간이다.</p>
+<h2 id="인물">5. 인물</h2>
+<p><strong>범인 (플레이어).</strong> 보건소 채혈 직원. 초등학교 6학년
+이전 기억이 없다. 피를 쿠키에 찍어 맛보면 편안해지고 옛 기억이 떠오른다
+— 예전에 먹은 그 맛을 찾고 있다. 지난 여름, 채혈하던 형사의 “불길한
+과자는 안 먹습니다”라는 말에 기사에서 봤던 쿠키 살인을 떠올리고 조사를
+시작했다. 그 사람을 만나려고 맥주집 알바를 죽였고(주기는 몰랐다 — 우연히
+10월이었다), 석 달 뒤 오락실 친구를 노리다 잡혔다.</p>
+<p><strong>형사 (플레이어).</strong> 범인을 잡은 사람. 3년 전 아버지와
+새엄마를 강도 사건으로 잃었다(그렇게 알고 있다). 새엄마가 데려온 동생을
+책임지기로 했고, 동생의 집 안팎에 CCTV를 달고 근처 차에서 자며 지켰다.
+그 밤 5분 만에 도착해 현행범을 잡아 특진했다. 목표: 쿠키 살인을 이
+남자에게 묶기, 동생의 이름과 감시 사실은 기록에 남지 않게, 그리고
+올바르게 판단하기.</p>
+<p><strong>그녀 — 김서연 (형사의 동생 — 의식 불명. 맥주집 피해자 서연과
+성만 다르다).</strong> 진짜 쿠키 살인범. 엄마의 ‘놀이’(채찍)를 받고 자란
+사이코패스. 부모가 죽은 뒤 발인 날 새벽 반지하에서 첫 쿠키 살인을
+저질렀고, 그 뒤 1년에 한 번, 같은 달에 저질렀다. 경찰의 탐색이 심해지자
+정보를 얻으려고 오빠에게 돌아왔다. 자기 달에 누가 먼저 저지른 맥주집
+사건을 보고 범인을 ’내 모방범’으로 여겨 곁에 두었고, 자기 살인까지
+떠넘길 기회로 삼아 미끼가 되었다. 다리 위 소년이 범인인 줄은 모른다.</p>
+<h2 id="사건-순서와-타임라인">6. 사건 순서와 타임라인</h2>
+<p>티비로 여는 현장은 셋이다. 나머지는 말과 핸드아웃으로만 나온다.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>때</th>
+<th>사건</th>
+<th>손</th>
+<th>게임에서</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2007</td>
+<td>다리 위의 만남, 다리 아래의 일</td>
+<td>그녀 (범인이 곁에)</td>
+<td>범인 핸드아웃 기억 ④</td>
+</tr>
+<tr class="even">
+<td>2015년 10월</td>
+<td>형사 부모의 죽음 (강도로 기록)</td>
+<td>—</td>
+<td>말로만. 엔딩 책자에서 짐작만 하게 둔다</td>
+</tr>
+<tr class="odd">
+<td>2015년 10월, 발인 날 새벽</td>
+<td><strong>반지하 여성 살인</strong> — 첫 번째 쿠키 살인</td>
+<td>그녀</td>
+<td>현장 3막 (카드 4)</td>
+</tr>
+<tr class="even">
+<td>2016·2017년 10월</td>
+<td>두 건 더. 현장이 심하게 훼손됨</td>
+<td>그녀</td>
+<td>기록 카드 한 장</td>
+</tr>
+<tr class="odd">
+<td>2018년 여름</td>
+<td>채혈. “불길한 과자” — 범인이 조사를 시작</td>
+<td>—</td>
+<td>범인 핸드아웃 기억 ③</td>
+</tr>
+<tr class="even">
+<td>2018년 10월</td>
+<td><strong>맥주집 알바 살인</strong> — 네 번째로 기록</td>
+<td>범인</td>
+<td>현장 2막 (카드 4)</td>
+</tr>
+<tr class="odd">
+<td>2019년 1월 말</td>
+<td><strong>현행범</strong> — 그녀의 집, 살인 미수</td>
+<td>범인</td>
+<td>현장 1막 (카드 5)</td>
+</tr>
+<tr class="even">
+<td>2019년 2월 말</td>
+<td>취조실</td>
+<td></td>
+<td>게임 시작</td>
+</tr>
+</tbody>
+</table>
+<h2 id="진실과-개연성">7. 진실과 개연성</h2>
+<p>쿠키 살인은 한 사람의 것이 아니다. 앞의 세 건은 그녀, 맥주집과
+현행범은 범인이다. 범인은 그녀를 만나려고 죽였는데 우연히 그녀의
+달이었고, 그래서 경찰의 눈에는 네 번째로 보인다.</p>
+<ul>
+<li><strong>왜 범인이 연쇄 살인범으로 의심받는가.</strong> 10월, 혼자
+사는 여성, 쿠키 — 맥주집이 주기에 맞았고, 현행범의 품에서 쿠키가, 손에서
+맥주집 피해자의 끈이 나왔다.</li>
+<li><strong>범인은 무엇을 보고 따라 했는가.</strong> 3년이 지난
+반지하에는 쿠키가 남아 있지 않았다. 범인은 ’현장에 쿠키가 있었다’는 것만
+알고, 어떻게 놓였는지는 모른다. 그래서 다르게 놓았다.</li>
+<li><strong>두 손은 무엇으로 갈리는가.</strong> 반지하: 쪼갠 쿠키의 남은
+반쪽에 피가 없다 / 열어 준 문, 아는 사이 / 벨트. 맥주집: 남긴 쿠키까지
+피에 젖어 봉지에 들어 있다 / 미리 열어 둔 창문 / 가방 끈.</li>
+<li><strong>형사는 무엇으로 동생에 닿는가.</strong> 반지하의 사망 시각이
+부모 발인 날 새벽, 동생이 사라진 시간이다. 피해자 방 사진 속 친구,
+그리고 현행범 현장의 이상한 점들 — 안에서 열린 문, 저항의 부재, 자기가
+단 카메라(처마의 돔 카메라, 곰인형 눈 속의 렌즈).</li>
+<li><strong>그녀는 왜 당했는가.</strong> 오빠가 5분 거리에서 보고 있다는
+걸 알았다. 문을 열어 두고, 끈 안에 손가락 하나를 끼운 채 버텼다.
+모방범이 잡히면 전부가 그의 것이 된다.</li>
+<li><strong>주기가 깨진 것.</strong> 다음은 2019년 10월이어야 했다. 석
+달 만의 범행은 ’같은 사람이 아니다’의 첫 신호다.</li>
+</ul>
+<p>형사가 여기까지 오면 골라야 한다 — 동생의 이름을 적을 것인가, 동생을
+구하기 위해 이 남자를 전부의 연쇄 살인범으로 만들 것인가.</p>
+<h2 id="시스템">8. 시스템</h2>
+<p><strong>티비 한 대.</strong> 테이블 가운데 화면 하나를 둘이 같이
+본다. 턴이 없다. 취조는 말로, 언제든.</p>
+<p><strong>현장 카드와 코드.</strong> 카드의 네 글자 코드를 넣으면
+현장이 뜬다. 사진 카드는 의심스러운 곳을 눌러 단서를 찾는다(사진마다
+지점 셋이나 넷, ★ 하나가 핵심). 글 카드는 감정서·기록이다. 단서는 둘 다
+본다.</p>
+<p><strong>▶ 지시.</strong> 어떤 단서는 한 사람에게만 지시한다 — “▶
+범인: 기억 ②를 읽는다”, “▶ 형사: 비밀 ①을 읽는다”. 그 사람만 자기
+핸드아웃의 그 대목을 펼친다. 읽은 것을 말할지 숨길지는 그 사람이 정한다.
+현장은 같이 보고, 기억과 비밀은 각자 쥔다.</p>
+<p><strong>거짓말은 자유, 카드는 부인 불가.</strong> 화면에 뜬 것은 둘
+다 봤으니 부인할 수 없다. 거짓말은 사실과 사실 사이의 연결을 끊는 데
+쓴다. 어떤 카드를 먼저 열고 무엇과 이어 붙이느냐가 진실에 다가가는
+길이다.</p>
+<p><strong>막 전환.</strong> 3막 + 판결. 막의 질문에 답하면 다음 현장이
+열린다. 막마다 질문이 둘이다 — 범인의 질문 하나, 형사의 질문 하나. 각자
+▶ 지시로 자기 핸드아웃(기억·비밀)을 읽고 나면 화면에 나타나고, 둘 다
+맞혀야 넘어간다. 범인의 질문은 그녀의 과거를 묻고 답은 형사가 안다.
+형사의 질문은 사건의 실마리를 묻고 답은 범인이 안다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>막</th>
+<th>현장</th>
+<th>다음으로 가는 질문</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1막</td>
+<td>현행범 (2019.1)</td>
+<td>범인의 질문: 그녀가 가족을 떠나 연락을 끊었던 것은 몇 년 동안인가?
+(3년) · 형사의 질문: 영수증의 국밥 2인분, 그 밤 누구와 먹었나?
+(그녀)</td>
+</tr>
+<tr class="even">
+<td>2막</td>
+<td>맥주집 (2018.10)</td>
+<td>범인의 질문: 그녀가 제일 싫어한다는 그 쿠키를 집에 늘 사다 놓던
+사람은? (어머니) · 형사의 질문: 책상 위에 남긴 쿠키는 누구에게 보내는
+편지였나? (진짜 범인)</td>
+</tr>
+<tr class="odd">
+<td>3막</td>
+<td>반지하 (2015.10)</td>
+<td>형사의 질문: 피의자가 피 묻은 쿠키를 처음 받아먹은 곳은? (다리) —
+이것만 맞히면 판결로. 범인의 질문: 그녀는 왜 쿠키를 먹을까? (피를 마셔
+그들을 이해하려고 — 형사 핸드아웃 비밀 ③ 일기장. “피를
+좋아하니까”만으로는 맞지 않는다) — 판결 끝까지 열려 있다. 형사는 숨길지
+정하고, 범인이 맞히면 형사는 동생을 지키지 못한 것이다.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>끝.</strong> 형사의 마지막 질문에 답하면 판결로.
+타이머(50분)가 끝나면 3막 “4 기억” 채널의 「시간이 끝났다 — 판결로
+간다」를 두 번 누른다 — 되돌릴 수 없고, 형사의 마지막 질문은 닫힌다.
+티비가 없으면 정답 봉투(지점표·질문표)로 종이 진행.</p>
+<h2 id="구성물">9. 구성물</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>구성</th>
+<th>수량</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>현장 카드</td>
+<td>13</td>
+<td>현행범 5 · 맥주집 4 · 반지하 4. 사진 10 · 글 3</td>
+</tr>
+<tr class="even">
+<td>범인 선택 카드</td>
+<td>2</td>
+<td>S1 “그녀의 것도 전부 내 것” / S2 “나는 하나만 했다” — 판결까지 봉인.
+3막 범인의 질문을 맞혀야 낼 수 있다</td>
+</tr>
+<tr class="odd">
+<td>엔딩 카드</td>
+<td>10</td>
+<td>엔딩 장면 9 (4번은 에필로그 신문) + 히든 엔딩 「마들렌」 1 — 두 사람
+다 3막 질문을 맞혔을 때만</td>
+</tr>
+<tr class="even">
+<td>특수 카드</td>
+<td>5</td>
+<td>목격자 증언 2 · 국과수 감정서 3. 사진 지점을 눌렀을 때 티비가
+꺼내라고 한다. 본문은 카드 뒷면에 있고, 서류라 다른 카드보다 크다 —
+A6(105×148mm). 그녀의 일기장은 카드가 아니라 형사 핸드아웃의 비밀 ③
+다</td>
+</tr>
+<tr class="odd">
+<td>핸드아웃</td>
+<td>3</td>
+<td>공용 프롤로그 · 범인(시작 + 기억 ①~④) · 형사(본문 + 비밀 ①②)</td>
+</tr>
+<tr class="even">
+<td>엔딩 책자</td>
+<td>1</td>
+<td>엔딩 S1·S2, 그녀의 이야기(히든 엔딩 「마들렌」에서만 읽는다)</td>
+</tr>
+</tbody>
+</table>
+<p>카드는 모두 30장, 크기는 두 가지다. 63×88mm 가 25장(현장 13 · 범인
+선택 2 · 엔딩 10), 증언·감정서는 서류라 서류 크기로 — A6(105×148mm) 가
+5장. 카드 본문·코드·사진 지점은 티비 설계가 원본이다.</p>
+<h2 id="판결">10. 판결</h2>
+<p><strong>순서.</strong> 형사가 기소 내용을 말한다 — 이 사람을 어느
+사건에 묶는가, 다른 사람의 이름을 적는가. 범인이 말한다 — 무엇을 했고
+하지 않았는가. 3막 범인의 질문(“그녀는 왜 쿠키를 먹을까”)을 맞혔다면
+S1·S2 중 하나를 덮어 낼 수 있다(안 써도 된다). 엔딩 카드를 연다.</p>
+<p><strong>갈래.</strong> 3막의 두 질문 — 형사: 피의자가 피 묻은 쿠키를
+처음 받아먹은 곳은?(다리) / 범인: 그녀는 왜 쿠키를 먹을까?(피를 마셔
+그들을 이해하려고) — 을 누가 맞혔는지로 갈래가 정해진다. 티비가 판결
+화면 맨 위에 지금 갈래를 띄운다.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>형사가 맞힘</th>
+<th>형사가 못 맞힘</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>범인이 맞힘</td>
+<td>고른 엔딩 + 히든 엔딩 「마들렌」(그녀의 이야기)</td>
+<td>범인의 자수 — S1·S2 → 1·2·6·7·8·9, 안 쓰면 3·4·5</td>
+</tr>
+<tr class="even">
+<td>범인이 못 맞힘</td>
+<td>범인은 연쇄 살인마 — 자수서 못 씀 → 3·4·5</td>
+<td>진실 미도달 — 취조서와 상관없이 엔딩 4 「머랭」</td>
+</tr>
+</tbody>
+</table>
+<p><strong>엔딩 아홉. 두 축으로 고른다 — 범인의 선택 카드(S1 전부 내 것
+/ S2 하나만 / 못 냄 = 그녀가 왜 쿠키를 먹는지 맞히지 못했다)과 형사의
+기소(① 전부 이 사람에게 묶는다 / ② 손을 가르고 나머지는 “신원 미상”으로
+둔다 / ③ 동생의 이름을 적는다). 3×3 = 9.</strong></p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>엔딩</th>
+<th>범인</th>
+<th>형사</th>
+<th>마지막 장면</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>쿠키는 두 개 · 페이스트리</td>
+<td>S1</td>
+<td>① 전부 묶는다</td>
+<td>“당신 동생 눈에는 달이 있어. 당신은 없고.” 형사는 조서에 서명한다.
+병실의 그녀가 쿠키 하나를 보고 배시시 웃는다</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>하나만 했다 · 쇼트브레드</td>
+<td>S2</td>
+<td>③ 이름을 적는다</td>
+<td>병실. 동생이 눈을 떠 오빠를 보고: “일찍 왔네.”</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>문을 닫는다 · 진저브레드</td>
+<td>못 냄</td>
+<td>① 전부 묶는다</td>
+<td>범인: “그 애 이름이 뭐였죠?” 형사는 답하지 않고 문을 닫는다</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>다른 패턴 · 머랭</td>
+<td>못 냄</td>
+<td>② 가르고 미상</td>
+<td>범인은 미수 한 건과 맥주집. 그녀는 열흘 뒤 퇴원했다. 카드 뒷면에
+신문 기사 — 「달림동 살인, 쿠키는 없었다」</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>맛이 없게 생겼군 · 비스코티</td>
+<td>못 냄</td>
+<td>③ 이름을 적는다</td>
+<td>범인: “당신은 맛이 없게 생겼군.” 형사: “알아. 내 피를
+뽑았잖아.”</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>반쪽 · 사블레</td>
+<td>S2</td>
+<td>② 가르고 미상</td>
+<td>형사는 두 줄 중 한 줄을 비워 둔다. 연쇄는 성립하지 않는다. 범인: “빈
+칸이 답이야.” 형사는 서류철을 덮지 않고 일어선다 — 미제 서류철 위에 쿠키
+반쪽</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>서명 없음 · 랑그드샤</td>
+<td>S2</td>
+<td>① 전부 묶는다</td>
+<td>범인이 펜을 밀어낸다. “하나만 했다고 했어.” 형사는 혼자 조서를
+완성한다. 법정 복도, 증인석에 보라색 머리가 앉아 있다</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>두 이름 · 마카롱</td>
+<td>S1</td>
+<td>③ 이름을 적는다</td>
+<td>범인은 전부 떠안으려 했고, 형사는 그 선물을 받지 않는다. 조서에 이름
+둘. 범인: “…당신, 맛이 있게 생겼군.”</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>받지 않은 편지 · 튀일</td>
+<td>S1</td>
+<td>② 가르고 미상</td>
+<td>범인이 전부 가져가겠다는데 형사는 두 건만 적고 나머지는 미상으로
+둔다. 범인: “왜 안 받아?” 형사: “내 것이 아니라서.” 티비가 꺼진다</td>
+</tr>
+</tbody>
+</table>
+<p>읽는 법. 범인이 3막 범인의 질문을 맞히지 못했으면 자수서를 못 내고,
+엔딩은 형사의 한 마디로만 갈린다 — 3·4·5. 질문을 맞혔으면 범인이 낸
+카드와 형사의 기소가 맞물린다 — 서로 같은 결록을 내리는 1·2, 범인이
+내놓은 것을 형사가 받지 않는 6·9, 서로 어긋나는 7·8. ①은 형사 목표 1·2를
+지키지만 “올바른 판단”을 버린다. ②은 증명된 것만 적는 정직한 비겁 —
+연쇄가 성립하지 않아 목표 1을 잃고, 특진도 휘청인다. ③은 목표 2를
+버린다. 세 기소가 각각 목표 하나씩을 버리게 되어 형사에게 지배 전략이
+없다. 엔딩 3이 이 작품의 질문이고, 6과 9가 그 질문에 대한 다른
+답이다.</p>
+<p>엔딩 3이 이 작품의 질문이다 — 형사가 동생을 구하려고 이 남자를 연쇄
+살인범으로 만든다.</p>
+</body>
+</html>
