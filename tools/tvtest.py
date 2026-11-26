@@ -1,3 +1,4 @@
+import re
 # -*- coding: utf-8 -*-
 """티비를 헤드리스 크롬으로 열어 검사한다.
 
@@ -40,7 +41,7 @@ def main():
 
         check("콘솔 오류가 없다", not errors, errors[:3])
         ver = pg.evaluate("DEFAULT_DATA.version")
-        check("DEFAULT_DATA.version 이 41 이다", ver == 41, ver)
+        check("DEFAULT_DATA.version 이 42 이다", ver == 42, ver)
 
         e2 = pg.evaluate("(DEFAULT_DATA.endings.find(e=>e.id==='E2')||{}).code")
         check("엔딩 E2 코드가 쇼트브레드다", e2 == "쇼트브레드", e2)
@@ -134,7 +135,7 @@ def main():
         r = pg.evaluate("""(()=>{ try{ setRoleCode("TV","T9"); start();
           const a=confessOpen(); setVerdict("confess","S1"); const b=(S.verdict||{}).confess;
           setVerdict("confess","none"); const c=S.verdict.confess; setVerdict("reset","");
-          S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까");
+          S.act.D=3; S.memDone.D=[1,2]; enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 마셔 그들을 이해하려고");
           const d=confessOpen(); setVerdict("confess","S1"); const e=S.verdict.confess;
           const S0=S; S=Object.assign({},S0); delete S.memPart; const f=confessOpen(); S=S0;
           return {a,b:b===undefined?null:b,c,d,e,f}; }catch(err){ return {err:String(err)}; } })()""")
@@ -169,10 +170,10 @@ def main():
           const a3=DEFAULT_DATA.memory.find(m=>m.from===3).asks.map(q=>q.key); R.keys=a3;
           S3(); enterCode("G1"); answerMemory("다리"); R.det=[route(),confessOpen(),S.act.D];
           setChannel(4); R.detLine=document.getElementById('body').innerText;
-          S3(); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); endAct3(); endAct3(); R.cul=[route(),S.act.D];
+          S3(); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 마셔 그들을 이해하려고"); endAct3(); endAct3(); R.cul=[route(),S.act.D];
           setChannel(4); R.culLine=document.getElementById('body').innerText;
           answerMemory("다리"); R.culBridge=qDone("bridge");
-          S3(); enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+          S3(); enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 마셔 그들을 이해하려고"); answerMemory("다리");
           setVerdict("charge","all"); setVerdict("confess","S1"); R.both=lastLog();
           S3(); endAct3(); endAct3(); setVerdict("charge","her"); setVerdict("confess","none"); R.none=verdictPick(S.verdict);
           S3(); endAct3(); setChannel(1); setChannel(4); endAct3(); R.arm=S.act.D;
@@ -239,7 +240,7 @@ def main():
         r = pg.evaluate("""(()=>{ S=freshState(); start(); S.act.D=2; S.memDone.D=[1]; enterCode("B3"); enterCode("B5");
               S.found.D.push("B3#0"); setChannel(4); answerMemory("어머니"); answerMemory("진짜 범인"); const a=S.log[0].text;
               S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); setChannel(4); answerMemory("다리"); const b=S.log[0].text;
-              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 좋아하니까"); answerMemory("다리");
+              S=freshState(); start(); S.act.D=3; S.memDone.D=[1,2]; enterCode("G1"); enterCode("G2"); S.found.D.push("G2#0"); answerMemory("피를 마셔 그들을 이해하려고"); answerMemory("다리");
               setVerdict("charge","all"); setVerdict("confess","S1"); const c=S.log[0].text; setChannel(4); const d=document.getElementById('body').innerText;
               return {a,b,c,d}; })()""")
         check("2→3 전환에도 비비기 멘트", "3막으로" in r["a"] and "비벼서 봐라" in r["a"], r["a"])
@@ -340,6 +341,31 @@ def main():
           const sv=JSON.stringify(S); S.opened.D=[...new Set([...S.opened.D,"G2"])]; S.found.D=S.found.D.filter(k=>k!=="G2#0");
           const a=askOpen("D",q); S.found.D.push("G2#0"); const b=askOpen("D",q); Object.assign(S,JSON.parse(sv)); return {a,b}; })()""")
         check("3막 범인의 질문은 G2 의 쿠키(기억 ④ 지시)를 찾은 뒤에야 뜬다", r["a"] is False and r["b"] is True, r)
+        # ── 3차 플레이테스트 뒤 (2026-11-26) ──
+        r = pg.evaluate("""(()=>{ const q=D.memory.find(x=>x.from===3).asks.find(a=>a.key==="herReason");
+          const t=v=>askHit(q,v); return {no:["이해","피 맛","사람 맛","사람이 좋아서","피를 좋아하니까","피가 좋아서"].filter(t),
+            yes:["피를 마셔 그들을 이해하려고","피를 마시면 그 사람을 알 것 같아서","피로 사람을 이해하려고"].filter(v=>!t(v))}; })()""")
+        check("3막 범인의 질문은 일기장의 뜻(피로 그 사람을 알려 한다)이 있어야 맞다", not r["no"] and not r["yes"], r)
+        r = pg.evaluate("""(()=>{ const E=D.endings.map(e=>e.id); return {a:endingCall([E[0]]), all:E.map(i=>endingCall([i]))}; })()""")
+        bad = [t for t in r["all"] if re.search(r"「[^」]*[가-힣]」을", t) and not re.search(r"「[^」]*[가-힣]」을", t) is None and False]
+        def josa_ok(t):
+            for m in re.finditer(r"「([^」]+)」(을|를)", t):
+                ch = m.group(1)[-1]
+                if "가" <= ch <= "힣":
+                    jong = (ord(ch) - 0xAC00) % 28
+                    if (m.group(2) == "을") != (jong != 0): return False
+            return True
+        check("엔딩 부르는 말의 을/를이 쿠키 이름 받침에 맞는다", all(josa_ok(t) for t in r["all"]), [t for t in r["all"] if not josa_ok(t)])
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); const m=D.memory.find(x=>x.role==="D"&&x.from===1);
+          m.asks.forEach((q,i)=>{ if(!S.memPart) S.memPart={}; }); m.asks.forEach(q=>{ (q.need?[].concat(q.need):[]).forEach(n=>{ const [c,h]=n.split("#"); if(!S.opened.D.includes(c)) S.opened.D.push(c); if(h!==undefined) S.found.D.push(n); }); });
+          m.asks.forEach(q=>answerMemory(q.answers[0])); const html=renderMemory("D"); return {act:S.act.D, gate:html.includes(GATE_LINE)}; })()""")
+        check("1막 질문을 다 풀었는데 서랍이 닫혀 있으면 기억 화면에 그 안내가 남아 있다", r["act"] == 1 and r["gate"], r)
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K2"); enterCode("K3"); const a=renderMemory("D"); S.act.D=4; const b=renderMemory("D");
+          return {a:(a.match(/열린 카드 (\d+)장/)||[])[1], b4:/4막/.test(b.slice(0,120))}; })()""")
+        check("기억 화면의 열린 카드 수는 실제로 연 카드다, 판결 때 '4막'이라 하지 않는다", r["a"] == "2" and not r["b4"], r)
+        r = pg.evaluate("""(()=>({only:D.cards.K6.hotspots.some(h=>h.only), b6:D.cards.B6.hotspots.map(h=>h.hint).join(" ")}))()""")
+        check("K6 서랍 지점에 쓰이지 않는 only 표시가 없다", not r["only"], r)
+        check("B6 은 서연의 집 앞 편의점 — 버스에서 내려 들렀다", "버스" in r["b6"] and "집 앞" in r["b6"], r["b6"])
         r = pg.evaluate("""(()=>{ const st=freshState(); st.started=true; st.opened.D=["K1","K2","B2","B4"]; st.found.D=["K1#0","B4#1","K2#0"];
           S=migrateState(st); setChannel(2); render(); return {op:S.opened.D, fd:S.found.D}; })()""")
         check("옛 판(K1·B2·B4 열림)도 오류 없이, 없는 카드는 걸러 낸다", r["op"] == ["K2"] and r["fd"] == ["K2#0"], r)

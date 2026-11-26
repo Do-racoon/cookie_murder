@@ -322,7 +322,7 @@ textarea.json{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;m
    memory: 막을 넘기는 질문. role·from·to, answers(허용 답), reveal(맞혔을 때 말).
    티비는 사진과 기억만 맡는다 — 취조·카드 교환·턴은 테이블에서. 사진은 제작자 모드에서 올린다. */
 const DEFAULT_DATA = {
-  "version": 41,
+  "version": 42,
   "title": "쿠키 살인 사건",
   "maxAct": 4,
   "cards": {
@@ -460,7 +460,6 @@ const DEFAULT_DATA = {
           "x": 93,
           "y": 52,
           "r": 6,
-          "only": "D",
           "hint": "책상 옆 서랍 — 피해자의 일기장이다 ▶ 형사: 비밀 ③을 읽는다"
         }
       ]
@@ -575,7 +574,7 @@ const DEFAULT_DATA = {
           "x": 21,
           "y": 25,
           "r": 7,
-          "hint": "★유리문에 비친 사람 — 보랏빛 머리. 가게 밖에서 서연을 보고 있다"
+          "hint": "★유리문에 비친 사람 — 보랏빛 머리. 서연의 집 앞 편의점, 가게 밖에서 서연을 보고 있다"
         },
         {
           "x": 52,
@@ -593,7 +592,7 @@ const DEFAULT_DATA = {
           "x": 92,
           "y": 7,
           "r": 6,
-          "hint": "02:41 — 퇴근하고 41분 뒤. 집까지는 걸어서 5분"
+          "hint": "02:41 — 2시 퇴근, 버스에서 내려 들렀다. 집 앞 편의점, 집까지는 걸어서 5분"
         }
       ]
     },
@@ -793,31 +792,27 @@ const DEFAULT_DATA = {
           "optional": true,
           "ask": "그녀는 왜 쿠키를 먹을까?",
           "answers": [
-            "피를 좋아하니까",
-            "피가 좋아서",
-            "피를 좋아해서",
-            "피를 마셔서 이해하려고",
             "피를 마셔 그들을 이해하려고",
-            "사람을 이해하려고",
-            "그들을 이해하려고"
+            "피를 마셔서 이해하려고",
+            "피를 마시면 그 사람을 알 것 같아서"
           ],
           "keys": [
             [
               "피",
-              "사람",
-              "그들",
-              "이해"
-            ],
-            [
-              "좋아",
-              "이해",
               "마시",
               "마셔",
-              "마신",
-              "맛"
+              "마신"
+            ],
+            [
+              "이해",
+              "알 것",
+              "알고",
+              "알려",
+              "알기",
+              "알 수"
             ]
           ],
-          "ok": "그녀는 피를 좋아한다. 피를 마시며 그들을 이해하려 했다. — 형사는 그녀를 지키지 못했다.",
+          "ok": "그녀는 피를 마시며 그들을 이해하려 했다. — 형사는 그녀를 지키지 못했다.",
           "key": "herReason"
         },
         {
@@ -1139,9 +1134,11 @@ function setVerdict(k,val){ if(!S.verdict) S.verdict={};
   if(VQ.every(q=>S.verdict[q.k]!==undefined)){ const ids=verdictPick(S.verdict); log("취조서와 자수서가 다 적혔다 — "+endingCall(ids),"sys","sys"); }
   else { saveState(); render(); } }
 /* 엔딩 부르기 — 히든이 있으면 고른 엔딩을 다 읽은 뒤에 뒤집으라고 말한다 */
+function josaEul(w){ const ch=(w||"").slice(-1), c=ch.charCodeAt(0); return (c>=0xAC00&&c<=0xD7A3)?(((c-0xAC00)%28)?"을":"를"):"을"; }
 function endingCall(ids){ const main=ids.filter(i=>!(endingOf(i)||{}).hidden), hid=ids.filter(i=>(endingOf(i)||{}).hidden);
-  let t="엔딩 카드 "+main.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집어 읽는다.";
-  if(hid.length) t+=" 다 읽은 뒤 — "+hid.map(i=>"「"+endingOf(i).code+"」").join(" · ")+"을 뒤집어 엔딩 책자의 「"+(endingOf(hid[0]).title||"")+"」를 읽는다.";
+  const last=a=>endingOf(a[a.length-1]).code;
+  let t="엔딩 카드 "+main.map(i=>"「"+endingOf(i).code+"」").join(" · ")+josaEul(last(main))+" 뒤집어 읽는다.";
+  if(hid.length) t+=" 다 읽은 뒤 — "+hid.map(i=>"「"+endingOf(i).code+"」").join(" · ")+josaEul(last(hid))+" 뒤집어 엔딩 책자의 「"+(endingOf(hid[0]).title||"")+"」를 읽는다.";
   return t; }
 function verdictHtml(){ const v=S.verdict||{}; let s=`<div class="memq reveal"><b>${esc(ROUTE_LINE[route()])}</b></div><div class="memq">취조는 끝났다. 형사는 <b>취조서</b>를, 범인은 <b>자수서</b>를 적는다.</div>`; let asking=false;
   VQ.forEach(q=>{ if(v[q.k]!==undefined){ const o=q.opts.find(x=>x[1]===v[q.k]); s+=`<div class="memq reveal"><b>${esc(q.form)}</b> · ${esc(q.q)}<br>→ ${esc(o?o[0]:"—")}</div>`; }
@@ -1260,13 +1257,14 @@ function renderSpecial(w){
 }
 function renderMemory(w){
   const m=memFor(w); const done=(D.memory||[]).filter(x=>x.role===w&&S.memDone[w].includes(x.from));
-  let s=`<div class="chname">기억 · ${roleName(w)} ${S.act[w]}막 · 열린 카드 ${Object.values(D.cards).filter(c=>c.who===w&&(c.act||1)<=S.act[w]).length}장</div>`;
+  let s=`<div class="chname">기억 · ${roleName(w)} ${S.act[w]>=(D.maxAct||4)?"판결":S.act[w]+"막"} · 열린 카드 ${(S.opened[w]||[]).filter(id=>D.cards[id]).length}장</div>`;
   done.forEach(x=>{ s+=`<div class="memq reveal">「${esc(x.ask)}」<br>${esc(x.reveal)}</div>`; });
   if(m&&m.asks&&m.asks.length){ const dn=partDone(w,m);
     s+=m.asks.map((q,i)=> dn.includes(i) ? `<div class="memq reveal"><b>${esc(q.who)}의 질문 ✓</b><br>「${esc(q.ask)}」<br>${esc(q.ok||"")}</div>`
       : askOpen(w,q) ? `<div class="memq"><b>${esc(q.who)}의 질문</b><br>${esc(q.ask)}</div>`
       : `<div class="memq" style="opacity:.55"><b>${esc(q.who)}의 질문</b> — 잠겨 있다<br>${esc(q.lock||"현장을 더 조사하면 나타난다.")}</div>`).join("");
     if(m.asks.some(q=>q.optional)) s+=`<div class="hint" style="color:var(--phos-dim)">마지막 범인의 질문은 막을 넘기는 데 필요하지 않다. 판결이 끝날 때까지 언제든 답할 수 있다.</div>`;
+    if(!reqLeft(w,m)&&!gateOpen(m)) s+=`<div class="memq"><b>${esc(GATE_LINE)}</b></div>`;
     if(m.from===3) s+=`<div class="row" style="flex:0 0 auto"><button data-end3="1" style="flex:0 0 auto">${S.endArm?"한 번 더 누르면 판결로 간다 — 되돌릴 수 없다":"시간이 끝났다 — 판결로 간다"}</button></div>`;
     s+=`<div class="hint" style="color:var(--phos-dim)">${m.asks.some(q=>q.optional)?"형사의 질문을 맞히면 판결로 간다.":"두 질문을 모두 맞혀야 다음 막이 열린다."} 범인의 질문의 답은 형사가, 형사의 질문의 답은 범인이 알고 있다 — 묻고, 내어 주고, 받아 낸다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다 — 어느 질문의 답이든 순서 없이. 횟수 제한 없음.</div>`; }
   else if(m) s+=`<div class="memq">${esc(m.ask)}</div><div class="hint" style="color:var(--phos-dim)">답은 사진의 힌트·문구·취조에서 들은 말 속에 있다. 기억 채널에 있을 때 아래 입력창에 답을 넣는다. 횟수 제한 없음.</div>`;
