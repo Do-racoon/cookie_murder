@@ -1002,6 +1002,7 @@ const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{
 let D=loadData(), S=null;
 let role=null, code=null, viewer="D", ch=1, viewCard=null, lastFound=null, lobbyStep=1;
 let lastJs=null, db=null, assets=null, gref=null, cref=null, unsub=null, unsubC=null, canWrite=null, dirty=false, writing=false, dbReady=false, dbTimer=null, offlineNote=false;
+function actLabel(n){ return n>=(D.maxAct||4)?"판결":n+"막"; }
 function freshState(){ return {ver:D.version, started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, verdict:{}, log:[], startAt:null}; }
 function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값으로 채운다 */
   const base=JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -1259,9 +1260,9 @@ function renderInner(){
   }
   const mine=canAct(w); scr.className="screen on";
   $("osdL").innerHTML="CH "+String(ch).padStart(2,"0")+' <span class="chn">'+esc(CH[ch-1].name)+"</span>";
-  $("osdR").innerHTML=`${roleName(w)} ${S.act[w]}막 <span class="rec"></span><span id="clock">${stamp()}</span>`;
+  $("osdR").innerHTML=`${roleName(w)} ${actLabel(S.act[w])} <span class="rec"></span><span id="clock">${stamp()}</span>`;
   const k=CH[ch-1].key;
-  if(k==="status") body.innerHTML=`<div class="chname">${roleName(w)} ${S.act[w]}막 ${D.shared?"":"· 상대 "+S.act[other(w)]+"막"} ${role==="TV"&&!D.shared?`· <span class="pill">${roleName(w)}이(가) 보는 중</span>`:""}</div><div class="logl">${S.log.map(e=>`<div class="e ${e.who} ${e.kind}"><time>${e.t}</time><span>${esc(e.text)}</span></div>`).join("")}</div>
+  if(k==="status") body.innerHTML=`<div class="chname">${roleName(w)} ${actLabel(S.act[w])} ${D.shared?"":"· 상대 "+S.act[other(w)]+"막"} ${role==="TV"&&!D.shared?`· <span class="pill">${roleName(w)}이(가) 보는 중</span>`:""}</div><div class="logl">${S.log.map(e=>`<div class="e ${e.who} ${e.kind}"><time>${e.t}</time><span>${esc(e.text)}</span></div>`).join("")}</div>
       <div class="ctl"><div class="hint">아래 입력창에 카드 코드를 넣는다. ★ 카드는 사진이 뜨고, 기억 채널에서는 같은 창이 기억의 답 입력이 된다.${canWrite===false?" 이 폰은 보기 전용이다.":""}${offlineNote?" 저장소 응답이 늦다.":""}</div></div>`;
   else if(k==="photo") body.innerHTML=renderPhoto(w);
   else if(k==="memory") body.innerHTML=renderMemory(w);
@@ -1281,7 +1282,7 @@ let keyMode="code";
 function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서는 기억 답, 그 외에는 카드 코드 */
   const kp=$("kwrap"), i=$("keyIn"), b=$("keyBtn"); kp.hidden=!(S&&S.started);
   if(kp.hidden) return;
-  $("kleft").textContent=roleName(w)+" · "+S.act[w]+"막";
+  $("kleft").textContent=roleName(w)+" · "+actLabel(S.act[w]);
   const k=CH[ch-1].key; const m=memFor(w);
   if(k==="memory"&&(m||(S&&S.started&&lateAsks(w).length))){ keyMode="mem"; i.classList.add("word"); i.placeholder="기억의 답"; b.textContent="답한다"; $("kmode").textContent="기억의 답을 넣는다"; }
   else { keyMode="code"; i.classList.remove("word"); i.placeholder="코드 4글자"; b.textContent="입력"; $("kmode").textContent="카드 코드를 넣는다"; }
