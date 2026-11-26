@@ -162,8 +162,8 @@ def main(argv):
            extra=["-s", "--metadata", "title=쿠키 살인 사건 — 기획서", "-V", f"header-includes=<style>{css}</style>"])
 
     # 카드 · 티비
-    for src, dst in [("cards/쿠키살인사건_30장_양면인쇄.pdf", "쿠키살인사건_30장_양면인쇄.pdf"),
-                     ("cards/쿠키살인사건_앞뒤_전체비교_30장.png", "쿠키살인사건_앞뒤_전체비교_30장.png"),
+    for src, dst in [("cards/쿠키살인사건_32장_양면인쇄.pdf", "쿠키살인사건_32장_양면인쇄.pdf"),
+                     ("cards/쿠키살인사건_앞뒤_전체비교_32장.png", "쿠키살인사건_앞뒤_전체비교_32장.png"),
                      ("tv/index.html", "티비_쿠키살인사건.html")]:
         shutil.copy(ROOT / src, out / dst)
     for f in sorted(out.iterdir()):
