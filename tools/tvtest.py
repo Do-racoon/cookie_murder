@@ -343,6 +343,16 @@ def main():
         r = pg.evaluate("""(()=>{ const st=freshState(); st.started=true; st.opened.D=["K1","K2","B2","B4"]; st.found.D=["K1#0","B4#1","K2#0"];
           S=migrateState(st); setChannel(2); render(); return {op:S.opened.D, fd:S.found.D}; })()""")
         check("옛 판(K1·B2·B4 열림)도 오류 없이, 없는 카드는 걸러 낸다", r["op"] == ["K2"] and r["fd"] == ["K2#0"], r)
+        r = pg.evaluate("""(()=>{ const mk=v=>{ const st=freshState(); st.started=true; if(v===null) delete st.ver; else st.ver=v;
+            st.found.D=["B5#2","K6#1","G2#0"]; st.misses.D=[{id:"B5",x:1,y:1},{id:"G2",x:2,y:2}]; return migrateState(st); };
+          const a=mk(null), b=mk(39), c=mk(D.version);
+          return {a:a.found.D, am:a.misses.D.map(m=>m.id), av:a.ver, b:b.found.D, c:c.found.D}; })()""")
+        check("40판 전 저장은 지점이 바뀐 카드의 찾은 지점만 비운다", r["a"] == ["G2#0"] and r["am"] == ["G2"] and r["b"] == ["G2#0"] and r["av"] == pg.evaluate("D.version"), r)
+        check("지금 판 저장은 찾은 지점을 그대로 둔다", r["c"] == ["B5#2", "K6#1", "G2#0"], r)
+        r = pg.evaluate("""(()=>{ S=freshState(); start(); enterCode("K6"); viewCard="K6"; ch=2; render(); bigView("K6");
+          S.found.D.push("K6#0"); openPicFor("K6",0); const a=!!document.querySelector('.picview'); document.getElementById('picClose').click();
+          const b=!!document.querySelector('.bigview'); closeSheet(); return {a,b}; })()""")
+        check("크게 보기에서 연 이어지는 사진을 닫으면 크게 보기로 돌아간다", r["a"] and r["b"], r)
 
         b.close()
 

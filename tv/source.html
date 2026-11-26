@@ -941,7 +941,7 @@ const CH=[{n:1,name:"현 상황",key:"status"},{n:2,name:"사진",key:"photo"},{
 let D=loadData(), S=null;
 let role=null, code=null, viewer="D", ch=1, viewCard=null, lastFound=null, lobbyStep=1;
 let lastJs=null, db=null, assets=null, gref=null, cref=null, unsub=null, unsubC=null, canWrite=null, dirty=false, writing=false, dbReady=false, dbTimer=null, offlineNote=false;
-function freshState(){ return {started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, verdict:{}, log:[], startAt:null}; }
+function freshState(){ return {ver:D.version, started:false, act:{C:1,D:1}, opened:{C:[],D:[]}, found:{C:[],D:[]}, misses:{C:[],D:[]}, memDone:{C:[],D:[]}, memPart:{C:{},D:{}}, verdict:{}, log:[], startAt:null}; }
 function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값으로 채운다 */
   const base=JSON.parse(JSON.stringify(DEFAULT_DATA));
   if(!d||!d.cards) return base;
@@ -953,6 +953,9 @@ function migrate(d){ /* 예전에 저장된 설계에 빠진 항목을 기본값
   d.memory=base.memory; d.endings=base.endings;
   return d; }
 function migrateState(st){ const base=freshState(); delete st.endArm;
+  /* 40판에서 지점이 바뀐 카드 — 그 전 저장의 찾은 지점·헛짚은 자리는 번호가 어긋나니 비운다(다시 찾으면 된다) */
+  if(!(st.ver>=40)) ["C","D"].forEach(w=>{ const chg=k=>["K2","K4","K5","K6","B1","B3","B5"].includes(k); if(st.found&&st.found[w]) st.found[w]=st.found[w].filter(k=>!chg(k.split("#")[0])); if(st.misses&&st.misses[w]) st.misses[w]=st.misses[w].filter(m=>!chg(m&&m.id)); });
+  st.ver=D.version;
   /* 없어진 카드(옛 설계의 K1·B2·B4 등)는 열린 목록·찾은 지점에서 걸러 낸다 */
   ["C","D"].forEach(w=>{ if(st.opened&&st.opened[w]) st.opened[w]=st.opened[w].filter(id=>D.cards[id]); if(st.found&&st.found[w]) st.found[w]=st.found[w].filter(k=>D.cards[k.split("#")[0]]); }); /* 「시간이 끝났다」 한 번 누른 대기는 저장된 판에 남기지 않는다 */ for(const k of Object.keys(base)){ if(st[k]===undefined) st[k]=base[k]; }
   /* 옛 판(턴·지시 카드)의 로그 줄은 지운다 */ if(Array.isArray(st.log)) st.log=st.log.filter(e=>e&&e.turn===undefined&&!/턴|END|지시 카드|상호작용/.test(e.text||"")); return st; }
@@ -1207,7 +1210,8 @@ function keypad(w,mine){ /* 티비 아래 입력창 하나. 기억 채널에서�
 function specialOf(id){ return (D.specials||[]).find(x=>x.id===id); }
 function eulReul(w){ return /[013678]$/.test(w)?"을":"를"; }
 /* 이어지는 사진 — 지점(pic) 또는 막의 질문(pic)에 붙은 사진을 시트로 띄운다. 닫으면 원래 화면으로 */
-function openPic(src, cap){ openSheet(sh=>{ sh.innerHTML=`<div class="picview"><div class="row" style="align-items:center"><h3 style="flex:1">이어지는 사진</h3><button id="picClose" style="flex:0 0 auto">닫기</button></div><img src="${esc(src)}" alt=""><p class="hint">${esc(cap||"")}</p></div>`; $("picClose").onclick=closeSheet; }); }
+function openPic(src, cap){ const back=!$("shutter").hidden&&$("sheet").querySelector(".bigview")?bigId:null; /* 크게 보기에서 열었으면 닫을 때 그리로 */
+  openSheet(sh=>{ sh.innerHTML=`<div class="picview"><div class="row" style="align-items:center"><h3 style="flex:1">이어지는 사진</h3><button id="picClose" style="flex:0 0 auto">닫기</button></div><img src="${esc(src)}" alt=""><p class="hint">${esc(cap||"")}</p></div>`; $("picClose").onclick=()=>{ if(back) bigView(back); else closeSheet(); }; }); }
 function openPicFor(id, i){ const h=((D.cards[id]||{}).hotspots||[])[i]; if(h&&h.pic) openPic(h.pic.src, h.pic.cap); }
 function capText(h, i){ if(!h) return ""; let t=esc(h.hint); const sp=h.card&&specialOf(h.card);
   if(h.pic) t+=`<button class="take picbtn" data-pic="${i}">사진을 본다 ▸</button>`;
